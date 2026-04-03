@@ -1,0 +1,246 @@
+/* ==========================================
+   Global reset & base styles
+   ========================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background: #0f0f1a;
+  color: #e0e0f0;
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ==========================================
+   Navigation
+   ========================================== */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.75rem 2rem;
+  background: #12121f;
+  border-bottom: 1px solid #2a2a4a;
+  flex-wrap: wrap;
+}
+
+.nav-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #c084fc;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #e0e0f0;
+}
+
+/* ==========================================
+   Main content area
+   ========================================== */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* ==========================================
+   Home page
+   ========================================== */
+.home {
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+}
+
+.home h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #c084fc, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.home-subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
+}
+
+.game-card:hover {
+  transform: translateY(-4px);
+}
+
+.game-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: #e0e0f0;
+}
+
+.game-card p {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.arclight-card {
+  background: #0a0a1a;
+  border-color: #00e5ff33;
+}
+
+.arclight-card:hover {
+  border-color: #00e5ff88;
+  box-shadow: 0 8px 24px rgba(0, 229, 255, 0.15);
+}
+
+.mine-card {
+  background: #1a0e05;
+  border-color: #c9a22733;
+}
+
+.mine-card:hover {
+  border-color: #c9a22788;
+  box-shadow: 0 8px 24px rgba(201, 162, 39, 0.15);
+}
+
+.space-card {
+  background: #03030f;
+  border-color: #1565c033;
+}
+
+.space-card:hover {
+  border-color: #1565c088;
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.15);
+}
+
+/* ==========================================
+   Game containers
+   ========================================== */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.game-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #e0e0f0;
+}
+
+.score-board {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.95rem;
+}
+
+.score {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.score.player1 {
+  background: rgba(0, 229, 255, 0.1);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.score.player2 {
+  background: rgba(255, 64, 129, 0.1);
+  color: #ff4081;
+  border: 1px solid rgba(255, 64, 129, 0.3);
+}
+
+.mine-svg ~ .score-board .score.player1,
+.mine-svg + .score-board .score.player1 {
+  color: #c9a227;
+  border-color: rgba(201, 162, 39, 0.3);
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.status-message {
+  font-size: 1rem;
+  color: #9ca3af;
+  margin: 0;
+  min-height: 1.5rem;
+}
+
+.game-svg {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==========================================
+   Buttons
+   ========================================== */
+.btn-reset {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: #6d28d9;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-reset:hover {
+  background: #7c3aed;
+}
