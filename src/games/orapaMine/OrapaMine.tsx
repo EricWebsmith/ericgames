@@ -1,12 +1,12 @@
-import { useState, useCallback } from 'react'
-import type { GameState } from '../shared/types'
-import { createGameState, applyMove, resetBoard } from '../shared/gameLogic'
+import { useCallback, useState } from 'react';
+import { applyMove, createGameState, resetBoard } from '../shared/gameLogic';
+import type { GameState } from '../shared/types';
 
-const CELL_SIZE = 64
-const PADDING = 36
-const WIN_LENGTH = 3
+const CELL_SIZE = 64;
+const PADDING = 36;
+const WIN_LENGTH = 3;
 
-const INITIAL_CONFIG = { rows: 5, cols: 5, winLength: WIN_LENGTH }
+const INITIAL_CONFIG = { rows: 5, cols: 5, winLength: WIN_LENGTH };
 
 /**
  * Orapa Mine – a Tic-Tac-Toe style game set in an underground mine.
@@ -16,33 +16,33 @@ const INITIAL_CONFIG = { rows: 5, cols: 5, winLength: WIN_LENGTH }
 export default function OrapaMine() {
   const [state, setState] = useState<GameState>(() =>
     createGameState({ ...INITIAL_CONFIG, player1Name: 'Gold Miner', player2Name: 'Crystal Miner' }),
-  )
+  );
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       setState((prev) => {
-        const next = prev.phase === 'idle' ? { ...prev, phase: 'playing' as const } : prev
-        return applyMove(next, row, col, WIN_LENGTH)
-      })
+        const next = prev.phase === 'idle' ? { ...prev, phase: 'playing' as const } : prev;
+        return applyMove(next, row, col, WIN_LENGTH);
+      });
     },
     [],
-  )
+  );
 
   const handleReset = useCallback(() => {
-    setState((prev) => resetBoard(prev))
-  }, [])
+    setState((prev) => resetBoard(prev));
+  }, []);
 
-  const svgWidth = INITIAL_CONFIG.cols * CELL_SIZE + PADDING * 2
-  const svgHeight = INITIAL_CONFIG.rows * CELL_SIZE + PADDING * 2
+  const svgWidth = INITIAL_CONFIG.cols * CELL_SIZE + PADDING * 2;
+  const svgHeight = INITIAL_CONFIG.rows * CELL_SIZE + PADDING * 2;
 
   const isWinningCell = (row: number, col: number) =>
-    state.winningCells.some((c) => c.row === row && c.col === col)
+    state.winningCells.some((c) => c.row === row && c.col === col);
 
   const statusMessage = () => {
-    if (state.phase === 'won') return `${state.currentPlayer.name} strikes it rich! ⛏️`
-    if (state.phase === 'draw') return 'The mine is exhausted!'
-    return `${state.currentPlayer.name}'s turn`
-  }
+    if (state.phase === 'won') return `${state.currentPlayer.name} strikes it rich! ⛏️`;
+    if (state.phase === 'draw') return 'The mine is exhausted!';
+    return `${state.currentPlayer.name}'s turn`;
+  };
 
   return (
     <div className="game-container">
@@ -110,13 +110,13 @@ export default function OrapaMine() {
         ))}
 
         {/* Cells */}
-        {state.board.map((row) =>
-          row.map((cell) => {
-            const x = PADDING + cell.col * CELL_SIZE
-            const y = PADDING + cell.row * CELL_SIZE
-            const cx = x + CELL_SIZE / 2
-            const cy = y + CELL_SIZE / 2
-            const winning = isWinningCell(cell.row, cell.col)
+        {state.board.map((row: any[]) =>
+          row.map((cell: any) => {
+            const x = PADDING + cell.col * CELL_SIZE;
+            const y = PADDING + cell.row * CELL_SIZE;
+            const cx = x + CELL_SIZE / 2;
+            const cy = y + CELL_SIZE / 2;
+            const winning = isWinningCell(cell.row, cell.col);
 
             return (
               <g
@@ -165,7 +165,7 @@ export default function OrapaMine() {
                   />
                 )}
               </g>
-            )
+            );
           }),
         )}
       </svg>
@@ -174,5 +174,5 @@ export default function OrapaMine() {
         New Round
       </button>
     </div>
-  )
+  );
 }
