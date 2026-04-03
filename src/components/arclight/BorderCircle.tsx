@@ -1,7 +1,7 @@
 import type { Color } from '../../engine/models';
 import { GEM_FILL } from './colors';
 
-const DEFAULT_GEM_COLOR = '#aaaaaa';
+const DEFAULT_GEM_COLOR = '#999999';
 const ARC_STROKE_WIDTH  = 3.5;
 
 // SVG path for a clockwise arc from startDeg to endDeg on a circle of radius r at (cx, cy)
@@ -34,7 +34,7 @@ export default function BorderCircle({
   cx, cy, r, colors, isEntry, isExit, label, onClick, glowFilter,
 }: BorderCircleProps) {
   const circleFill   = isEntry ? '#1e1e5a' : isExit ? '#1a3a1a' : '#111130';
-  const circleStroke = isEntry ? '#8888ff' : isExit ? '#44cc44' : '#3a3a7a';
+  const circleStroke = isEntry ? '#7777ee' : isExit ? '#44cc44' : '#3a3a7a';
   const textFill     = isEntry ? '#ccccff' : isExit ? '#88ff88' : '#8888aa';
 
   // Deduplicate colors while preserving order so that e.g. ['red','red','blue']

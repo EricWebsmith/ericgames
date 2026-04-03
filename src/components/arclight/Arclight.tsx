@@ -11,7 +11,7 @@ import { GEM_FILL } from './colors';
 // BD_R=13 is large enough to fit two-digit labels (10–21) while keeping adjacent circles non-overlapping.
 const HEX_SIZE = 42;
 const HEX_R    = 38;
-const BD_DIST  = 54;
+const BD_DIST  = 40;
 const BD_R     = 13;
 const SVG_W    = 700;
 const SVG_H    = 600;
@@ -325,7 +325,7 @@ export default function Arclight() {
           const strokeColor = '#2a2a6a';
 
           // Arc stroke: use gem colour for gem tiles, otherwise white.
-          const arcColor = hasGem ? gemColor : 'rgba(255,255,255,0.85)';
+          const arcColor = 'rgba(255,255,255,0.85)';
 
           return (
             <g
@@ -352,7 +352,7 @@ export default function Arclight() {
               )}
 
               {/* Arc / line paths drawn on top of the polygon when revealed */}
-              {revealed && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
+              {showAll && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
                 const inDir = Number(inDirStr);
                 const path  = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
