@@ -1,5 +1,5 @@
 import { borderNodeCoordinates, getBasicTiles, getBoard } from './arclightData';
-import { type Board, type Color, type LightResult, type PathStep, type Puzzle, type Tile, TileInBoard } from './models';
+import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from './models';
 
 export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>, startCoordinate: string): LightResult {
     const startNode = board.spaces[startCoordinate];
@@ -7,7 +7,6 @@ export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>
     let currentCoordinate = startNode.edges[outDirKey];
     let outDir = outDirKey;
     const colors = new Set<Color>();
-    const path: PathStep[] = [];
 
     while (true) {
         const currentNode = board.spaces[currentCoordinate];
@@ -17,20 +16,18 @@ export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>
             const tile = tilesInBoard[currentCoordinate];
             const inDir = (outDir + 3) % 6;
             if (!(inDir in tile.arc_dict)) {
-                path.push({ coordinate: currentCoordinate, accumulated_colors: [...colors], absorbed: true });
-                return { end_label: '', colors: [], path };
+                return { end_label: '', colors: [] };
             }
             outDir = tile.arc_dict[inDir];
             for (const color of tile.tile.colors) {
                 colors.add(color);
             }
-            path.push({ coordinate: currentCoordinate, accumulated_colors: [...colors], absorbed: false });
         }
 
         currentCoordinate = currentNode.edges[outDir];
     }
 
-    return { end_label: currentCoordinate, colors: [...colors], path };
+    return { end_label: currentCoordinate, colors: [...colors] };
 }
 
 function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {

@@ -101,16 +101,9 @@ export interface Board {
     spaces: Record<string, Node>;
 }
 
-export interface PathStep {
-    coordinate: string;
-    accumulated_colors: Color[];
-    absorbed: boolean;
-}
-
 export interface LightResult {
     end_label: string;
     colors: Color[];
-    path: PathStep[];
 }
 
 export interface SightResult {
