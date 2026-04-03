@@ -343,7 +343,7 @@ export default function Arclight() {
               )}
 
               {/* Arc / line paths drawn on top of the polygon when revealed */}
-              {revealed && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
+              {showAll && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
                 const inDir = Number(inDirStr);
                 const path  = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
