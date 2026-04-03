@@ -16,6 +16,14 @@ const SVG_H    = 600;
 const OX       = 350;  // SVG origin X (center of hex grid)
 const OY       = 300;  // SVG origin Y
 
+// Arc radii derived from hex geometry:
+// ARC_SMALL_R = R/2  (tight 120° corner arc, center at a hex vertex)
+// ARC_MED_R   = dist from neighbour-centre to edge-midpoint (60° arc through adjacent hex centre)
+const ARC_SMALL_R = HEX_R / 2;
+const ARC_MED_R   = Math.sqrt(
+  (3 / 4) * HEX_R * HEX_R - (3 / 2) * HEX_R * HEX_SIZE + 3 * HEX_SIZE * HEX_SIZE,
+);
+
 // ─── Axial coordinate helpers ──────────────────────────────────────
 // Tile label → (q, r):  letterIndex = 3+q+r,  numberIndex = r+3
 // letters: A=0 C=1 E=2 G=3 I=4 K=5 M=6   numbers: 2=0 4=1 6=2 8=3 10=4 12=5 14=6
@@ -51,6 +59,51 @@ const toPx = (q: number, r: number) => ({
 // 0=left 1=upper-left 2=upper-right 3=right 4=lower-right 5=lower-left
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
+};
+
+// ─── Arc-path helpers ─────────────────────────────────────────────
+// Midpoint of the hex edge that faces direction d.
+// In a pointy-top hex the inradius = R*cos(30°) = R*√3/2; the edge midpoint
+// sits exactly at that distance from the centre, in the direction DIR_DEG[d].
+const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number } => {
+  const angle   = (Math.PI / 180) * DIR_DEG[d];
+  const inradius = HEX_R * Math.sqrt(3) / 2;
+  return { x: cx + inradius * Math.cos(angle), y: cy + inradius * Math.sin(angle) };
+};
+
+// Build an SVG path string for one arc inside a tile, following the same
+// geometry as the Python draw_tile() function.
+//   distance 1 / 5 → tight 120° corner arc (radius = HEX_R/2), CCW
+//   distance 2 / 4 → medium  60° arc (radius = ARC_MED_R),     CCW
+//   distance 3     → straight line through the tile centre
+// Returns null when inDir > outDir (each arc is drawn only once).
+const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): string | null => {
+  if (inDir > outDir) return null;
+  const distance = (outDir - inDir) % 6;
+
+  if (distance === 1 || distance === 5) {
+    const dir = distance === 1 ? inDir : outDir;
+    const s   = edgeMidForDir(cx, cy, dir);
+    const e   = edgeMidForDir(cx, cy, (dir + 1) % 6);
+    const r   = ARC_SMALL_R;
+    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r},${r} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+
+  if (distance === 2 || distance === 4) {
+    const dir = distance === 2 ? inDir : outDir;
+    const s   = edgeMidForDir(cx, cy, dir);
+    const e   = edgeMidForDir(cx, cy, (dir + 2) % 6);
+    const r   = ARC_MED_R;
+    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+
+  if (distance === 3) {
+    const s = edgeMidForDir(cx, cy, inDir);
+    const e = edgeMidForDir(cx, cy, outDir);
+    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} L${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+
+  return null;
 };
 
 // Pointy-top hexagon polygon points string (vertex at top, SVG y-down)
@@ -198,6 +251,12 @@ export default function Arclight() {
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
+  // Coordinate → TileInBoard lookup (for opacity and arc_dict)
+  const tileByCoord = useMemo(
+    () => Object.fromEntries(puzzle.tiles.map(t => [t.coordinate, t])),
+    [puzzle.tiles],
+  );
+
   // Collect exit labels that are currently highlighted as light-beam targets
   const exitHighlights = useMemo(() => {
     const set = new Set<string>();
@@ -242,9 +301,22 @@ export default function Arclight() {
           const revealed = showAll || revealedTiles.has(label);
           const hasGem   = colors.length > 0;
           const gemColor = hasGem ? getGemColor(colors) : '';
+          const tileData = tileByCoord[label];
 
-          const fillColor   = revealed && hasGem ? gemColor : '#14142e';
+          // Fill colour: gem colour when revealed, else dark; black-hole → black,
+          // transparent tile (arcs but no gem) → light grey.
+          let fillColor = revealed && hasGem ? gemColor : '#14142e';
+          if (revealed && tileData && !hasGem) {
+            fillColor = tileData.tile.arcs.length === 0 ? '#000000' : '#EEEEEE';
+          }
+
+          // Opacity from tile data (0-100 → 0-1); only applied when revealed.
+          const fillOpacity = revealed && tileData ? tileData.tile.opacity / 100 : 1;
+
           const strokeColor = '#2a2a6a';
+
+          // Arc stroke: use gem colour for gem tiles, otherwise white.
+          const arcColor = hasGem ? gemColor : 'rgba(255,255,255,0.85)';
 
           return (
             <g
@@ -256,18 +328,36 @@ export default function Arclight() {
               <polygon
                 points={hexPoints(x, y, HEX_R)}
                 fill={fillColor}
+                fillOpacity={fillOpacity}
                 stroke={strokeColor}
                 strokeWidth={1.5}
                 filter={revealed && hasGem ? 'url(#al-glow)' : undefined}
               />
 
-              {/* X cross for revealed tiles with no gem */}
-              {revealed && !hasGem && (
+              {/* X cross only for revealed empty cells (no tile placed there) */}
+              {revealed && !hasGem && !tileData && (
                 <g stroke="#3a3a7a" strokeWidth={2} strokeLinecap="round">
                   <line x1={x - 13} y1={y - 13} x2={x + 13} y2={y + 13} />
                   <line x1={x + 13} y1={y - 13} x2={x - 13} y2={y + 13} />
                 </g>
               )}
+
+              {/* Arc / line paths drawn on top of the polygon when revealed */}
+              {revealed && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
+                const inDir = Number(inDirStr);
+                const path  = makeArcPath(inDir, outDir, x, y);
+                if (!path) return null;
+                return (
+                  <path
+                    key={`arc-${inDir}-${outDir}`}
+                    d={path}
+                    stroke={arcColor}
+                    strokeWidth={3}
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                );
+              })}
 
               {/* Tile coordinate label */}
               <text
