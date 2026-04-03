@@ -208,6 +208,27 @@ export default function Arclight() {
     return set;
   }, [clickedBorders, lightResults]);
 
+  // Map each tile coordinate to the overlay fill+opacity pairs from active light beams
+  const pathTileOverlays = useMemo(() => {
+    const map = new Map<string, { fill: string; opacity: number }[]>();
+    for (const bl of clickedBorders) {
+      const result = lightResults[bl];
+      if (!result?.path) continue;
+      for (const step of result.path) {
+        const overlays = map.get(step.coordinate) ?? [];
+        if (step.absorbed) {
+          overlays.push({ fill: '#000000', opacity: 0.9 });
+        } else if (step.accumulated_colors.length === 0) {
+          overlays.push({ fill: '#000000', opacity: 0.8 });
+        } else {
+          overlays.push({ fill: getGemColor(step.accumulated_colors), opacity: 0.7 });
+        }
+        map.set(step.coordinate, overlays);
+      }
+    }
+    return map;
+  }, [clickedBorders, lightResults]);
+
   return (
     <div className="game-container">
       <h2 className="game-title">Arclight</h2>
@@ -246,6 +267,8 @@ export default function Arclight() {
           const fillColor   = revealed && hasGem ? gemColor : '#14142e';
           const strokeColor = '#2a2a6a';
 
+          const tilePathOverlays = pathTileOverlays.get(label) ?? [];
+
           return (
             <g
               key={label}
@@ -260,6 +283,18 @@ export default function Arclight() {
                 strokeWidth={1.5}
                 filter={revealed && hasGem ? 'url(#al-glow)' : undefined}
               />
+
+              {/* Light path overlays: absorbed=black, no-color=80% black mask, colored=gem color */}
+              {tilePathOverlays.map(({ fill, opacity }, i) => (
+                <polygon
+                  key={`overlay-${i}`}
+                  points={hexPoints(x, y, HEX_R)}
+                  fill={fill}
+                  fillOpacity={opacity}
+                  stroke="none"
+                  style={{ pointerEvents: 'none' }}
+                />
+              ))}
 
               {/* X cross for revealed tiles with no gem */}
               {revealed && !hasGem && (
