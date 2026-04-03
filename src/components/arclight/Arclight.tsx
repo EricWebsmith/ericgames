@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { setup } from '../../engine/gameManager';
-import type { Puzzle } from '../../engine/models';
+import type { Color, Puzzle } from '../../engine/models';
+import BorderCircle from './BorderCircle';
+import { GEM_FILL } from './colors';
 
 // ─── Layout constants ──────────────────────────────────────────────
 // HEX_SIZE=42 gives center-to-center distance of 42*√3≈72.7px (pointy-top hex).
@@ -9,7 +11,7 @@ import type { Puzzle } from '../../engine/models';
 // BD_R=13 is large enough to fit two-digit labels (10–21) while keeping adjacent circles non-overlapping.
 const HEX_SIZE = 42;
 const HEX_R    = 38;
-const BD_DIST  = 54;
+const BD_DIST  = 40;
 const BD_R     = 13;
 const SVG_W    = 700;
 const SVG_H    = 600;
@@ -165,12 +167,6 @@ const ALL_BORDERS: BorderInfo[] = [
 ];
 
 // ─── Color helpers ─────────────────────────────────────────────────
-const GEM_FILL: Record<string, string> = {
-  red:    '#ff5555',
-  blue:   '#5577ff',
-  yellow: '#ffee00',
-};
-
 const DEFAULT_GEM_COLOR = '#aaaaaa';
 
 const getGemColor = (colors: string[]): string => {
@@ -267,6 +263,19 @@ export default function Arclight() {
     return set;
   }, [clickedBorders, lightResults]);
 
+  // Map each exit border label → the colors from the beam that exits there,
+  // so we can colour both ends of a light path identically.
+  const exitColors = useMemo(() => {
+    const map: Record<string, Color[]> = {};
+    for (const bl of clickedBorders) {
+      const result = lightResults[bl];
+      if (result?.end_label) {
+        map[result.end_label] = result.colors;
+      }
+    }
+    return map;
+  }, [clickedBorders, lightResults]);
+
   return (
     <div className="game-container">
       <h2 className="game-title">Arclight</h2>
@@ -316,7 +325,7 @@ export default function Arclight() {
           const strokeColor = '#2a2a6a';
 
           // Arc stroke: use gem colour for gem tiles, otherwise white.
-          const arcColor = hasGem ? gemColor : 'rgba(255,255,255,0.85)';
+          const arcColor = 'rgba(255,255,255,0.85)';
 
           return (
             <g
@@ -386,42 +395,30 @@ export default function Arclight() {
           const isExit   = exitHighlights.has(label);
           const result   = lightResults[label];
           const exitLbl  = result?.end_label ?? '';
-          const gemColors = result?.colors ?? [];
-          const noteColor = gemColors.length > 0 ? getGemColor(gemColors) : '#aaaacc';
 
-          const circleFill   = isEntry ? '#1e1e5a' : isExit ? '#1a3a1a' : '#111130';
-          const circleStroke = isEntry ? '#8888ff' : isExit ? '#44cc44' : '#3a3a7a';
+          // Entry circles use their own light-result colors;
+          // exit circles use the colors from the beam that exits there.
+          const circleColors: Color[] = isEntry
+            ? (result?.colors ?? [])
+            : (exitColors[label] ?? []);
+
+          const noteColor = circleColors.length > 0 ? getGemColor(circleColors) : '#aaaacc';
 
           return (
-            <g
-              key={`b-${label}`}
-              onClick={() => handleBorderClick(label)}
-              style={{ cursor: 'pointer' }}
-              aria-label={`Border ${label}`}
-            >
-              <circle
+            <g key={`b-${label}`}>
+              <BorderCircle
                 cx={bp.x}
                 cy={bp.y}
                 r={BD_R}
-                fill={circleFill}
-                stroke={circleStroke}
-                strokeWidth={isEntry || isExit ? 2 : 1.5}
-                filter={isEntry ? 'url(#al-glow)' : undefined}
+                colors={circleColors}
+                isEntry={isEntry}
+                isExit={isExit}
+                label={label}
+                onClick={() => handleBorderClick(label)}
+                glowFilter="url(#al-glow)"
               />
-              <text
-                x={bp.x}
-                y={bp.y}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill={isEntry ? '#ccccff' : isExit ? '#88ff88' : '#8888aa'}
-                fontSize={10}
-                fontWeight="bold"
-                style={{ pointerEvents: 'none', userSelect: 'none' }}
-              >
-                {label}
-              </text>
 
-              {/* Light result note (visible when this border was clicked) */}
+              {/* Light result note (visible when this border was clicked as entry) */}
               {isEntry && np && (
                 <text
                   x={np.x}
