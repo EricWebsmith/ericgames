@@ -56,13 +56,13 @@ export function getBasicTiles(): Tile[] {
             arcs: [[1, 0], [2, 5], [3, 4]],
             link_tiles: { 2: 6 }
         },
-        {
+        { // Transparent tile, render as a white tile with 50% opacity
             id: 8,
             colors: [],
             arcs: [[1, 0], [2, 4], [3, 5]],
             link_tiles: {}
         },
-        {
+        { // Black hole tile, render as a black tile with 100% opacity
             id: 9,
             colors: [],
             arcs: [],
