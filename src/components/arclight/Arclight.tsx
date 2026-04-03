@@ -3,10 +3,14 @@ import { setup } from '../../engine/gameManager';
 import type { Puzzle } from '../../engine/models';
 
 // ─── Layout constants ──────────────────────────────────────────────
-const HEX_SIZE = 42;   // axial spacing between tile centers (pixels)
-const HEX_R    = 38;   // visual circumradius of each hex tile
-const BD_DIST  = 54;   // tile-center → border-circle-center distance
-const BD_R     = 13;   // border circle radius
+// HEX_SIZE=42 gives center-to-center distance of 42*√3≈72.7px (pointy-top hex).
+// HEX_R=38 leaves ~6px visual gap between adjacent tiles (inradius≈33px, gap=(72.7-66)/2≈3px each side).
+// BD_DIST=54 places border circles ~20px beyond each tile edge (tile inradius≈33px, 54-33=21px gap).
+// BD_R=13 is large enough to fit two-digit labels (10–21) while keeping adjacent circles non-overlapping.
+const HEX_SIZE = 42;
+const HEX_R    = 38;
+const BD_DIST  = 54;
+const BD_R     = 13;
 const SVG_W    = 700;
 const SVG_H    = 600;
 const OX       = 350;  // SVG origin X (center of hex grid)
@@ -114,14 +118,16 @@ const GEM_FILL: Record<string, string> = {
   yellow: '#ffee00',
 };
 
+const DEFAULT_GEM_COLOR = '#aaaaaa';
+
 const getGemColor = (colors: string[]): string => {
   if (colors.length === 0) return '';
-  if (colors.length === 1) return GEM_FILL[colors[0]] ?? '#aaaaaa';
+  if (colors.length === 1) return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
   const s = new Set(colors);
   if (s.has('blue')   && s.has('yellow')) return '#33cc66';  // green
   if (s.has('red')    && s.has('blue'))   return '#cc55cc';  // purple
   if (s.has('red')    && s.has('yellow')) return '#ff8833';  // orange
-  return GEM_FILL[colors[0]] ?? '#aaaaaa';
+  return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 };
 
 // ─── Component ────────────────────────────────────────────────────
@@ -266,7 +272,7 @@ export default function Arclight() {
               {/* Tile coordinate label */}
               <text
                 x={x}
-                y={revealed && hasGem ? y + 1 : y + 1}
+                y={y + 1}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#3a3a7a'}
