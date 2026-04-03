@@ -23,6 +23,7 @@ export type Arc = [number, number];
 export interface Tile {
     id: number;
     colors: Color[];
+    opacity: number; // 0 to 100, for rendering purposes
     arcs: Arc[];
     link_tiles: Record<number, number>; // dict[int, int]
 }

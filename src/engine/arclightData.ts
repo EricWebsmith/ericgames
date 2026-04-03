@@ -10,36 +10,42 @@ export function getBasicTiles(): Tile[] {
         {
             id: 0,
             colors: [Color.Red],
+            opacity: 100,
             arcs: [[1, 0], [2, 3], [4, 5]],
             link_tiles: { 5: 1 }
         },
         {
             id: 1,
             colors: [Color.Red],
+            opacity: 100,
             arcs: [[1, 0], [2, 3], [4, 5]],
             link_tiles: { 1: 0 }
         },
         {
             id: 2,
             colors: [Color.Blue],
+            opacity: 100,
             arcs: [[1, 3], [2, 5], [4, 0]],
             link_tiles: { 5: 3 }
         },
         {
             id: 3,
             colors: [Color.Blue],
+            opacity: 100,
             arcs: [[1, 3], [2, 5], [4, 0]],
             link_tiles: { 1: 2 }
         },
         {
             id: 4,
             colors: [Color.Yellow],
+            opacity: 100,
             arcs: [[1, 0], [2, 4], [3, 5]],
             link_tiles: { 5: 5 }
         },
         {
             id: 5,
             colors: [Color.Yellow],
+            opacity: 100,
             arcs: [[1, 0], [2, 4], [3, 5]],
             link_tiles: { 2: 4 }
         },
@@ -47,24 +53,28 @@ export function getBasicTiles(): Tile[] {
         {
             id: 6,
             colors: [Color.Blue, Color.Yellow],
+            opacity: 100,
             arcs: [[1, 0], [2, 5], [3, 4]],
             link_tiles: { 5: 7 }
         },
         {
             id: 7,
             colors: [Color.Blue, Color.Yellow],
+            opacity: 100,
             arcs: [[1, 0], [2, 5], [3, 4]],
             link_tiles: { 2: 6 }
         },
         { // Transparent tile, render as a white tile with 50% opacity
             id: 8,
             colors: [],
+            opacity: 50,
             arcs: [[1, 0], [2, 4], [3, 5]],
             link_tiles: {}
         },
         { // Black hole tile, render as a black tile with 100% opacity
             id: 9,
             colors: [],
+            opacity: 100,
             arcs: [],
             link_tiles: {}
         },
