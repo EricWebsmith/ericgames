@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'
-import type { GameState } from '../shared/types'
-import { createGameState, applyMove, resetBoard } from '../shared/gameLogic'
+import { useCallback, useState } from 'react';
+import { applyMove, createGameState, resetBoard } from '../shared/gameLogic';
+import type { GameState } from '../shared/types';
 
 const CELL_SIZE = 60
 const PADDING = 40

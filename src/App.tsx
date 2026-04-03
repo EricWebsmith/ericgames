@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import Arclight from './games/arclight/Arclight'
-import OrapaMine from './games/orapaMine/OrapaMine'
-import OrapaSpace from './games/orapaSpace/OrapaSpace'
-import './App.css'
+import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import './App.css';
+import Arclight from './components/arclight/Arclight';
+import OrapaMine from './components/orapaMine/OrapaMine';
+import OrapaSpace from './components/orapaSpace/OrapaSpace';
 
 function Home() {
   return (

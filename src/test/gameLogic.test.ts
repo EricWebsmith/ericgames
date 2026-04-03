@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest';
 import {
+  applyMove,
   createBoard,
   createGameState,
-  applyMove,
   findWinningCells,
   resetBoard,
-} from '../games/shared/gameLogic'
-import type { GameConfig, GameState } from '../games/shared/types'
+} from '../components/shared/gameLogic';
+import type { GameConfig, GameState } from '../components/shared/types';
 
 const cfg: GameConfig = { rows: 6, cols: 7, winLength: 4 }
 

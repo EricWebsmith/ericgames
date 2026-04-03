@@ -1,10 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import Arclight from '../games/arclight/Arclight'
-import OrapaMine from '../games/orapaMine/OrapaMine'
-import OrapaSpace from '../games/orapaSpace/OrapaSpace'
-import App from '../App'
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it } from 'vitest';
+import App from '../App';
+import Arclight from '../components/arclight/Arclight';
+import OrapaMine from '../components/orapaMine/OrapaMine';
+import OrapaSpace from '../components/orapaSpace/OrapaSpace';
 
 describe('Arclight', () => {
   it('renders the game title', () => {
