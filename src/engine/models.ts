@@ -41,7 +41,7 @@ export class TileInBoard implements ITileInBoard {
     arc_dict: Record<number, number> = {};
     rotate_angle: number;
 
-    constructor(data: Partial<ITileInBoard> & { tile: Tile; coordinate: string }) {
+    constructor(data: Partial<ITileInBoard> & { tile: Tile; coordinate: string; }) {
         this.tile = data.tile;
         this.coordinate = data.coordinate;
         this.rotate_angle = data.rotate_angle ?? 0;
@@ -55,11 +55,11 @@ export class TileInBoard implements ITileInBoard {
     resolve_rotate(): this {
         // Reset arc_dict before recalculating
         this.arc_dict = {};
-        
+
         for (const [in_dir, out_dir] of this.tile.arcs) {
             const a = (in_dir + this.rotate_angle) % 6;
             const b = (out_dir + this.rotate_angle) % 6;
-            
+
             this.arc_dict[a] = b;
             this.arc_dict[b] = a;
         }
