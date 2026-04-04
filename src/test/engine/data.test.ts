@@ -1,5 +1,5 @@
 import { getBoard } from '../../engine/arclightData';
-import { Board } from '../../engine/models';
+import type { Board } from '../../engine/models';
 
 describe('getBoard', () => {
     it('should return a board with spaces as an empty object', () => {
