@@ -280,7 +280,7 @@ export default function Arclight() {
     <div className="game-container">
       <h2 className="game-title">Arclight</h2>
       <p className="status-message">
-        Click a tile to inspect it · Click a border to fire a light beam
+        点击六边形看看里面有什么宝石，点击边界圆看看光线会射到哪里！当你准备好挑战答案时，点击“看答案”揭晓所有宝石和光线路径。
       </p>
 
       <svg
@@ -444,10 +444,10 @@ export default function Arclight() {
           onClick={() => setShowAll(true)}
           disabled={showAll}
         >
-          Reveal Answer
+          看答案
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          New Game
+          新游戏
         </button>
       </div>
     </div>
