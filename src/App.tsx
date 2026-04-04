@@ -6,7 +6,7 @@ function Home() {
   return (
     <div className="home">
       <h1>Eric Games</h1>
-      <p className="home-subtitle">Choose a game to play</p>
+      <p className="home-subtitle">闲鱼卡坦王Eric</p>
       <div className="game-grid">
         <NavLink to="/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
@@ -15,10 +15,10 @@ function Home() {
             <path d="M 26 40 A 14 14 0 0 1 54 40" fill="none" stroke="white" strokeWidth={3} />
           </svg>
           <h2>Arclight</h2>
-          <p>Connect 4 with neon lights</p>
+          <p>解谜游戏</p>
         </NavLink>
 
-        <NavLink to="/orapa-mine" className="game-card mine-card">
+        {/* <NavLink to="/orapa-mine" className="game-card mine-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#2d1f0e" rx={4} />
             <polygon points="40,14 58,50 22,50" fill="#c9a227" stroke="#8b6914" strokeWidth={1.5} />
@@ -45,7 +45,7 @@ function Home() {
           </svg>
           <h2>Orapa Space</h2>
           <p>4-in-a-row among the stars</p>
-        </NavLink>
+        </NavLink> */}
       </div>
     </div>
   )
@@ -54,9 +54,9 @@ function Home() {
 function Nav() {
   return (
     <nav className="main-nav">
-      <NavLink to="/" end className="nav-brand">Eric Games</NavLink>
+      <NavLink to="/ericgames" end className="nav-brand">Eric Games</NavLink>
       <ul className="nav-links">
-        <li><NavLink to="/arclight">Arclight</NavLink></li>
+        <li><NavLink to="/ericgames/arclight">Arclight</NavLink></li>
         {/* <li><NavLink to="/orapa-mine">Orapa Mine</NavLink></li>
         <li><NavLink to="/orapa-space">Orapa Space</NavLink></li> */}
       </ul>
@@ -70,8 +70,8 @@ export default function App() {
       <Nav />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/arclight" element={<Arclight />} />
+          <Route path="/ericgames" element={<Home />} />
+          <Route path="/ericgames/arclight" element={<Arclight />} />
           {/* <Route path="/orapa-mine" element={<OrapaMine />} />
           <Route path="/orapa-space" element={<OrapaSpace />} /> */}
         </Routes>
