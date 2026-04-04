@@ -1,8 +1,6 @@
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Arclight from './components/arclight/Arclight';
-import OrapaMine from './components/orapaMine/OrapaMine';
-import OrapaSpace from './components/orapaSpace/OrapaSpace';
 
 function Home() {
   return (
@@ -59,8 +57,8 @@ function Nav() {
       <NavLink to="/" end className="nav-brand">Eric Games</NavLink>
       <ul className="nav-links">
         <li><NavLink to="/arclight">Arclight</NavLink></li>
-        <li><NavLink to="/orapa-mine">Orapa Mine</NavLink></li>
-        <li><NavLink to="/orapa-space">Orapa Space</NavLink></li>
+        {/* <li><NavLink to="/orapa-mine">Orapa Mine</NavLink></li>
+        <li><NavLink to="/orapa-space">Orapa Space</NavLink></li> */}
       </ul>
     </nav>
   )
@@ -74,8 +72,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/arclight" element={<Arclight />} />
-          <Route path="/orapa-mine" element={<OrapaMine />} />
-          <Route path="/orapa-space" element={<OrapaSpace />} />
+          {/* <Route path="/orapa-mine" element={<OrapaMine />} />
+          <Route path="/orapa-space" element={<OrapaSpace />} /> */}
         </Routes>
       </main>
     </BrowserRouter>
