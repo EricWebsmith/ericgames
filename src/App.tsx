@@ -8,7 +8,7 @@ function Home() {
       <h1>Eric Games</h1>
       <p className="home-subtitle">闲鱼卡坦王Eric</p>
       <div className="game-grid">
-        <NavLink to="/arclight" className="game-card arclight-card">
+        <NavLink to="/ericgames/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <circle cx={40} cy={40} r={30} fill="#0a0a1a" stroke="#00e5ff" strokeWidth={2} />
             <circle cx={40} cy={40} r={18} fill="#00e5ff" opacity={0.8} />
@@ -72,8 +72,8 @@ export default function App() {
         <Routes>
           <Route path="/ericgames" element={<Home />} />
           <Route path="/ericgames/arclight" element={<Arclight />} />
-          {/* <Route path="/orapa-mine" element={<OrapaMine />} />
-          <Route path="/orapa-space" element={<OrapaSpace />} /> */}
+          {/* <Route path="/ericgames/orapa-mine" element={<OrapaMine />} />
+          <Route path="/ericgames/orapa-space" element={<OrapaSpace />} /> */}
         </Routes>
       </main>
     </BrowserRouter>
