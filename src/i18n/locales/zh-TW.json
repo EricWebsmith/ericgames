@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "brand": "Eric的遊戲"
+  },
+  "home": {
+    "title": "Eric的遊戲",
+    "subtitle": "閒魚卡坦王Eric",
+    "arclight": {
+      "description": "解謎遊戲"
+    },
+    "mine": {
+      "description": "3連礦石挑戰"
+    },
+    "space": {
+      "description": "星際4連棋"
+    }
+  },
+  "arclight": {
+    "title": "Arclight",
+    "instructions": "點擊六邊形看看裡面有什麼寶石，點擊邊界圓看看光線會射到哪裡！當你準備好挑戰答案時，點擊「看答案」揭曉所有寶石和光線路徑。",
+    "showAnswer": "看答案",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "Arclight謎題棋盤",
+    "tileAriaLabel": "格{{label}}",
+    "borderAriaLabel": "邊界{{label}}"
+  },
+  "orapaMine": {
+    "title": "Orapa Mine",
+    "player1Name": "金礦工",
+    "player2Name": "晶礦工",
+    "win": "{{name}}發財了！⛏️",
+    "draw": "礦石耗盡！",
+    "turn": "{{name}}的回合",
+    "newRound": "新回合",
+    "boardAriaLabel": "Orapa Mine遊戲棋盤",
+    "cellAriaLabel": "第{{row}}行，第{{col}}列",
+    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+  },
+  "orapaSpace": {
+    "title": "Orapa Space",
+    "player1Name": "藍星球",
+    "player2Name": "橙星星",
+    "win": "{{name}}征服了銀河系！🚀",
+    "draw": "宇宙保持平衡！",
+    "turn": "{{name}}的回合",
+    "newRound": "新回合",
+    "boardAriaLabel": "Orapa Space遊戲棋盤",
+    "cellAriaLabel": "第{{row}}行，第{{col}}列",
+    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+  }
+}

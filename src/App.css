@@ -253,15 +253,24 @@ body {
   padding: 0.3rem 0.75rem;
   border: 1px solid #4a4a6a;
   border-radius: 6px;
-  background: transparent;
+  background: #12121f;
   color: #9ca3af;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.lang-switcher:hover {
+.lang-switcher:hover,
+.lang-switcher:focus {
   color: #e0e0f0;
   border-color: #9ca3af;
+  outline: none;
+}
+
+.lang-switcher option {
+  background: #1a1a2e;
+  color: #e0e0f0;
 }

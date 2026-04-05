@@ -1,16 +1,24 @@
 import { useTranslation } from 'react-i18next';
 
+const LANGUAGES = [
+  { code: 'en',    label: 'English'  },
+  { code: 'zh',    label: '简体中文' },
+  { code: 'zh-TW', label: '繁體中文' },
+] as const;
+
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const isZh = i18n.language === 'zh';
 
   return (
-    <button
+    <select
       className="lang-switcher"
-      onClick={() => i18n.changeLanguage(isZh ? 'en' : 'zh')}
-      aria-label={isZh ? 'Switch to English' : '切换为中文'}
+      value={i18n.language}
+      onChange={(e) => i18n.changeLanguage(e.target.value)}
+      aria-label="Select language"
     >
-      {isZh ? 'EN' : '中文'}
-    </button>
+      {LANGUAGES.map(({ code, label }) => (
+        <option key={code} value={code}>{label}</option>
+      ))}
+    </select>
   );
 }
