@@ -1,12 +1,15 @@
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import Arclight from './components/arclight/Arclight';
+import LanguageSwitcher from './components/shared/LanguageSwitcher';
 
 function Home() {
+  const { t } = useTranslation();
   return (
     <div className="home">
-      <h1>Eric Games</h1>
-      <p className="home-subtitle">闲鱼卡坦王Eric</p>
+      <h1>{t('home.title')}</h1>
+      <p className="home-subtitle">{t('home.subtitle')}</p>
       <div className="game-grid">
         <NavLink to="/ericgames/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
@@ -15,7 +18,7 @@ function Home() {
             <path d="M 26 40 A 14 14 0 0 1 54 40" fill="none" stroke="white" strokeWidth={3} />
           </svg>
           <h2>Arclight</h2>
-          <p>解谜游戏</p>
+          <p>{t('home.arclight.description')}</p>
         </NavLink>
 
         {/* <NavLink to="/orapa-mine" className="game-card mine-card">
@@ -25,7 +28,7 @@ function Home() {
             <polygon points="40,30 54,66 26,66" fill="#5b9ecc" stroke="#2a6080" strokeWidth={1.5} />
           </svg>
           <h2>Orapa Mine</h2>
-          <p>3-in-a-row mining challenge</p>
+          <p>{t('home.mine.description')}</p>
         </NavLink>
 
         <NavLink to="/orapa-space" className="game-card space-card">
@@ -44,7 +47,7 @@ function Home() {
             <ellipse cx={40} cy={40} rx={22} ry={5} fill="none" stroke="#90caf9" strokeWidth={1.5} opacity={0.6} />
           </svg>
           <h2>Orapa Space</h2>
-          <p>4-in-a-row among the stars</p>
+          <p>{t('home.space.description')}</p>
         </NavLink> */}
       </div>
     </div>
@@ -52,14 +55,16 @@ function Home() {
 }
 
 function Nav() {
+  const { t } = useTranslation();
   return (
     <nav className="main-nav">
-      <NavLink to="/ericgames" end className="nav-brand">Eric Games</NavLink>
+      <NavLink to="/ericgames" end className="nav-brand">{t('nav.brand')}</NavLink>
       <ul className="nav-links">
         <li><NavLink to="/ericgames/arclight">Arclight</NavLink></li>
         {/* <li><NavLink to="/orapa-mine">Orapa Mine</NavLink></li>
         <li><NavLink to="/orapa-space">Orapa Space</NavLink></li> */}
       </ul>
+      <LanguageSwitcher />
     </nav>
   )
 }

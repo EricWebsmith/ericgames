@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { setup } from '../../engine/gameManager';
 import type { Color, Puzzle } from '../../engine/models';
 import BorderCircle from './BorderCircle';
@@ -181,6 +182,7 @@ const getGemColor = (colors: string[]): string => {
 
 // ─── Component ────────────────────────────────────────────────────
 export default function Arclight() {
+  const { t } = useTranslation();
   const [puzzle,         setPuzzle]         = useState<Puzzle>(() => setup());
   const [revealedTiles,  setRevealedTiles]  = useState<Set<string>>(new Set());
   const [showAll,        setShowAll]        = useState(false);
@@ -278,9 +280,9 @@ export default function Arclight() {
 
   return (
     <div className="game-container">
-      <h2 className="game-title">Arclight</h2>
+      <h2 className="game-title">{t('arclight.title')}</h2>
       <p className="status-message">
-        点击六边形看看里面有什么宝石，点击边界圆看看光线会射到哪里！当你准备好挑战答案时，点击“看答案”揭晓所有宝石和光线路径。
+        {t('arclight.instructions')}
       </p>
 
       <svg
@@ -288,7 +290,7 @@ export default function Arclight() {
         height={SVG_H}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         className="game-svg arclight-svg"
-        aria-label="Arclight puzzle board"
+        aria-label={t('arclight.boardAriaLabel')}
       >
         <defs>
           <filter id="al-glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -332,7 +334,7 @@ export default function Arclight() {
               key={label}
               onClick={() => handleTileClick(label)}
               style={{ cursor: 'pointer' }}
-              aria-label={`Tile ${label}`}
+                aria-label={t('arclight.tileAriaLabel', { label })}
             >
               <polygon
                 points={hexPoints(x, y, HEX_R)}
@@ -444,10 +446,10 @@ export default function Arclight() {
           onClick={() => setShowAll(true)}
           disabled={showAll}
         >
-          看答案
+          {t('arclight.showAnswer')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          新游戏
+          {t('arclight.newGame')}
         </button>
       </div>
     </div>

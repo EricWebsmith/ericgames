@@ -244,3 +244,24 @@ body {
 .btn-reset:hover {
   background: #7c3aed;
 }
+
+/* ==========================================
+   Language Switcher
+   ========================================== */
+.lang-switcher {
+  margin-left: auto;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #4a4a6a;
+  border-radius: 6px;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.lang-switcher:hover {
+  color: #e0e0f0;
+  border-color: #9ca3af;
+}

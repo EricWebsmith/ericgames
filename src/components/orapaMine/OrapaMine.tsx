@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { applyMove, createGameState, resetBoard } from '../shared/gameLogic';
 import type { GameState } from '../shared/types';
 
@@ -14,9 +15,28 @@ const INITIAL_CONFIG = { rows: 5, cols: 5, winLength: WIN_LENGTH };
  * Win condition: 3 in a row on a 5×5 grid.
  */
 export default function OrapaMine() {
+  const { t, i18n } = useTranslation();
   const [state, setState] = useState<GameState>(() =>
-    createGameState({ ...INITIAL_CONFIG, player1Name: 'Gold Miner', player2Name: 'Crystal Miner' }),
+    createGameState({ ...INITIAL_CONFIG, player1Name: i18n.t('orapaMine.player1Name'), player2Name: i18n.t('orapaMine.player2Name') }),
   );
+
+  useEffect(() => {
+    const updateNames = () => {
+      setState((prev) => ({
+        ...prev,
+        players: [
+          { ...prev.players[0], name: i18n.t('orapaMine.player1Name') },
+          { ...prev.players[1], name: i18n.t('orapaMine.player2Name') },
+        ],
+        currentPlayer: {
+          ...prev.currentPlayer,
+          name: prev.currentPlayer.id === 1 ? i18n.t('orapaMine.player1Name') : i18n.t('orapaMine.player2Name'),
+        },
+      }));
+    };
+    i18n.on('languageChanged', updateNames);
+    return () => { i18n.off('languageChanged', updateNames); };
+  }, [i18n]);
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -39,14 +59,14 @@ export default function OrapaMine() {
     state.winningCells.some((c) => c.row === row && c.col === col);
 
   const statusMessage = () => {
-    if (state.phase === 'won') return `${state.currentPlayer.name} strikes it rich! ⛏️`;
-    if (state.phase === 'draw') return 'The mine is exhausted!';
-    return `${state.currentPlayer.name}'s turn`;
+    if (state.phase === 'won') return t('orapaMine.win', { name: state.currentPlayer.name });
+    if (state.phase === 'draw') return t('orapaMine.draw');
+    return t('orapaMine.turn', { name: state.currentPlayer.name });
   };
 
   return (
     <div className="game-container">
-      <h2 className="game-title">Orapa Mine</h2>
+      <h2 className="game-title">{t('orapaMine.title')}</h2>
 
       <div className="score-board">
         <span className="score player1">
@@ -64,7 +84,7 @@ export default function OrapaMine() {
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="game-svg mine-svg"
-        aria-label="Orapa Mine game board"
+        aria-label={t('orapaMine.boardAriaLabel')}
         role="grid"
       >
         <defs>
@@ -122,7 +142,7 @@ export default function OrapaMine() {
               <g
                 key={`${cell.row}-${cell.col}`}
                 role="gridcell"
-                aria-label={`Row ${cell.row + 1}, Column ${cell.col + 1}${cell.active ? `, Player ${cell.value}` : ''}`}
+                aria-label={cell.active ? t('orapaMine.cellAriaLabelWithPlayer', { row: cell.row + 1, col: cell.col + 1, player: cell.value }) : t('orapaMine.cellAriaLabel', { row: cell.row + 1, col: cell.col + 1 })}
                 onClick={() => handleCellClick(cell.row, cell.col)}
                 style={{ cursor: cell.active || state.phase === 'won' || state.phase === 'draw' ? 'default' : 'pointer' }}
               >
@@ -171,7 +191,7 @@ export default function OrapaMine() {
       </svg>
 
       <button className="btn-reset" onClick={handleReset}>
-        New Round
+        {t('orapaMine.newRound')}
       </button>
     </div>
   );
