@@ -1,4 +1,4 @@
-import { type Board, type Node, type Tile, Color } from './models'; // Assuming the previous models are in models.ts
+import { type Board, type Node, type Tile, Color } from './models';
 
 export const borderNodeCoordinates: string[] = [
     ...'ABCDEFGHIJKLMNOPQRSTU'.split(''),
