@@ -82,19 +82,22 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 
     for (const tile of tiles) {
         if (unavailableTileIds.has(tile.id)) continue;
-        if (tile.parent_id !== undefined) continue; // child tiles are placed by their parent
+        // Skip non-anchor group tiles (siblings placed when their anchor is placed)
+        if (tile.parent_id !== undefined && tile.parent_id !== tile.id) continue;
 
-        // Find all child tiles that belong to this parent
-        const childTiles = tiles.filter(t => t.parent_id === tile.id && t.coordinate !== undefined);
+        // Find all sibling tiles in the same group (non-anchor members with offset coordinates)
+        const siblingTiles = tile.parent_id !== undefined
+            ? tiles.filter(t => t.parent_id === tile.parent_id && t.id !== tile.id && t.coordinate !== undefined)
+            : [];
 
         let randomCoordinate = '';
         const rotation = Math.floor(Math.random() * 6);
 
         while (randomCoordinate === '' || unavailableCoordinates.has(randomCoordinate)) {
             randomCoordinate = randomChoice(coordinates);
-            // Handle double hex tiles: ensure all child positions are also available
-            for (const childTile of childTiles) {
-                const dir = coordinateToDirection(childTile.coordinate!);
+            // Handle double hex tiles: ensure all sibling positions are also available
+            for (const siblingTile of siblingTiles) {
+                const dir = coordinateToDirection(siblingTile.coordinate!);
                 const newDir = (dir + rotation) % 6;
                 const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
                 console.log('neighbor_coordinate in check', neighborCoordinate);
@@ -107,12 +110,12 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 
         putTile(tile, randomCoordinate, rotation);
 
-        for (const childTile of childTiles) {
-            const dir = coordinateToDirection(childTile.coordinate!);
+        for (const siblingTile of siblingTiles) {
+            const dir = coordinateToDirection(siblingTile.coordinate!);
             const newDir = (dir + rotation) % 6;
             console.log('dir, new_dir', dir, newDir);
             const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
-            putTile(childTile, neighborCoordinate, rotation);
+            putTile(siblingTile, neighborCoordinate, rotation);
         }
     }
 

@@ -6,8 +6,10 @@ export const borderNodeCoordinates: string[] = [
 ];
 
 // Axial (q, r) offset for direction 5 (one hex step in the slash/SE direction).
-// Child tiles in a double-hex piece are placed at this offset relative to their parent.
+// Sibling tiles in a double-hex piece are placed at this offset relative to their anchor.
 const DIR5_OFFSET = { 0: -1, 1: 1 };
+// Origin offset for anchor tiles within a group.
+const ORIGIN_OFFSET = { 0: 0, 1: 0 };
 
 export function getBasicTiles(): Tile[] {
     const tiles: Tile[] = [
@@ -16,6 +18,8 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Red],
             opacity: 100,
             arcs: [[1, 0], [2, 3], [4, 5]],
+            parent_id: 0,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 1,
@@ -30,6 +34,8 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Blue],
             opacity: 100,
             arcs: [[1, 3], [2, 5], [4, 0]],
+            parent_id: 2,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 3,
@@ -44,6 +50,8 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 4], [3, 5]],
+            parent_id: 4,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 5,
@@ -59,6 +67,8 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Blue, Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 5], [3, 4]],
+            parent_id: 6,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 7,
