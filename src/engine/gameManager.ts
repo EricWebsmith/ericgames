@@ -30,6 +30,27 @@ export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>
     return { end_label: currentCoordinate, colors: [...colors] };
 }
 
+// Maps axial coordinate offset (q, r) to hex direction (0-5).
+// Directions and their offsets in axial (q, r) coordinates:
+//   0: (-1,  0), 1: ( 0, -1), 2: (+1, -1)
+//   3: (+1,  0), 4: ( 0, +1), 5: (-1, +1)
+const AXIAL_OFFSETS: Array<[number, number]> = [
+    [-1,  0],
+    [ 0, -1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 0,  1],
+    [-1,  1],
+];
+
+function coordinateToDirection(coordinate: Record<number, number>): number {
+    const q = coordinate[0];
+    const r = coordinate[1];
+    const dir = AXIAL_OFFSETS.findIndex(([dq, dr]) => dq === q && dr === r);
+    if (dir === -1) throw new Error(`Invalid axial coordinate offset: (${q}, ${r})`);
+    return dir;
+}
+
 function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     const coordinates: string[] = [];
     const unavailableCoordinates = new Set<string>();
@@ -61,15 +82,22 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 
     for (const tile of tiles) {
         if (unavailableTileIds.has(tile.id)) continue;
+        // Skip non-anchor group tiles (siblings placed when their anchor is placed)
+        if (tile.parent_id !== undefined && tile.parent_id !== tile.id) continue;
+
+        // Find all sibling tiles in the same group (non-anchor members with offset coordinates)
+        const siblingTiles = tile.parent_id !== undefined
+            ? tiles.filter(t => t.parent_id === tile.parent_id && t.id !== tile.id && t.coordinate !== undefined)
+            : [];
 
         let randomCoordinate = '';
         const rotation = Math.floor(Math.random() * 6);
 
         while (randomCoordinate === '' || unavailableCoordinates.has(randomCoordinate)) {
             randomCoordinate = randomChoice(coordinates);
-            // Handle double hex tiles
-            for (const dirStr of Object.keys(tile.link_tiles)) {
-                const dir = Number(dirStr);
+            // Handle double hex tiles: ensure all sibling positions are also available
+            for (const siblingTile of siblingTiles) {
+                const dir = coordinateToDirection(siblingTile.coordinate!);
                 const newDir = (dir + rotation) % 6;
                 const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
                 console.log('neighbor_coordinate in check', neighborCoordinate);
@@ -82,13 +110,12 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 
         putTile(tile, randomCoordinate, rotation);
 
-        for (const [dirStr, neighborTileId] of Object.entries(tile.link_tiles)) {
-            const dir = Number(dirStr);
-            const neighborTile = tiles[neighborTileId];
+        for (const siblingTile of siblingTiles) {
+            const dir = coordinateToDirection(siblingTile.coordinate!);
             const newDir = (dir + rotation) % 6;
             console.log('dir, new_dir', dir, newDir);
             const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
-            putTile(neighborTile, neighborCoordinate, rotation);
+            putTile(siblingTile, neighborCoordinate, rotation);
         }
     }
 

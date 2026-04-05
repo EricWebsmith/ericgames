@@ -1,9 +1,15 @@
-import { type Board, type Node, type Tile, Color } from './models'; // Assuming the previous models are in models.ts
+import { type Board, type Node, type Tile, Color } from './models';
 
 export const borderNodeCoordinates: string[] = [
     ...'ABCDEFGHIJKLMNOPQRSTU'.split(''),
     ...Array.from({ length: 21 }, (_, i) => String(i + 1)),
 ];
+
+// Axial (q, r) offset for direction 5 (one hex step in the slash/SE direction).
+// Sibling tiles in a double-hex piece are placed at this offset relative to their anchor.
+const DIR5_OFFSET = { 0: -1, 1: 1 };
+// Origin offset for anchor tiles within a group.
+const ORIGIN_OFFSET = { 0: 0, 1: 0 };
 
 export function getBasicTiles(): Tile[] {
     const tiles: Tile[] = [
@@ -12,42 +18,48 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Red],
             opacity: 100,
             arcs: [[1, 0], [2, 3], [4, 5]],
-            link_tiles: { 5: 1 }
+            parent_id: 0,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 1,
             colors: [Color.Red],
             opacity: 100,
             arcs: [[1, 0], [2, 3], [4, 5]],
-            link_tiles: { 1: 0 }
+            parent_id: 0,
+            coordinate: DIR5_OFFSET,
         },
         {
             id: 2,
             colors: [Color.Blue],
             opacity: 100,
             arcs: [[1, 3], [2, 5], [4, 0]],
-            link_tiles: { 5: 3 }
+            parent_id: 2,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 3,
             colors: [Color.Blue],
             opacity: 100,
             arcs: [[1, 3], [2, 5], [4, 0]],
-            link_tiles: { 1: 2 }
+            parent_id: 2,
+            coordinate: DIR5_OFFSET,
         },
         {
             id: 4,
             colors: [Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 4], [3, 5]],
-            link_tiles: { 5: 5 }
+            parent_id: 4,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 5,
             colors: [Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 4], [3, 5]],
-            link_tiles: { 2: 4 }
+            parent_id: 4,
+            coordinate: DIR5_OFFSET,
         },
         // Green
         {
@@ -55,28 +67,28 @@ export function getBasicTiles(): Tile[] {
             colors: [Color.Blue, Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 5], [3, 4]],
-            link_tiles: { 5: 7 }
+            parent_id: 6,
+            coordinate: ORIGIN_OFFSET,
         },
         {
             id: 7,
             colors: [Color.Blue, Color.Yellow],
             opacity: 100,
             arcs: [[1, 0], [2, 5], [3, 4]],
-            link_tiles: { 2: 6 }
+            parent_id: 6,
+            coordinate: DIR5_OFFSET,
         },
         { // Transparent tile, render as a white tile with 50% opacity
             id: 8,
             colors: [],
             opacity: 50,
             arcs: [[1, 0], [2, 4], [3, 5]],
-            link_tiles: {}
         },
         { // Black hole tile, render as a black tile with 100% opacity
             id: 9,
             colors: [],
             opacity: 100,
             arcs: [],
-            link_tiles: {}
         },
     ];
 

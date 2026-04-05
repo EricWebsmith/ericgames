@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "brand": "卡坦王Eric的遊戲"
+  },
+  "home": {
+    "title": "卡坦王Eric的遊戲",
+    "subtitle": "閒魚卡坦王Eric",
+    "arclight": {
+      "description": "解謎遊戲"
+    },
+    "mine": {
+      "description": "3連礦石挑戰"
+    },
+    "space": {
+      "description": "星際4連棋"
+    }
+  },
+  "arclight": {
+    "title": "弧光",
+    "lightAction": "導光",
+    "sightAction": "驗光",
+    "instructions": "每回合你有兩個操作：導光（從邊界圓發射光線）或驗光（查看格子裡的寶石顏色）。點擊六邊形執行驗光，點擊邊界圓執行導光！當你準備好挑戰答案時，點擊「看答案」揭曉所有寶石和光線路徑。",
+    "showAnswer": "看答案",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "弧光謎題棋盤",
+    "tileAriaLabel": "格{{label}}",
+    "borderAriaLabel": "邊界{{label}}"
+  },
+  "orapaMine": {
+    "title": "Orapa Mine",
+    "player1Name": "金礦工",
+    "player2Name": "晶礦工",
+    "win": "{{name}}發財了！⛏️",
+    "draw": "礦石耗盡！",
+    "turn": "{{name}}的回合",
+    "newRound": "新回合",
+    "boardAriaLabel": "Orapa Mine遊戲棋盤",
+    "cellAriaLabel": "第{{row}}行，第{{col}}列",
+    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+  },
+  "orapaSpace": {
+    "title": "Orapa Space",
+    "player1Name": "藍星球",
+    "player2Name": "橙星星",
+    "win": "{{name}}征服了銀河系！🚀",
+    "draw": "宇宙保持平衡！",
+    "turn": "{{name}}的回合",
+    "newRound": "新回合",
+    "boardAriaLabel": "Orapa Space遊戲棋盤",
+    "cellAriaLabel": "第{{row}}行，第{{col}}列",
+    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+  }
+}

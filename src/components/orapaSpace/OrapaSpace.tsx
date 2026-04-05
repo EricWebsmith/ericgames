@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { GameState } from '../shared/types'
 import { createGameState, applyMove, resetBoard } from '../shared/gameLogic'
 
@@ -14,9 +15,28 @@ const INITIAL_CONFIG = { rows: 6, cols: 6, winLength: WIN_LENGTH }
  * Win condition: 4 in a row.
  */
 export default function OrapaSpace() {
+  const { t, i18n } = useTranslation()
   const [state, setState] = useState<GameState>(() =>
-    createGameState({ ...INITIAL_CONFIG, player1Name: 'Planet Blue', player2Name: 'Star Orange' }),
+    createGameState({ ...INITIAL_CONFIG, player1Name: i18n.t('orapaSpace.player1Name'), player2Name: i18n.t('orapaSpace.player2Name') }),
   )
+
+  useEffect(() => {
+    const updateNames = () => {
+      setState((prev) => ({
+        ...prev,
+        players: [
+          { ...prev.players[0], name: i18n.t('orapaSpace.player1Name') },
+          { ...prev.players[1], name: i18n.t('orapaSpace.player2Name') },
+        ],
+        currentPlayer: {
+          ...prev.currentPlayer,
+          name: prev.currentPlayer.id === 1 ? i18n.t('orapaSpace.player1Name') : i18n.t('orapaSpace.player2Name'),
+        },
+      }))
+    }
+    i18n.on('languageChanged', updateNames)
+    return () => { i18n.off('languageChanged', updateNames) }
+  }, [i18n])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -39,9 +59,9 @@ export default function OrapaSpace() {
     state.winningCells.some((c) => c.row === row && c.col === col)
 
   const statusMessage = () => {
-    if (state.phase === 'won') return `${state.currentPlayer.name} conquers the galaxy! 🚀`
-    if (state.phase === 'draw') return 'The universe is in balance!'
-    return `${state.currentPlayer.name}'s turn`
+    if (state.phase === 'won') return t('orapaSpace.win', { name: state.currentPlayer.name })
+    if (state.phase === 'draw') return t('orapaSpace.draw')
+    return t('orapaSpace.turn', { name: state.currentPlayer.name })
   }
 
   /** Generate a deterministic star field based on position */
@@ -55,7 +75,7 @@ export default function OrapaSpace() {
 
   return (
     <div className="game-container">
-      <h2 className="game-title">Orapa Space</h2>
+      <h2 className="game-title">{t('orapaSpace.title')}</h2>
 
       <div className="score-board">
         <span className="score player1">
@@ -73,7 +93,7 @@ export default function OrapaSpace() {
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="game-svg space-svg"
-        aria-label="Orapa Space game board"
+        aria-label={t('orapaSpace.boardAriaLabel')}
         role="grid"
       >
         <defs>
@@ -139,7 +159,7 @@ export default function OrapaSpace() {
               <g
                 key={`${cell.row}-${cell.col}`}
                 role="gridcell"
-                aria-label={`Row ${cell.row + 1}, Column ${cell.col + 1}${cell.active ? `, Player ${cell.value}` : ''}`}
+                aria-label={cell.active ? t('orapaSpace.cellAriaLabelWithPlayer', { row: cell.row + 1, col: cell.col + 1, player: cell.value }) : t('orapaSpace.cellAriaLabel', { row: cell.row + 1, col: cell.col + 1 })}
                 onClick={() => handleCellClick(cell.row, cell.col)}
                 style={{ cursor: cell.active || state.phase === 'won' || state.phase === 'draw' ? 'default' : 'pointer' }}
               >
@@ -211,7 +231,7 @@ export default function OrapaSpace() {
       </svg>
 
       <button className="btn-reset" onClick={handleReset}>
-        New Round
+        {t('orapaSpace.newRound')}
       </button>
     </div>
   )
