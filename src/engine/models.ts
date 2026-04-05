@@ -29,7 +29,6 @@ export interface Tile {
     // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate?: Record<number, number>;
-    link_tiles?: Record<number, number>; // dict[int, int]
 }
 
 export interface ITileInBoard {
