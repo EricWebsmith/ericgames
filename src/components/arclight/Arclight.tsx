@@ -443,8 +443,7 @@ export default function Arclight() {
       <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
         <button
           className="btn-reset"
-          onClick={() => setShowAll(true)}
-          disabled={showAll}
+          onClick={() => setShowAll(!showAll)}
         >
           {t('arclight.showAnswer')}
         </button>
