@@ -17,7 +17,9 @@
   },
   "arclight": {
     "title": "Arclight",
-    "instructions": "Click hexagons to see what gems are inside, click border circles to see where light beams go! When you're ready to check the answer, click \"See Answer\" to reveal all gems and light paths.",
+    "lightAction": "Light (导光)",
+    "sightAction": "Sight (验光)",
+    "instructions": "Each turn you have two actions: a Light action (导光) — send a light beam from a border circle, or a Sight action (验光) — reveal the gem colour of a tile. Click hexagons to perform a Sight action; click border circles to perform a Light action. When you're ready to check the answer, click \"See Answer\" to reveal all gems and light paths.",
     "showAnswer": "See Answer",
     "newGame": "New Game",
     "boardAriaLabel": "Arclight puzzle board",

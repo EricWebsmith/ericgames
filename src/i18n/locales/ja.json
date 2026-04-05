@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "brand": "カタン王Ericのゲーム"
+  },
+  "home": {
+    "title": "カタン王Ericのゲーム",
+    "subtitle": "カタン王 Eric",
+    "arclight": {
+      "description": "パズルゲーム"
+    },
+    "mine": {
+      "description": "3連続鉱石チャレンジ"
+    },
+    "space": {
+      "description": "宇宙4目並べ"
+    }
+  },
+  "arclight": {
+    "title": "弧光",
+    "lightAction": "導光",
+    "sightAction": "験光",
+    "instructions": "各ターンに2つのアクションがあります：導光（境界の円から光線を送る）または験光（タイルの宝石の色を確認する）。六角形をクリックして験光を行い、境界の円をクリックして導光を行いましょう！答えを確認する準備ができたら「答えを見る」をクリックすると、すべての宝石と光線のパスが表示されます。",
+    "showAnswer": "答えを見る",
+    "newGame": "新しいゲーム",
+    "boardAriaLabel": "弧光パズルボード",
+    "tileAriaLabel": "タイル{{label}}",
+    "borderAriaLabel": "境界{{label}}"
+  },
+  "orapaMine": {
+    "title": "オラパ鉱山",
+    "player1Name": "金の採掘者",
+    "player2Name": "クリスタル採掘者",
+    "win": "{{name}}が大当たり！⛏️",
+    "draw": "鉱山が枯渇しました！",
+    "turn": "{{name}}のターン",
+    "newRound": "新しいラウンド",
+    "boardAriaLabel": "オラパ鉱山ゲームボード",
+    "cellAriaLabel": "{{row}}行{{col}}列",
+    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}"
+  },
+  "orapaSpace": {
+    "title": "オラパスペース",
+    "player1Name": "青い惑星",
+    "player2Name": "オレンジの星",
+    "win": "{{name}}が銀河を征服！🚀",
+    "draw": "宇宙のバランスが保たれています！",
+    "turn": "{{name}}のターン",
+    "newRound": "新しいラウンド",
+    "boardAriaLabel": "オラパスペースゲームボード",
+    "cellAriaLabel": "{{row}}行{{col}}列",
+    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}"
+  }
+}
