@@ -83,7 +83,7 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     for (const tile of tiles) {
         if (unavailableTileIds.has(tile.id)) continue;
         // Skip non-anchor group tiles (siblings placed when their anchor is placed)
-        if (tile.parent_id !== undefined && tile.parent_id !== tile.id) continue;
+        if (tile.parent_id !== undefined && tile.parent_id !== tile.parent_id) continue;
 
         // Find all sibling tiles in the same group (non-anchor members with offset coordinates)
         const siblingTiles = tile.parent_id !== undefined
