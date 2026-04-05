@@ -9,7 +9,7 @@
       "description": "Puzzle game"
     },
     "mine": {
-      "description": "3-in-a-row mining challenge"
+      "description": "Wave-reflection gem deduction"
     },
     "space": {
       "description": "4-in-a-row among the stars"
@@ -28,15 +28,12 @@
   },
   "orapaMine": {
     "title": "Orapa Mine",
-    "player1Name": "Gold Miner",
-    "player2Name": "Crystal Miner",
-    "win": "{{name}} strikes it rich! ⛏️",
-    "draw": "The mine is exhausted!",
-    "turn": "{{name}}'s turn",
-    "newRound": "New Round",
-    "boardAriaLabel": "Orapa Mine game board",
-    "cellAriaLabel": "Row {{row}}, Column {{col}}",
-    "cellAriaLabelWithPlayer": "Row {{row}}, Column {{col}}, Player {{player}}"
+    "instructions": "Fire a wave from a border position (number or letter) to discover where it exits and what gem colours it carries. Click a cell to reveal the gem inside. Click border circles to fire waves.",
+    "showAnswer": "See Answer",
+    "newGame": "New Game",
+    "boardAriaLabel": "Orapa Mine puzzle board",
+    "cellAriaLabel": "Cell column {{col}}, row {{row}}",
+    "borderAriaLabel": "Border {{label}}"
   },
   "orapaSpace": {
     "title": "Orapa Space",

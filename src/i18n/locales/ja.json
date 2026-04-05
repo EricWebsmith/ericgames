@@ -9,7 +9,7 @@
       "description": "パズルゲーム"
     },
     "mine": {
-      "description": "3連続鉱石チャレンジ"
+      "description": "超音波宝石推理ゲーム"
     },
     "space": {
       "description": "宇宙4目並べ"
@@ -28,15 +28,12 @@
   },
   "orapaMine": {
     "title": "オラパ鉱山",
-    "player1Name": "金の採掘者",
-    "player2Name": "クリスタル採掘者",
-    "win": "{{name}}が大当たり！⛏️",
-    "draw": "鉱山が枯渇しました！",
-    "turn": "{{name}}のターン",
-    "newRound": "新しいラウンド",
-    "boardAriaLabel": "オラパ鉱山ゲームボード",
-    "cellAriaLabel": "{{row}}行{{col}}列",
-    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}"
+    "instructions": "境界位置（数字または文字）から超音波を発射し、どこから出てきてどの宝石の色を持っているかを調べます。セルをクリックして中の宝石を確認し、境界の円をクリックして超音波を発射しましょう。",
+    "showAnswer": "答えを見る",
+    "newGame": "新しいゲーム",
+    "boardAriaLabel": "オラパ鉱山パズルボード",
+    "cellAriaLabel": "{{col}}列{{row}}行",
+    "borderAriaLabel": "境界{{label}}"
   },
   "orapaSpace": {
     "title": "オラパスペース",

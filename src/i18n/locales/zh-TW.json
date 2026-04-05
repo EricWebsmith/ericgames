@@ -9,7 +9,7 @@
       "description": "解謎遊戲"
     },
     "mine": {
-      "description": "3連礦石挑戰"
+      "description": "超音波寶石推理遊戲"
     },
     "space": {
       "description": "星際4連棋"
@@ -28,15 +28,12 @@
   },
   "orapaMine": {
     "title": "Orapa Mine",
-    "player1Name": "金礦工",
-    "player2Name": "晶礦工",
-    "win": "{{name}}發財了！⛏️",
-    "draw": "礦石耗盡！",
-    "turn": "{{name}}的回合",
-    "newRound": "新回合",
-    "boardAriaLabel": "Orapa Mine遊戲棋盤",
-    "cellAriaLabel": "第{{row}}行，第{{col}}列",
-    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+    "instructions": "從邊界位置（數字或字母）發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
+    "showAnswer": "看答案",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "Orapa Mine謎題棋盤",
+    "cellAriaLabel": "第{{col}}列第{{row}}行",
+    "borderAriaLabel": "邊界{{label}}"
   },
   "orapaSpace": {
     "title": "Orapa Space",
