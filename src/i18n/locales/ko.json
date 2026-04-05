@@ -9,7 +9,7 @@
       "description": "퍼즐 게임"
     },
     "mine": {
-      "description": "3연속 광석 도전"
+      "description": "초음파 보석 추리 게임"
     },
     "space": {
       "description": "우주 4목 두기"
@@ -28,15 +28,12 @@
   },
   "orapaMine": {
     "title": "오라파 광산",
-    "player1Name": "금 광부",
-    "player2Name": "크리스탈 광부",
-    "win": "{{name}} 대박났어요! ⛏️",
-    "draw": "광산이 고갈되었습니다!",
-    "turn": "{{name}}의 차례",
-    "newRound": "새 라운드",
-    "boardAriaLabel": "오라파 광산 게임 보드",
-    "cellAriaLabel": "{{row}}행 {{col}}열",
-    "cellAriaLabelWithPlayer": "{{row}}행 {{col}}열, 플레이어 {{player}}"
+    "instructions": "경계 위치(숫자 또는 문자)에서 초음파를 발사하여 어디서 나오는지, 어떤 보석 색을 가지고 오는지 확인하세요. 셀을 클릭하면 안의 보석을 확인할 수 있고, 경계 원을 클릭하면 초음파를 발사합니다.",
+    "showAnswer": "정답 보기",
+    "newGame": "새 게임",
+    "boardAriaLabel": "오라파 광산 퍼즐 보드",
+    "cellAriaLabel": "{{col}}열 {{row}}행",
+    "borderAriaLabel": "경계 {{label}}"
   },
   "orapaSpace": {
     "title": "오라파 스페이스",

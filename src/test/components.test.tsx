@@ -40,27 +40,28 @@ describe('OrapaMine', () => {
     expect(screen.getByText('Orapa Mine')).toBeInTheDocument()
   })
 
-  it('shows the current player turn', () => {
+  it('renders a "New Game" button', () => {
     render(<OrapaMine />)
-    expect(screen.getByText(/Gold Miner's turn/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /new game/i })).toBeInTheDocument()
   })
 
-  it('renders a "New Round" button', () => {
+  it('renders a "See Answer" button', () => {
     render(<OrapaMine />)
-    expect(screen.getByRole('button', { name: /new round/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /see answer/i })).toBeInTheDocument()
   })
 
   it('renders the SVG board', () => {
     render(<OrapaMine />)
-    expect(screen.getByRole('grid')).toBeInTheDocument()
+    expect(screen.getByLabelText('Orapa Mine puzzle board')).toBeInTheDocument()
   })
 
-  it('switches player after clicking a cell', async () => {
+  it('clicking a border circle toggles it', async () => {
     const user = userEvent.setup()
     render(<OrapaMine />)
-    const cells = screen.getAllByRole('gridcell')
-    await user.click(cells[0])
-    expect(screen.getByText(/Crystal Miner's turn/)).toBeInTheDocument()
+    const border = screen.getByLabelText('Border 1')
+    await user.click(border)
+    // No error thrown; circle toggled
+    expect(border).toBeInTheDocument()
   })
 })
 

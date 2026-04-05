@@ -2,6 +2,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './App.css';
 import Arclight from './components/arclight/Arclight';
+import OrapaMine from './components/orapaMine/OrapaMine';
 import LanguageSwitcher from './components/shared/LanguageSwitcher';
 
 function Home() {
@@ -21,17 +22,21 @@ function Home() {
           <p>{t('home.arclight.description')}</p>
         </NavLink>
 
-        {/* <NavLink to="/orapa-mine" className="game-card mine-card">
+        <NavLink to="/ericgames/orapa-mine" className="game-card mine-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
-            <rect width={80} height={80} fill="#2d1f0e" rx={4} />
-            <polygon points="40,14 58,50 22,50" fill="#c9a227" stroke="#8b6914" strokeWidth={1.5} />
-            <polygon points="40,30 54,66 26,66" fill="#5b9ecc" stroke="#2a6080" strokeWidth={1.5} />
+            <rect width={80} height={80} fill="#080818" rx={4} />
+            <rect x={10} y={20} width={60} height={40} fill="none" stroke="#2a2a6a" strokeWidth={1} />
+            <rect x={20} y={27} width={12} height={12} fill="#ff5555" rx={1} />
+            <rect x={40} y={35} width={12} height={12} fill="#5577ff" rx={1} />
+            <rect x={30} y={43} width={12} height={12} fill="#ffee00" rx={1} />
+            <circle cx={10} cy={20} r={5} fill="#1e1e5a" stroke="#7777ee" strokeWidth={1.5} />
+            <circle cx={70} cy={60} r={5} fill="#1a3a1a" stroke="#44cc44" strokeWidth={1.5} />
           </svg>
           <h2>Orapa Mine</h2>
           <p>{t('home.mine.description')}</p>
         </NavLink>
 
-        <NavLink to="/orapa-space" className="game-card space-card">
+        {/* <NavLink to="/ericgames/orapa-space" className="game-card space-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#03030f" rx={4} />
             <circle cx={20} cy={15} r={1} fill="white" opacity={0.8} />
@@ -61,8 +66,8 @@ function Nav() {
       <NavLink to="/ericgames" end className="nav-brand">{t('nav.brand')}</NavLink>
       <ul className="nav-links">
         <li><NavLink to="/ericgames/arclight">Arclight</NavLink></li>
-        {/* <li><NavLink to="/orapa-mine">Orapa Mine</NavLink></li>
-        <li><NavLink to="/orapa-space">Orapa Space</NavLink></li> */}
+        <li><NavLink to="/ericgames/orapa-mine">Orapa Mine</NavLink></li>
+        {/* <li><NavLink to="/ericgames/orapa-space">Orapa Space</NavLink></li> */}
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -77,8 +82,8 @@ export default function App() {
         <Routes>
           <Route path="/ericgames" element={<Home />} />
           <Route path="/ericgames/arclight" element={<Arclight />} />
-          {/* <Route path="/ericgames/orapa-mine" element={<OrapaMine />} />
-          <Route path="/ericgames/orapa-space" element={<OrapaSpace />} /> */}
+          <Route path="/ericgames/orapa-mine" element={<OrapaMine />} />
+          {/* <Route path="/ericgames/orapa-space" element={<OrapaSpace />} /> */}
         </Routes>
       </main>
     </BrowserRouter>
