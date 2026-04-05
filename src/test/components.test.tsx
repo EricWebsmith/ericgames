@@ -55,13 +55,13 @@ describe('OrapaMine', () => {
     expect(screen.getByLabelText('Orapa Mine puzzle board')).toBeInTheDocument()
   })
 
-  it('clicking a border circle toggles it', async () => {
+  it('clicking a border circle shows a wave result annotation', async () => {
     const user = userEvent.setup()
     render(<OrapaMine />)
     const border = screen.getByLabelText('Border 1')
     await user.click(border)
-    // No error thrown; circle toggled
-    expect(border).toBeInTheDocument()
+    // After firing a wave, an annotation (→<exit> or ✕ for absorbed) is shown
+    expect(screen.queryByText(/→|✕/)).toBeInTheDocument()
   })
 })
 

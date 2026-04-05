@@ -206,9 +206,13 @@ export default function OrapaMine() {
             const gemColor = hasGem ? getGemColor(colors) : '';
             const tileData = tileByCoord[label];
 
-            let fillColor = revealed && hasGem ? gemColor : '#14142e';
-            if (revealed && tileData && !hasGem) {
+            let fillColor: string;
+            if (revealed && hasGem) {
+              fillColor = gemColor;
+            } else if (revealed && tileData) {
               fillColor = tileData.tile.arcs.length === 0 ? '#1a1a1a' : '#eeeeee';
+            } else {
+              fillColor = '#14142e';
             }
 
             return (
