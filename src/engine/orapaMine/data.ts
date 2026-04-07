@@ -27,7 +27,7 @@ export function getRedTile(): ParentTile {
     return {
         name: 'Red', optional: false, subTiles: [
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 2]], absorbLight: false },
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], absorbLight: false },
         ]
     };
@@ -107,7 +107,7 @@ export function getTiles(): ParentTile[] {
         // Light Blue tile – single cell
         {
             name: 'Light Blue', optional: false, subTiles: [
-                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false },
+                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 0]], absorbLight: false },
             ]
         },
     ];
