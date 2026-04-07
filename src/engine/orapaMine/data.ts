@@ -23,24 +23,7 @@ export const borderNodeCoordinates: string[] = [
 // A tile with arcs: [] absorbs light entirely (black gem behaviour).
 
 
-export function getParentTiles(): ParentTile[] {
-    const allTiles = getBasicTiles();
-    const parentDefs = [
-        { id: 0, name: 'Red', optional: false },
-        { id: 1, name: 'Flipped Red', optional: false },
-        { id: 2, name: 'Blue', optional: false },
-        { id: 3, name: 'Yellow', optional: false },
-        { id: 4, name: 'White Big', optional: false },
-        { id: 5, name: 'White Small', optional: false },
-        { id: 6, name: 'Transparent', optional: true },
-        { id: 7, name: 'Black', optional: true },
-        { id: 8, name: 'Light Blue', optional: false },
-    ];
-    return parentDefs.map(p => ({ ...p, subTiles: allTiles.filter(t => t.parent_id === p.id) }));
-}
-
-
-export function getBasicTiles(): Tile[] {
+export function getTiles(): ParentTile[] {
     const tiles: Tile[] = [
         // Red tile – 1×3 vertical strip (parent 0)
         {
@@ -325,7 +308,25 @@ export function getBasicTiles(): Tile[] {
         },
     ];
 
-    return tiles;
+    const parentDefs = [
+        { id: 0, name: 'Red', optional: false },
+        { id: 1, name: 'Flipped Red', optional: false },
+        { id: 2, name: 'Blue', optional: false },
+        { id: 3, name: 'Yellow', optional: false },
+        { id: 4, name: 'White Big', optional: false },
+        { id: 5, name: 'White Small', optional: false },
+        { id: 6, name: 'Transparent', optional: true },
+        { id: 7, name: 'Black', optional: true },
+        { id: 8, name: 'Light Blue', optional: false },
+    ];
+
+    // Red (id 0) and Flipped Red (id 1) are the same physical piece in two
+    // orientations. Randomly keep exactly one so the board has a single Red gem.
+    const dropId = Math.random() < 0.5 ? 0 : 1;
+
+    return parentDefs
+        .filter(p => p.id !== dropId)
+        .map(p => ({ ...p, subTiles: tiles.filter(t => t.parent_id === p.id) }));
 }
 
 
