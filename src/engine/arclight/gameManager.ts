@@ -1,4 +1,4 @@
-import { borderNodeCoordinates, getBasicTiles, getBoard } from './arclightData';
+import { borderNodeCoordinates, getBasicTiles, getBoard } from './data';
 import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from './models';
 
 export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>, startCoordinate: string): LightResult {

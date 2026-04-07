@@ -299,26 +299,24 @@ export function getBasicTiles(): Tile[] {
 
 
 export function getBoard(): Board {
+    const rowMax = 8;
+    const colMax = 10;
     const nodes: Record<string, Node> = {};
 
     // Internal cells – c{col}r{row}, col 1–10, row 1–8
-    for (let col = 1; col <= 10; col++) {
-        for (let row = 1; row <= 8; row++) {
-            const label = `c${col}r${row}`;
+    const lebalLetters = 'ABCDEFGH'.split('');
+    for (let col = 0; col < colMax; col++) {
+        for (let row = 0; row < rowMax; row++) {
+            const label = `${lebalLetters[row]}${col + 1}`;
             nodes[label] = { label, is_border: false, edges: {} };
+            // Connect to orthogonal neighbours (if they exist)
+            if (col > 0) nodes[label].edges[0] = `${lebalLetters[row]}${col}`; // West
+            if (row > 0) nodes[label].edges[1] = `${lebalLetters[row - 1]}${col + 1}`; // North
+            if (col < colMax - 1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
+            if (row < rowMax - 1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
         }
     }
 
-    // Internal edges (directions: 0=West, 1=North, 2=East, 3=South)
-    for (let col = 1; col <= 10; col++) {
-        for (let row = 1; row <= 8; row++) {
-            const label = `c${col}r${row}`;
-            if (col > 1)  nodes[label].edges[0] = `c${col - 1}r${row}`;
-            if (row > 1)  nodes[label].edges[1] = `c${col}r${row - 1}`;
-            if (col < 10) nodes[label].edges[2] = `c${col + 1}r${row}`;
-            if (row < 8)  nodes[label].edges[3] = `c${col}r${row + 1}`;
-        }
-    }
 
     // Border nodes
     for (let k = 1; k <= 18; k++) nodes[String(k)] = { label: String(k), is_border: true, edges: {} };
@@ -333,26 +331,17 @@ export function getBoard(): Board {
         nodes[cellLabel].edges[cellDir] = borderLabel;
     };
 
-    // Numbers 1–10: top edge (enter going South, direction 3)
-    for (let col = 1; col <= 10; col++) {
-        addBorderEdge(String(col), 3, `c${col}r1`);
+    // Add top and bottom nodes
+    const bottomLetters = 'IJKLMNOPQR'.split('');
+    for (let col = 0; col < colMax; col++) {
+        addBorderEdge(String(col + 1), 3, `A${col + 1}`); // Top
+        addBorderEdge(bottomLetters[col], 3, `H${col + 1}`); // Bottom
     }
 
-    // Numbers 11–18: left edge (enter going East, direction 2)
-    for (let row = 1; row <= 8; row++) {
-        addBorderEdge(String(10 + row), 2, `c1r${row}`);
-    }
-
-    // Letters A–J: bottom edge (enter going North, direction 1)
-    const bottomLetters = 'ABCDEFGHIJ'.split('');
-    for (let col = 1; col <= 10; col++) {
-        addBorderEdge(bottomLetters[col - 1], 1, `c${col}r8`);
-    }
-
-    // Letters K–R: right edge (enter going West, direction 0)
-    const rightLetters = 'KLMNOPQR'.split('');
-    for (let row = 1; row <= 8; row++) {
-        addBorderEdge(rightLetters[row - 1], 0, `c10r${row}`);
+    // Add left and right nodes
+    for (let row = 0; row < rowMax; row++) {
+        addBorderEdge(lebalLetters[row], 2, `${lebalLetters[row]}1`); // Left
+        addBorderEdge(String(10 + row + 1), 2, `${lebalLetters[row]}10`); // Right
     }
 
     return { spaces: nodes };

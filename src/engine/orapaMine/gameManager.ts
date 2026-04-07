@@ -1,5 +1,5 @@
-import { borderNodeCoordinates, getBasicTiles, getBoard } from './orapaMineData';
-import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from './models';
+import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from '../arclight/models';
+import { borderNodeCoordinates, getBasicTiles, getBoard } from './data';
 
 /**
  * Traverse the board from a border node and return where the wave exits and

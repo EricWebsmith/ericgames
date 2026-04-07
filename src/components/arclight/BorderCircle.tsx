@@ -1,4 +1,4 @@
-import type { Color } from '../../engine/models';
+import type { Color } from '../../engine/arclight/models';
 import { GEM_FILL } from './colors';
 
 const DEFAULT_GEM_COLOR = '#999999';
