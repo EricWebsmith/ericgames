@@ -1,5 +1,6 @@
 import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from '../arclight/models';
-import { borderNodeCoordinates, getBasicTiles, getBoard } from './data';
+import { type ParentTile } from './models';
+import { borderNodeCoordinates, getBoard, getParentTiles } from './data';
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -77,11 +78,44 @@ export function traverse(
 }
 
 /**
+ * Place all subtiles of a single piece at a specific anchor coordinate on the board.
+ *
+ * The anchor subtile has relative coordinate (0, 0); every other subtile is placed
+ * at anchorLabel offset by its (col, row) delta.
+ *
+ * Coordinate format: `{Letter}{Number}` where A–H are rows 0–7 and 1–10 are
+ * columns (matching the labels produced by getBoard()).
+ */
+export function putTile(
+    tile: ParentTile,
+    anchorLabel: string,
+    rotateAngle: number = 0,
+): Record<string, TileInBoard> {
+    const rowLetters = 'ABCDEFGH';
+    const m = anchorLabel.match(/^([A-H])(\d{1,2})$/);
+    if (!m) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
+    const anchorRow = rowLetters.indexOf(m[1]);
+    const anchorCol = parseInt(m[2], 10);
+
+    const result: Record<string, TileInBoard> = {};
+
+    for (const subTile of tile.subTiles) {
+        const row = anchorRow + subTile.coordinate[1];
+        const col = anchorCol + subTile.coordinate[0];
+        const coord = `${rowLetters[row]}${col}`;
+        const tib = new TileInBoard({ tile: subTile, coordinate: coord, rotate_angle: rotateAngle });
+        tib.resolve_rotate();
+        result[coord] = tib;
+    }
+
+    return result;
+}
+
+/**
  * Place a set of gem pieces on the board.
  *
- * Each piece is a group of Tile records sharing the same parent_id.
- * The anchor tile has coordinate {0: 0, 1: 0}; siblings carry their
- * (col, row) offset relative to the anchor.
+ * Each ParentTile carries its subTiles with (col, row) offsets relative to the
+ * anchor subtile (coordinate {0: 0, 1: 0}).
  *
  * Placement rules enforced here:
  *   - Pieces must fit within the 10×8 grid.
@@ -89,7 +123,7 @@ export function traverse(
  *   - Piece edges (orthogonal neighbours) may not touch another piece's cells
  *     (corner-to-corner contact is fine).
  */
-function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
+function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard> {
     const tilesInBoard: Record<string, TileInBoard> = {};
     const unavailableCoords = new Set<string>();
 
@@ -100,67 +134,45 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 
     const internalCoords = Object.keys(board.spaces).filter(k => !board.spaces[k].is_border);
     const randomChoice = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+    const rowLetters = 'ABCDEFGH';
 
-    const placedParentIds = new Set<number>();
-
-    // Identify anchor tiles (relative coordinate = origin).
-    const anchorTiles = tiles.filter(t => t.coordinate[0] === 0 && t.coordinate[1] === 0);
-
-    for (const anchorTile of anchorTiles) {
-        if (placedParentIds.has(anchorTile.parent_id)) continue;
-
-        const siblings = tiles.filter(
-            t => t.parent_id === anchorTile.parent_id && !(t.coordinate[0] === 0 && t.coordinate[1] === 0),
-        );
-
+    for (const parentTile of tiles) {
         let placed = false;
 
         for (let attempt = 0; attempt < 1000 && !placed; attempt++) {
             const anchorCoord = randomChoice(internalCoords);
             if (unavailableCoords.has(anchorCoord)) continue;
 
-            const match = anchorCoord.match(/^c(\d+)r(\d+)$/);
-            if (!match) continue;
-            const anchorCol = parseInt(match[1], 10);
-            const anchorRow = parseInt(match[2], 10);
+            const m = anchorCoord.match(/^([A-H])(\d{1,2})$/);
+            if (!m) continue;
+            const anchorRow = rowLetters.indexOf(m[1]);
+            const anchorCol = parseInt(m[2], 10);
 
-            // Verify all sibling positions are in-bounds and free.
-            const siblingCoords: string[] = [];
+            // Verify all subtile positions are in-bounds and free.
             let valid = true;
-
-            for (const sib of siblings) {
-                const col = anchorCol + sib.coordinate[0];
-                const row = anchorRow + sib.coordinate[1];
-                if (col < 1 || col > 10 || row < 1 || row > 8) { valid = false; break; }
-                const coord = `c${col}r${row}`;
+            for (const subTile of parentTile.subTiles) {
+                const row = anchorRow + subTile.coordinate[1];
+                const col = anchorCol + subTile.coordinate[0];
+                if (row < 0 || row >= 8 || col < 1 || col > 10) { valid = false; break; }
+                const coord = `${rowLetters[row]}${col}`;
                 if (unavailableCoords.has(coord)) { valid = false; break; }
-                siblingCoords.push(coord);
             }
-
             if (!valid) continue;
 
-            // Place the piece.
-            const allCells: Array<{ coord: string; tile: Tile }> = [
-                { coord: anchorCoord, tile: anchorTile },
-                ...siblings.map((sib, i) => ({ coord: siblingCoords[i], tile: sib })),
-            ];
-
-            for (const { coord, tile } of allCells) {
-                const tib = new TileInBoard({ tile, coordinate: coord, rotate_angle: 0 });
-                tib.resolve_rotate();
+            // Place the piece via putTile and merge into tilesInBoard.
+            const newTiles = putTile(parentTile, anchorCoord, 0);
+            for (const [coord, tib] of Object.entries(newTiles)) {
                 tilesInBoard[coord] = tib;
                 unavailableCoords.add(coord);
             }
 
-            // Enforce non-adjacency: mark all orthogonal neighbours of the
-            // newly placed cells as unavailable so the next piece cannot touch.
-            for (const { coord } of allCells) {
+            // Enforce non-adjacency: mark all orthogonal neighbours as unavailable.
+            for (const coord of Object.keys(newTiles)) {
                 for (const neighbour of Object.values(board.spaces[coord].edges)) {
                     unavailableCoords.add(neighbour);
                 }
             }
 
-            placedParentIds.add(anchorTile.parent_id);
             placed = true;
         }
     }
@@ -171,7 +183,7 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
 /** Create a random Orapa Mine puzzle and pre-compute all wave results. */
 export function setup(): Puzzle {
     const board = getBoard();
-    const tilesInBoard = putTiles(board, getBasicTiles());
+    const tilesInBoard = putTiles(board, getParentTiles());
 
     // Compute wave results for every border position.
     const lightResults: Record<string, LightResult> = {};
