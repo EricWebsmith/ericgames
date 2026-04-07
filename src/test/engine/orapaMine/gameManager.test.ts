@@ -63,8 +63,10 @@ describe('setup', () => {
 });
 
 describe('traverse (black tile at D5)', () => {
-  // Tile 27 (black, absorbLight: true, arcs []) is placed at D5.
-  // Any beam that reaches D5 is absorbed entirely: end_label '' and colors [].
+  // The black tile (parent 7) is a two-subtile piece:
+  //   Tile 27 (absorbLight: true, coordinate {0:0, 1:0}) → anchor placed at D5.
+  //   Tile 28 (absorbLight: true, coordinate {0:0, 1:1}) → one row north  → C5.
+  // Any beam that reaches either D5 or C5 is absorbed entirely: end_label '' and colors [].
   // Beams on other columns pass through unaffected.
   let board: Board;
   let tiles: Record<string, TileInBoard>;
@@ -75,15 +77,21 @@ describe('traverse (black tile at D5)', () => {
     tiles = {};
     tiles['D5'] = new TileInBoard({ tile: basicTiles[27], coordinate: 'D5', rotate_angle: 0 });
     tiles['D5'].resolve_rotate();
+    tiles['C5'] = new TileInBoard({ tile: basicTiles[28], coordinate: 'C5', rotate_angle: 0 });
+    tiles['C5'].resolve_rotate();
   });
 
   it.each([
-    // Beam enters from top border 5 (→ A5 South), absorbed at D5
+    // Beam enters from top border 5 (→ A5 South), absorbed at C5 (first subtile encountered)
     ['5', '', []],
     // Beam enters left border D (→ D1 East), absorbed at D5
     ['D', '', []],
     // Beam enters right border 14 (→ D10 West), absorbed at D5
     ['14', '', []],
+    // Beam enters left border C (→ C1 East), absorbed at C5
+    ['C', '', []],
+    // Beam enters right border 13 (→ C10 West), absorbed at C5
+    ['13', '', []],
     // Column 2 is empty – straight pass-through from top border 2 to bottom border J
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
