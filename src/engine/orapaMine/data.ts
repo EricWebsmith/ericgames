@@ -49,6 +49,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 0,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 1,
@@ -57,6 +58,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 0,
             coordinate: { 0: 0, 1: 1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 2,
@@ -65,6 +67,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 0,
             coordinate: { 0: 0, 1: 2 },
             arcs: [[2, 3]],
+            absorbLight: false,
         },
         // Flipped Red tile – same shape as Red, mirrored arc pattern (parent 1).
         // Having a separate parent avoids the need for run-time tile flipping:
@@ -76,6 +79,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 1,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         {
             id: 4,
@@ -84,6 +88,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 1,
             coordinate: { 0: 0, 1: 1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 5,
@@ -92,6 +97,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 1,
             coordinate: { 0: 0, 1: 2 },
             arcs: [[0, 3]],
+            absorbLight: false,
         },
         // Blue tile – irregular 6-cell shape (parent 2)
         {
@@ -101,6 +107,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 7,
@@ -109,6 +116,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: 1, 1: 0 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         {
             id: 8,
@@ -117,6 +125,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: -1, 1: -1 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 9,
@@ -125,6 +134,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: 0, 1: -1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 10,
@@ -133,6 +143,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: 1, 1: -1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 11,
@@ -141,6 +152,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 2,
             coordinate: { 0: 2, 1: -1 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         // Yellow tile – 3-cell L-shape (parent 3)
         {
@@ -150,6 +162,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 3,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         {
             id: 13,
@@ -158,6 +171,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 3,
             coordinate: { 0: 1, 1: 0 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 14,
@@ -166,6 +180,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 3,
             coordinate: { 0: 1, 1: -1 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         // White Big tile – same 6-cell shape as Blue but white (parent 4)
         {
@@ -175,6 +190,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 16,
@@ -183,6 +199,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: 1, 1: 0 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         {
             id: 17,
@@ -191,6 +208,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: -1, 1: -1 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 18,
@@ -199,6 +217,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: 0, 1: -1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 19,
@@ -207,6 +226,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: 1, 1: -1 },
             arcs: [],
+            absorbLight: false,
         },
         {
             id: 20,
@@ -215,6 +235,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 4,
             coordinate: { 0: 2, 1: -1 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         // White Small tile – 2×2 square (parent 5)
         {
@@ -224,6 +245,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 5,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 22,
@@ -232,6 +254,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 5,
             coordinate: { 0: 1, 1: 0 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         {
             id: 23,
@@ -240,6 +263,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 5,
             coordinate: { 0: 0, 1: -1 },
             arcs: [[0, 3]],
+            absorbLight: false,
         },
         {
             id: 24,
@@ -248,6 +272,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 5,
             coordinate: { 0: 1, 1: -1 },
             arcs: [[2, 3]],
+            absorbLight: false,
         },
         // Transparent tile – 1×2 vertical strip, 50% opacity (parent 6)
         {
@@ -257,6 +282,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 6,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
         {
             id: 26,
@@ -265,6 +291,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 6,
             coordinate: { 0: 0, 1: 1 },
             arcs: [[1, 2]],
+            absorbLight: false,
         },
         // Black tile – 1×2 vertical strip, absorbs light (parent 7)
         {
@@ -274,6 +301,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 7,
             coordinate: { 0: 0, 1: 0 },
             arcs: [],
+            absorbLight: true,
         },
         {
             id: 28,
@@ -282,6 +310,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 7,
             coordinate: { 0: 0, 1: 1 },
             arcs: [],
+            absorbLight: true,
         },
         // Light Blue tile – single cell (parent 8)
         {
@@ -291,6 +320,7 @@ export function getBasicTiles(): Tile[] {
             parent_id: 8,
             coordinate: { 0: 0, 1: 0 },
             arcs: [[0, 1]],
+            absorbLight: false,
         },
     ];
 
