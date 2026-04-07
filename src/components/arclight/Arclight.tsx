@@ -302,8 +302,8 @@ export default function Arclight() {
           </filter>
         </defs>
 
-        {/* Dark background */}
-        <rect width={SVG_W} height={SVG_H} fill="#080818" rx={10} />
+        {/* Brown background */}
+        <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
 
         {/* ── Hex tiles ── */}
         {ALL_TILES.map(({ label }) => {
@@ -316,7 +316,7 @@ export default function Arclight() {
 
           // Fill colour: gem colour when revealed, else dark; black-hole → black,
           // transparent tile (arcs but no gem) → light grey.
-          let fillColor = revealed && hasGem ? gemColor : '#14142e';
+          let fillColor = revealed && hasGem ? gemColor : '#3d2410';
           if (revealed && tileData && !hasGem) {
             fillColor = tileData.tile.arcs.length === 0 ? '#000000' : '#EEEEEE';
           }
@@ -324,7 +324,7 @@ export default function Arclight() {
           // Opacity from tile data (0-100 → 0-1); only applied when revealed.
           const fillOpacity = revealed && tileData ? tileData.tile.opacity / 100 : 1;
 
-          const strokeColor = '#2a2a6a';
+          const strokeColor = '#6a4420';
 
           // Arc stroke: use gem colour for gem tiles, otherwise white.
           const arcColor = 'rgba(255,255,255,0.85)';
@@ -347,7 +347,7 @@ export default function Arclight() {
 
               {/* X cross only for revealed empty cells (no tile placed there) */}
               {revealed && !hasGem && !tileData && (
-                <g stroke="#3a3a7a" strokeWidth={2} strokeLinecap="round">
+                <g stroke="#7a4a20" strokeWidth={2} strokeLinecap="round">
                   <line x1={x - 13} y1={y - 13} x2={x + 13} y2={y + 13} />
                   <line x1={x + 13} y1={y - 13} x2={x - 13} y2={y + 13} />
                 </g>
@@ -376,7 +376,7 @@ export default function Arclight() {
                 y={y + 1}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#3a3a7a'}
+                fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#7a4a20'}
                 fontSize={9}
                 fontWeight="bold"
                 style={{ pointerEvents: 'none', userSelect: 'none' }}
