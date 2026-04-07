@@ -213,6 +213,9 @@ export default function OrapaMine() {
             const tileData = tileByCoord[label];
 
             // Triangle tiles: any tile whose reflect array is non-empty.
+            // The triangle shape is only revealed in "See Answer" mode (showAll);
+            // during normal play the full square is painted with the tile colour so
+            // the player has to figure out the shape themselves.
             const reflectArcs = tileData?.tile.reflect ?? [];
             const isTriangle = reflectArcs.length > 0;
 
@@ -229,10 +232,10 @@ export default function OrapaMine() {
             // Opacity from tile data (transparent gem is 50%); only when revealed.
             const fillOpacity = revealed && tileData ? tileData.tile.opacity / 100 : 1;
 
-            // SVG polygon points for triangle tiles.
+            // SVG polygon points for triangle tiles – only computed in showAll mode.
             // reflectArcs[0] is safe here: isTriangle guarantees length > 0,
             // and Reflect is typed as [number, number].
-            const trianglePoints = revealed && isTriangle && reflectArcs[0]
+            const trianglePoints = showAll && isTriangle && reflectArcs[0]
               ? getTrianglePoints(x, y, reflectArcs[0])
               : null;
 
@@ -256,7 +259,7 @@ export default function OrapaMine() {
                 {/* Revealed tile drawn on top of the background. */}
                 {revealed && tileData && (
                   isTriangle && trianglePoints ? (
-                    /* Triangle tile: polygon covers only the solid portion of the cell. */
+                    /* Triangle tile (See Answer mode): polygon covers only the solid portion. */
                     <polygon
                       points={trianglePoints}
                       fill={tileFill}
@@ -264,7 +267,7 @@ export default function OrapaMine() {
                       filter={hasGem ? 'url(#mine-glow)' : undefined}
                     />
                   ) : (
-                    /* Non-triangle tile: full rectangle (colored gem or black hole). */
+                    /* Normal play or non-triangle tile: full rectangle. */
                     <rect
                       x={x + 1} y={y + 1}
                       width={CELL - 2} height={CELL - 2}
