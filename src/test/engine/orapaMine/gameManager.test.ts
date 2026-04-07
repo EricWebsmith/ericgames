@@ -186,3 +186,33 @@ describe('red (red tile at D5)', () => {
     expect(result.colors).toEqual(expectedColors);
   });
 });
+
+
+describe('light blue D5', () => {
+  // Light Blue (parent 7) is placed with anchor at D5:
+  //   tile 7 (arcs [[0,1]], colors [Color.Blue, Color.White]) at D5.
+  // arc_dict for tile 7 (rotate_angle = 0): { 0: 1, 1: 0 }
+  // Because the tile has colors, beams are redirected and color is collected.
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    board = getBoard();
+    tiles = putTile(getTiles()[7], 'D5', 0);
+  });
+
+  it.each([
+    ['5', '5', [Color.Blue, Color.White]],
+    ['D', 'D', [Color.Blue, Color.White]],
+    ['M', 'M', [Color.Blue, Color.White]],
+    ['14', '14', [Color.Blue, Color.White]],
+    ['4', 'L', []],
+    ['16', 'F', []],
+    ['2', 'J', []],
+    ['8', 'P', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
