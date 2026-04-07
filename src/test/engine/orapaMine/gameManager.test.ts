@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { getBoard, getRedTile, getTiles } from '../../../engine/orapaMine/data';
+import { putTile, setup, traverse } from '../../../engine/orapaMine/gameManager';
 import { type Board, Color, TileInBoard } from '../../../engine/orapaMine/models';
-import { getBoard, getTiles } from '../../../engine/orapaMine/data';
-import { setup, traverse, putTile } from '../../../engine/orapaMine/gameManager';
 
 describe('traverse (yellow tile at D5)', () => {
   // Yellow (parent 3) is placed with anchor at D5, forming an L-shape:
@@ -148,6 +148,44 @@ describe('traverse (transparent tile at D5)', () => {
     ['M', 'M', []],
     // Column 2 is empty – straight pass-through from top border 2 to bottom border J
     ['2', 'J', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
+
+
+
+describe('red (red tile at D5)', () => {
+  // Red (parent 0) is placed with anchor at D5:
+  //   tile 0 (arcs [[0,1]], colors [Color.Red]) at D5, tile 1 (arcs [[1,2]], colors [Color.Red]) at E5.
+  // arc_dict for tile 0 (rotate_angle = 0): { 0: 1, 1: 0 }
+  // Because the tiles have colors, beams are redirected and color is collected.
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    board = getBoard();
+    tiles = putTile(getRedTile(), 'D5', 0);
+  });
+
+  it.each([
+    // Beam enters left border D (→ D1 East), deflected North at D5, exits top border 5 – no color
+    ['D', '5', [Color.Red]],
+    // Bidirectional: enters top border 5 (→ A5 South), deflected West at D5, exits left border D – no color
+    ['5', 'D', [Color.Red]],
+    ['E', 'E', [Color.Red]],
+    ['F', 'F', [Color.Red]],
+    ['M', '16', [Color.Red]],
+    ['16', 'M', [Color.Red]],
+    // Beam enters right border 14 (→ D10 West), East face of D5 has no matching arc → reflects back – no color
+    ['14', '14', [Color.Red]],
+    // Beam enters bottom border M (→ H5 North), South face of E5 has no matching arc → reflects back – no color
+    ['M', 'M', [Color.Red]],
+    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['2', 'J', [Color.Red]],
+    ['8', 'P', [Color.Red]],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
     const result = traverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);

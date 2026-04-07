@@ -23,22 +23,30 @@ export const borderNodeCoordinates: string[] = [
 // A tile with arcs: [] absorbs light entirely (black gem behaviour).
 
 
-export function getTiles(): ParentTile[] {
-
-    // Red tile – 1×3 vertical strip
-    const redTile: ParentTile = Math.random() < 0.5 ? {
+export function getRedTile(): ParentTile {
+    return {
         name: 'Red', optional: false, subTiles: [
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false },
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], absorbLight: false },
         ]
-    } : {
+    };
+};
+
+export function getAlternativeRedTile(): ParentTile {
+    return {
         name: 'Flipped Red', optional: false, subTiles: [
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false },
             { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false },
         ]
     };
+}
+
+export function getTiles(): ParentTile[] {
+
+    // Red tile – 1×3 vertical strip
+    const redTile: ParentTile = Math.random() < 0.5 ? getRedTile() : getAlternativeRedTile();
 
     return [
         redTile
