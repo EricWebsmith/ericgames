@@ -40,7 +40,6 @@ export function traverse(
     const MAX_STEPS = 400;
 
     for (let step = 0; step < MAX_STEPS; step++) {
-        console.log(`${currentCoordinate}`)
         const currentNode = board.spaces[currentCoordinate];
         if (currentNode.is_border) break;
 

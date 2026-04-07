@@ -38,6 +38,7 @@ export interface Tile {
     // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate: Record<number, number>;
+    absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
 }
 
 export interface ITileInBoard {

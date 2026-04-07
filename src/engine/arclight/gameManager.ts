@@ -66,8 +66,6 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     const tilesInBoard: Record<string, TileInBoard> = {};
     const unavailableTileIds = new Set<number>();
 
-    console.log('unavailable_coordinates', unavailableCoordinates);
-
     const putTile = (tile: Tile, coordinate: string, rotateAngle: number): void => {
         tilesInBoard[coordinate] = new TileInBoard({ tile, coordinate, rotate_angle: rotateAngle });
         tilesInBoard[coordinate].resolve_rotate();
@@ -100,7 +98,6 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
                 const dir = coordinateToDirection(siblingTile.coordinate!);
                 const newDir = (dir + rotation) % 6;
                 const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
-                console.log('neighbor_coordinate in check', neighborCoordinate);
                 if (neighborCoordinate === undefined || unavailableCoordinates.has(neighborCoordinate)) {
                     randomCoordinate = '';
                     break;
@@ -113,7 +110,6 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
         for (const siblingTile of siblingTiles) {
             const dir = coordinateToDirection(siblingTile.coordinate!);
             const newDir = (dir + rotation) % 6;
-            console.log('dir, new_dir', dir, newDir);
             const neighborCoordinate = board.spaces[randomCoordinate].edges[newDir];
             putTile(siblingTile, neighborCoordinate, rotation);
         }

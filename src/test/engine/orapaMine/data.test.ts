@@ -9,11 +9,8 @@ describe('getBoard', () => {
         expect(Object.keys(board.spaces).length).toBe(116);
         for (const label in board.spaces) {
             const node = board.spaces[label];
-            console.log(node.label);
-            console.log(node.edges);
             if (node.is_border) {
                 if (["A1", "A10", "H1", "H10"].includes(node.label)) {
-                    console.log(node.edges);
                     expect(Object.keys(node.edges).length).toBe(2);
                 } else {
                     expect(Object.keys(node.edges).length).toBe(1);
