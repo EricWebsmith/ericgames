@@ -52,7 +52,8 @@ export function traverse(
                 return { end_label: '', colors: [] };
             }
 
-            // Colored cell with no arcs – beam passes through unaffected (picks up color only).
+            // Colored cell with no arcs: beam passes through unaffected (picks up color only).
+            // Only enter this block when the tile has arcs that can redirect the beam.
             if (tileInBoard.tile.arcs.length > 0) {
                 const entryFace = (outDir + 2) % 4;
 
