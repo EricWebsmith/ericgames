@@ -1,4 +1,4 @@
-import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from '../arclight/models';
+import { type Board, type Color, type LightResult, type Puzzle, TileInBoard } from '../arclight/models';
 import { type ParentTile } from './models';
 import { borderNodeCoordinates, getBoard, getParentTiles } from './data';
 
