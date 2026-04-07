@@ -24,73 +24,85 @@ export const borderNodeCoordinates: string[] = [
 
 
 export function getTiles(): ParentTile[] {
-    // Red (id 0) and Flipped Red (id 1) are the same physical piece in two
-    // orientations. Randomly keep exactly one so the board has a single Red gem.
-    const dropId = Math.random() < 0.5 ? 0 : 1;
 
-    const parentTiles: ParentTile[] = [
-        // Red tile – 1×3 vertical strip
-        { id: 0, name: 'Red', optional: false, subTiles: [
+    // Red tile – 1×3 vertical strip
+    const redTile: ParentTile = Math.random() < 0.5 ? {
+        id: 0, name: 'Red', optional: false, subTiles: [
             { id: 0, colors: [Color.Red], opacity: 100, parent_id: 0, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
             { id: 1, colors: [Color.Red], opacity: 100, parent_id: 0, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: false },
             { id: 2, colors: [Color.Red], opacity: 100, parent_id: 0, coordinate: { 0: 0, 1: 2 }, arcs: [[2, 3]], absorbLight: false },
-        ]},
-        // Flipped Red tile – same shape as Red, mirrored arc pattern.
-        // Having a separate parent avoids the need for run-time tile flipping:
-        // the generator randomly selects one of the two.
-        { id: 1, name: 'Flipped Red', optional: false, subTiles: [
+        ]
+    } : {
+        id: 1, name: 'Flipped Red', optional: false, subTiles: [
             { id: 3, colors: [Color.Red], opacity: 100, parent_id: 1, coordinate: { 0: 0, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
             { id: 4, colors: [Color.Red], opacity: 100, parent_id: 1, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: false },
             { id: 5, colors: [Color.Red], opacity: 100, parent_id: 1, coordinate: { 0: 0, 1: 2 }, arcs: [[0, 3]], absorbLight: false },
-        ]},
-        // Blue tile – irregular 6-cell shape
-        { id: 2, name: 'Blue', optional: false, subTiles: [
-            { id: 6,  colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0:  0, 1:  0 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 7,  colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0:  1, 1:  0 }, arcs: [[1, 2]], absorbLight: false },
-            { id: 8,  colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 9,  colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0:  0, 1: -1 }, arcs: [], absorbLight: false },
-            { id: 10, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0:  1, 1: -1 }, arcs: [], absorbLight: false },
-            { id: 11, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0:  2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
-        ]},
-        // Yellow tile – 3-cell L-shape
-        { id: 3, name: 'Yellow', optional: false, subTiles: [
-            { id: 12, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 0, 1:  0 }, arcs: [[1, 2]], absorbLight: false },
-            { id: 13, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 1, 1:  0 }, arcs: [], absorbLight: false },
-            { id: 14, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 1, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
-        ]},
-        // White Big tile – same 6-cell shape as Blue but white
-        { id: 4, name: 'White Big', optional: false, subTiles: [
-            { id: 15, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0:  0, 1:  0 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 16, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0:  1, 1:  0 }, arcs: [[1, 2]], absorbLight: false },
-            { id: 17, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 18, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0:  0, 1: -1 }, arcs: [], absorbLight: false },
-            { id: 19, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0:  1, 1: -1 }, arcs: [], absorbLight: false },
-            { id: 20, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0:  2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
-        ]},
-        // White Small tile – 2×2 square
-        { id: 5, name: 'White Small', optional: false, subTiles: [
-            { id: 21, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 0, 1:  0 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 22, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 1, 1:  0 }, arcs: [[1, 2]], absorbLight: false },
-            { id: 23, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 0, 1: -1 }, arcs: [[0, 3]], absorbLight: false },
-            { id: 24, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 1, 1: -1 }, arcs: [[2, 3]], absorbLight: false },
-        ]},
-        // Transparent tile – 1×2 vertical strip, 50% opacity
-        { id: 6, name: 'Transparent', optional: true, subTiles: [
-            { id: 25, colors: [], opacity: 50, parent_id: 6, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-            { id: 26, colors: [], opacity: 50, parent_id: 6, coordinate: { 0: 0, 1: 1 }, arcs: [[1, 2]], absorbLight: false },
-        ]},
-        // Black tile – 1×2 vertical strip, absorbs light
-        { id: 7, name: 'Black', optional: true, subTiles: [
-            { id: 27, colors: [], opacity: 100, parent_id: 7, coordinate: { 0: 0, 1: 0 }, arcs: [], absorbLight: true },
-            { id: 28, colors: [], opacity: 100, parent_id: 7, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: true },
-        ]},
-        // Light Blue tile – single cell
-        { id: 8, name: 'Light Blue', optional: false, subTiles: [
-            { id: 29, colors: [Color.Blue, Color.White], opacity: 100, parent_id: 8, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-        ]},
-    ];
+        ]
+    };
 
-    return parentTiles.filter(p => p.id !== dropId);
+    return [
+        redTile
+        ,
+        // Blue tile – irregular 6-cell shape
+        {
+            id: 2, name: 'Blue', optional: false, subTiles: [
+                { id: 6, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 7, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
+                { id: 8, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 9, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: 0, 1: -1 }, arcs: [], absorbLight: false },
+                { id: 10, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: 1, 1: -1 }, arcs: [], absorbLight: false },
+                { id: 11, colors: [Color.Blue], opacity: 100, parent_id: 2, coordinate: { 0: 2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+            ]
+        },
+        // Yellow tile – 3-cell L-shape
+        {
+            id: 3, name: 'Yellow', optional: false, subTiles: [
+                { id: 12, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 0, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
+                { id: 13, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 1, 1: 0 }, arcs: [], absorbLight: false },
+                { id: 14, colors: [Color.Yellow], opacity: 100, parent_id: 3, coordinate: { 0: 1, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+            ]
+        },
+        // White Big tile – same 6-cell shape as Blue but white
+        {
+            id: 4, name: 'White Big', optional: false, subTiles: [
+                { id: 15, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 16, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
+                { id: 17, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 18, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: 0, 1: -1 }, arcs: [], absorbLight: false },
+                { id: 19, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: 1, 1: -1 }, arcs: [], absorbLight: false },
+                { id: 20, colors: [Color.White], opacity: 100, parent_id: 4, coordinate: { 0: 2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+            ]
+        },
+        // White Small tile – 2×2 square
+        {
+            id: 5, name: 'White Small', optional: false, subTiles: [
+                { id: 21, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 22, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
+                { id: 23, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 0, 1: -1 }, arcs: [[0, 3]], absorbLight: false },
+                { id: 24, colors: [Color.White], opacity: 100, parent_id: 5, coordinate: { 0: 1, 1: -1 }, arcs: [[2, 3]], absorbLight: false },
+            ]
+        },
+        // Transparent tile – 1×2 vertical strip, 50% opacity
+        {
+            id: 6, name: 'Transparent', optional: true, subTiles: [
+                { id: 25, colors: [], opacity: 50, parent_id: 6, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+                { id: 26, colors: [], opacity: 50, parent_id: 6, coordinate: { 0: 0, 1: 1 }, arcs: [[1, 2]], absorbLight: false },
+            ]
+        },
+        // Black tile – 1×2 vertical strip, absorbs light
+        {
+            id: 7, name: 'Black', optional: true, subTiles: [
+                { id: 27, colors: [], opacity: 100, parent_id: 7, coordinate: { 0: 0, 1: 0 }, arcs: [], absorbLight: true },
+                { id: 28, colors: [], opacity: 100, parent_id: 7, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: true },
+            ]
+        },
+        // Light Blue tile – single cell
+        {
+            id: 8, name: 'Light Blue', optional: false, subTiles: [
+                { id: 29, colors: [Color.Blue, Color.White], opacity: 100, parent_id: 8, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+            ]
+        },
+    ];
 }
 
 
@@ -108,8 +120,8 @@ export function getBoard(): Board {
             // Connect to orthogonal neighbours (if they exist)
             if (col > 0) nodes[label].edges[0] = `${lebalLetters[row]}${col}`; // West
             if (row > 0) nodes[label].edges[1] = `${lebalLetters[row - 1]}${col + 1}`; // North
-            if (col < colMax-1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
-            if (row < rowMax-1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
+            if (col < colMax - 1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
+            if (row < rowMax - 1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
         }
     }
 
