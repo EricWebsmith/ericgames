@@ -84,43 +84,6 @@ function notePx(b: BorderInfo): { x: number; y: number } {
   }
 }
 
-// ─── Arc path inside a square cell ────────────────────────────────
-// face 0 = West, 1 = North, 2 = East, 3 = South
-// Returns a quadratic-bezier path for a 90° corner arc, or a straight line
-// for a pass-through.  Only draws each (inFace, outFace) pair once
-// (returns null when inFace >= outFace).
-function makeCellArcPath(inFace: number, outFace: number, x: number, y: number): string | null {
-  if (inFace >= outFace) return null;
-  const hs = CELL / 2;
-  const cx = x + hs, cy = y + hs;
-
-  const facePt = (f: number): { x: number; y: number } => {
-    if (f === 0) return { x, y: cy };
-    if (f === 1) return { x: cx, y };
-    if (f === 2) return { x: x + CELL, y: cy };
-    return { x: cx, y: y + CELL };
-  };
-
-  const a = facePt(inFace);
-  const b = facePt(outFace);
-
-  // Opposite faces → straight pass-through
-  if ((inFace === 0 && outFace === 2) || (inFace === 1 && outFace === 3)) {
-    return `M${a.x},${a.y} L${b.x},${b.y}`;
-  }
-
-  // 90° corner: control point is the corner shared by both faces
-  const corners: Record<string, { x: number; y: number }> = {
-    '0-1': { x, y },
-    '1-2': { x: x + CELL, y },
-    '2-3': { x: x + CELL, y: y + CELL },
-    '0-3': { x, y: y + CELL },
-  };
-  const cp = corners[`${inFace}-${outFace}`];
-  if (!cp) return null;
-  return `M${a.x},${a.y} Q${cp.x},${cp.y} ${b.x},${b.y}`;
-}
-
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
@@ -221,7 +184,7 @@ export default function OrapaMine() {
             // transparent tile (arcs, no colour) → light grey; else dark brown.
             let fillColor = revealed && hasGem ? gemColor : '#3d2410';
             if (revealed && tileData && !hasGem) {
-              fillColor = tileData.tile.arcs.length === 0 ? '#000000' : '#eeeeee';
+              fillColor = tileData.tile.reflect.length === 0 ? '#000000' : '#eeeeee';
             }
 
             // Opacity from tile data (transparent gem is 50%); only when revealed.
@@ -245,22 +208,6 @@ export default function OrapaMine() {
                   filter={revealed && hasGem ? 'url(#mine-glow)' : undefined}
                 />
 
-                {/* Arc paths (visible in Show Answer mode) */}
-                {showAll && tileData && Object.entries(tileData.arc_dict).map(([inFaceStr, outFace]) => {
-                  const inFace = Number(inFaceStr);
-                  const path = makeCellArcPath(inFace, outFace, x, y);
-                  if (!path) return null;
-                  return (
-                    <path
-                      key={`arc-${inFace}-${outFace}`}
-                      d={path}
-                      stroke="rgba(255,255,255,0.85)"
-                      strokeWidth={2.5}
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  );
-                })}
 
                 {/* X cross for revealed empty cells (no gem piece placed) */}
                 {revealed && !hasGem && !tileData && (

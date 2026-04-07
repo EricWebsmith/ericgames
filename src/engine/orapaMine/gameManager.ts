@@ -1,5 +1,5 @@
-import { type Board, type Color, type LightResult, type Puzzle, TileInBoard, type ParentTile } from './models';
 import { borderNodeCoordinates, getBoard, getTiles } from './data';
+import { TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -53,12 +53,12 @@ export function traverse(
 
             // Colored cell with no arcs: beam passes through unaffected (picks up color only).
             // Only enter this block when the tile has arcs that can redirect the beam.
-            if (tileInBoard.tile.arcs.length > 0) {
+            if (tileInBoard.tile.reflect.length > 0) {
                 const entryFace = (outDir + 2) % 4;
 
-                if (entryFace in tileInBoard.arc_dict) {
+                if (entryFace in tileInBoard.rotated_reflect) {
                     // Arc matched: redirect to the exit face (which equals the new travel direction).
-                    outDir = tileInBoard.arc_dict[entryFace];
+                    outDir = tileInBoard.rotated_reflect[entryFace];
                 } else {
                     // No matching arc: reflect straight back.
                     outDir = (outDir + 2) % 4;
