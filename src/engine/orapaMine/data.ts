@@ -24,7 +24,8 @@ export const borderNodeCoordinates: string[] = [
 
 
 export function getParentTiles(): ParentTile[] {
-    const parentTiles: ParentTile[] = [
+    const allTiles = getBasicTiles();
+    const parentDefs = [
         { id: 0, name: 'Red', optional: false },
         { id: 1, name: 'Flipped Red', optional: false },
         { id: 2, name: 'Blue', optional: false },
@@ -35,7 +36,7 @@ export function getParentTiles(): ParentTile[] {
         { id: 7, name: 'Black', optional: true },
         { id: 8, name: 'Light Blue', optional: false },
     ];
-    return parentTiles;
+    return parentDefs.map(p => ({ ...p, subTiles: allTiles.filter(t => t.parent_id === p.id) }));
 }
 
 

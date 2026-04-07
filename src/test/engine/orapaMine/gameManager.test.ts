@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Board, Color, TileInBoard } from '../../../engine/arclight/models';
-import { getBasicTiles, getBoard } from '../../../engine/orapaMine/data';
+import { getBasicTiles, getBoard, getParentTiles } from '../../../engine/orapaMine/data';
 import { setup, traverse, putTile } from '../../../engine/orapaMine/gameManager';
 
 describe('traverse (yellow tile at D5)', () => {
@@ -72,9 +72,8 @@ describe('traverse (black tile at D5)', () => {
   let tiles: Record<string, TileInBoard>;
 
   beforeEach(() => {
-    const basicTiles = getBasicTiles();
     board = getBoard();
-    tiles = putTile(basicTiles, 7, 'D5', 0);
+    tiles = putTile(getParentTiles()[7], 'D5', 0);
   });
 
   it.each([

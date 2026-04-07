@@ -27,6 +27,7 @@ export interface ParentTile {
     id: number;
     name: string;
     optional: boolean;
+    subTiles: Tile[];
 }
 
 export interface Tile {
