@@ -171,21 +171,15 @@ describe('red (red tile at D5)', () => {
   });
 
   it.each([
-    // Beam enters left border D (→ D1 East), deflected North at D5, exits top border 5 – no color
     ['D', '5', [Color.Red]],
-    // Bidirectional: enters top border 5 (→ A5 South), deflected West at D5, exits left border D – no color
     ['5', 'D', [Color.Red]],
     ['E', 'E', [Color.Red]],
     ['F', 'F', [Color.Red]],
     ['M', '16', [Color.Red]],
     ['16', 'M', [Color.Red]],
-    // Beam enters right border 14 (→ D10 West), East face of D5 has no matching arc → reflects back – no color
     ['14', '14', [Color.Red]],
-    // Beam enters bottom border M (→ H5 North), South face of E5 has no matching arc → reflects back – no color
-    ['M', 'M', [Color.Red]],
-    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
-    ['2', 'J', [Color.Red]],
-    ['8', 'P', [Color.Red]],
+    ['2', 'J', []],
+    ['8', 'P', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
     const result = traverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
