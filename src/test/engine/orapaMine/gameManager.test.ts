@@ -22,6 +22,8 @@ describe('traverse (yellow tile at D5)', () => {
     tiles = {};
     tiles['D5'] = new TileInBoard({ tile: basicTiles[12], coordinate: 'D5', rotate_angle: 0 });
     tiles['D5'].resolve_rotate();
+    tiles['D6'] = new TileInBoard({ tile: basicTiles[13], coordinate: 'D6', rotate_angle: 0 });
+    tiles['D6'].resolve_rotate();
     tiles['E6'] = new TileInBoard({ tile: basicTiles[14], coordinate: 'E6', rotate_angle: 0 });
     tiles['E6'].resolve_rotate();
   });
