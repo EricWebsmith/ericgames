@@ -61,3 +61,104 @@ describe('setup', () => {
     expect(() => setup()).not.toThrow();
   });
 });
+
+describe('traverse (black tile at D5)', () => {
+  // Tile 27 (black, absorbLight: true, arcs []) is placed at D5.
+  // Any beam that reaches D5 is absorbed entirely: end_label '' and colors [].
+  // Beams on other columns pass through unaffected.
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    const basicTiles = getBasicTiles();
+    board = getBoard();
+    tiles = {};
+    tiles['D5'] = new TileInBoard({ tile: basicTiles[27], coordinate: 'D5', rotate_angle: 0 });
+    tiles['D5'].resolve_rotate();
+  });
+
+  it.each([
+    // Beam enters from top border 5 (→ A5 South), absorbed at D5
+    ['5', '', []],
+    // Beam enters left border D (→ D1 East), absorbed at D5
+    ['D', '', []],
+    // Beam enters right border 14 (→ D10 West), absorbed at D5
+    ['14', '', []],
+    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['2', 'J', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
+
+describe('traverse (white tile at D5)', () => {
+  // Tile 21 (white, arcs [[0,1]]) is placed at D5.
+  // arc_dict (rotate_angle = 0): { 0: 1, 1: 0 }
+  //   entry face West (0) → exit North (1)  … redirects beams from the left
+  //   entry face North (1) → exit West  (0)  … redirects beams from the top
+  //   entry face East  (2) – no match → reflects back East
+  //   entry face South (3) – no match → reflects back South
+  // The white color is always collected when the beam visits D5.
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    const basicTiles = getBasicTiles();
+    board = getBoard();
+    tiles = {};
+    tiles['D5'] = new TileInBoard({ tile: basicTiles[21], coordinate: 'D5', rotate_angle: 0 });
+    tiles['D5'].resolve_rotate();
+  });
+
+  it.each([
+    // Beam enters left border D (→ D1 East), deflected North at D5, exits top border 5
+    ['D', '5', [Color.White]],
+    // Bidirectional: enters top border 5 (→ A5 South), deflected West at D5, exits left border D
+    ['5', 'D', [Color.White]],
+    // Beam enters right border 14 (→ D10 West), East face has no matching arc → reflects back
+    ['14', '14', [Color.White]],
+    // Beam enters bottom border M (→ H5 North), South face has no matching arc → reflects back
+    ['M', 'M', [Color.White]],
+    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['2', 'J', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
+
+describe('traverse (transparent tile at D5)', () => {
+  // Tile 25 (transparent, arcs [[0,1]], colors []) is placed at D5.
+  // arc_dict (rotate_angle = 0): { 0: 1, 1: 0 } – identical arc shape to the white tile above.
+  // Because the tile has no colors, the beam is redirected but no color is collected.
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    const basicTiles = getBasicTiles();
+    board = getBoard();
+    tiles = {};
+    tiles['D5'] = new TileInBoard({ tile: basicTiles[25], coordinate: 'D5', rotate_angle: 0 });
+    tiles['D5'].resolve_rotate();
+  });
+
+  it.each([
+    // Beam enters left border D (→ D1 East), deflected North at D5, exits top border 5 – no color
+    ['D', '5', []],
+    // Bidirectional: enters top border 5 (→ A5 South), deflected West at D5, exits left border D – no color
+    ['5', 'D', []],
+    // Beam enters right border 14 (→ D10 West), East face has no matching arc → reflects back – no color
+    ['14', '14', []],
+    // Beam enters bottom border M (→ H5 North), South face has no matching arc → reflects back – no color
+    ['M', 'M', []],
+    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['2', 'J', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
