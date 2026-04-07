@@ -1,6 +1,6 @@
 import { type Board, type Color, type LightResult, type Puzzle, TileInBoard } from '../arclight/models';
 import { type ParentTile } from './models';
-import { borderNodeCoordinates, getBoard, getParentTiles } from './data';
+import { borderNodeCoordinates, getBoard, getTiles } from './data';
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -183,10 +183,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
 /** Create a random Orapa Mine puzzle and pre-compute all wave results. */
 export function setup(): Puzzle {
     const board = getBoard();
-    // Red (id 0) and Flipped Red (id 1) are the same physical piece in two
-    // orientations. Randomly keep exactly one so the board has a single Red gem.
-    const dropId = Math.random() < 0.5 ? 0 : 1;
-    const tiles = getParentTiles().filter(t => t.id !== dropId);
+    const tiles = getTiles();
     const tilesInBoard = putTiles(board, tiles);
 
     // Compute wave results for every border position.

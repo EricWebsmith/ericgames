@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Board, Color, TileInBoard } from '../../../engine/arclight/models';
-import { getBoard, getParentTiles } from '../../../engine/orapaMine/data';
+import { getBoard, getTiles } from '../../../engine/orapaMine/data';
 import { setup, traverse, putTile } from '../../../engine/orapaMine/gameManager';
 
 describe('traverse (yellow tile at D5)', () => {
@@ -17,7 +17,7 @@ describe('traverse (yellow tile at D5)', () => {
 
   beforeEach(() => {
     board = getBoard();
-    tiles = putTile(getParentTiles()[3], 'D5', 0);
+    tiles = putTile(getTiles()[2], 'D5', 0);
   });
 
   it.each([
@@ -65,7 +65,7 @@ describe('traverse (black tile at D5)', () => {
 
   beforeEach(() => {
     board = getBoard();
-    tiles = putTile(getParentTiles()[7], 'D5', 0);
+    tiles = putTile(getTiles()[6], 'D5', 0);
   });
 
   it.each([
@@ -99,7 +99,7 @@ describe('traverse (white tile at D5)', () => {
 
   beforeEach(() => {
     board = getBoard();
-    tiles = putTile(getParentTiles()[5], 'D5', 0);
+    tiles = putTile(getTiles()[4], 'D5', 0);
   });
 
   it.each([
@@ -134,7 +134,7 @@ describe('traverse (transparent tile at D5)', () => {
 
   beforeEach(() => {
     board = getBoard();
-    tiles = putTile(getParentTiles()[6], 'D5', 0);
+    tiles = putTile(getTiles()[5], 'D5', 0);
   });
 
   it.each([
