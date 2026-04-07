@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { Color, TileInBoard } from '../../../engine/arclight/models';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { type Board, Color, TileInBoard } from '../../../engine/arclight/models';
 import { getBasicTiles, getBoard } from '../../../engine/orapaMine/data';
 import { setup, traverse } from '../../../engine/orapaMine/gameManager';
 
@@ -13,6 +13,19 @@ describe('traverse (yellow tile at D5)', () => {
   //   entry face East  (2) → exit North (1)   … redirects beams from the right
   //   entry face West  (0) – no match  → reflect back West
   //   entry face South (3) – no match  → reflect back South
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    const basicTiles = getBasicTiles();
+    board = getBoard();
+    tiles = {};
+    tiles['D5'] = new TileInBoard({ tile: basicTiles[12], coordinate: 'D5', rotate_angle: 0 });
+    tiles['D5'].resolve_rotate();
+    tiles['E6'] = new TileInBoard({ tile: basicTiles[14], coordinate: 'E6', rotate_angle: 0 });
+    tiles['E6'].resolve_rotate();
+  });
+
   it.each([
     // Beam enters from top border 5 (→ A5 South), deflected East at D5, exits right border 14
     ['5', '14', [Color.Yellow]],
@@ -35,13 +48,6 @@ describe('traverse (yellow tile at D5)', () => {
     // Column 7 is empty – straight pass-through from top border 7 to bottom border O
     ['7', 'O', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const basicTiles = getBasicTiles();
-    const board = getBoard();
-    const tiles: Record<string, TileInBoard> = {};
-    tiles['D5'] = new TileInBoard({ tile: basicTiles[12], coordinate: 'D5', rotate_angle: 0 });
-    tiles['D5'].resolve_rotate();
-    tiles['E6'] = new TileInBoard({ tile: basicTiles[14], coordinate: 'E6', rotate_angle: 0 });
-    tiles['E6'].resolve_rotate();
     const result = traverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
