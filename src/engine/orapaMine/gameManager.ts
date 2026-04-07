@@ -47,19 +47,22 @@ export function traverse(
         if (currentCoordinate in tilesInBoard) {
             const tileInBoard = tilesInBoard[currentCoordinate];
 
-            // Black gem (arcs: []) – absorb the wave.
-            if (tileInBoard.tile.arcs.length === 0) {
+            // Black gem (no arcs AND no colors) – absorb the wave.
+            if (tileInBoard.tile.arcs.length === 0 && tileInBoard.tile.colors.length === 0) {
                 return { end_label: '', colors: [] };
             }
 
-            const entryFace = (outDir + 2) % 4;
+            // Colored cell with no arcs – beam passes through unaffected (picks up color only).
+            if (tileInBoard.tile.arcs.length > 0) {
+                const entryFace = (outDir + 2) % 4;
 
-            if (entryFace in tileInBoard.arc_dict) {
-                // Arc matched: redirect to the exit face (which equals the new travel direction).
-                outDir = tileInBoard.arc_dict[entryFace];
-            } else {
-                // No matching arc: reflect straight back.
-                outDir = (outDir + 2) % 4;
+                if (entryFace in tileInBoard.arc_dict) {
+                    // Arc matched: redirect to the exit face (which equals the new travel direction).
+                    outDir = tileInBoard.arc_dict[entryFace];
+                } else {
+                    // No matching arc: reflect straight back.
+                    outDir = (outDir + 2) % 4;
+                }
             }
 
             for (const color of tileInBoard.tile.colors) {
