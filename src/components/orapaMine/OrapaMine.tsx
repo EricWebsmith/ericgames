@@ -5,22 +5,22 @@ import type { Color, Puzzle } from '../../engine/orapaMine/models';
 import BorderCircle from '../arclight/BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
-const COLS   = 10;
-const ROWS   = 8;
-const CELL   = 46;   // cell size in px
-const BD_R   = 12;   // border circle radius
+const COLS = 10;
+const ROWS = 8;
+const CELL = 46;   // cell size in px
+const BD_R = 12;   // border circle radius
 const BD_OFF = 28;   // distance from grid edge to border circle centre
-const GX     = 64;   // x of left edge of grid
-const GY     = 64;   // y of top edge of grid
-const SVG_W  = 620;
-const SVG_H  = 510;
+const GX = 64;   // x of left edge of grid
+const GY = 64;   // y of top edge of grid
+const SVG_W = 620;
+const SVG_H = 510;
 
 // ─── Gem colors ────────────────────────────────────────────────────
 const GEM_FILL: Record<string, string> = {
-  red:    '#ff5555',
-  blue:   '#5577ff',
+  red: '#ff5555',
+  blue: '#5577ff',
   yellow: '#ffee00',
-  white:  '#dddddd',
+  white: '#dddddd',
 };
 
 const DEFAULT_GEM_COLOR = '#aaaaaa';
@@ -29,9 +29,9 @@ function getGemColor(colors: string[]): string {
   if (colors.length === 0) return '';
   if (colors.length === 1) return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
   const s = new Set(colors);
-  if (s.has('blue')   && s.has('white'))  return '#66ccee';  // light blue
-  if (s.has('red')    && s.has('blue'))   return '#cc55cc';  // purple
-  if (s.has('red')    && s.has('yellow')) return '#ff8833';  // orange
+  if (s.has('blue') && s.has('white')) return '#66ccee';  // light blue
+  if (s.has('red') && s.has('blue')) return '#cc55cc';  // purple
+  if (s.has('red') && s.has('yellow')) return '#ff8833';  // orange
   return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 }
 
@@ -43,11 +43,11 @@ const ALL_BORDERS: BorderInfo[] = [
   // Numbers 1–10: top edge, col 1–10
   ...Array.from({ length: 10 }, (_, i) => ({ label: String(i + 1), side: 'top' as Side, idx: i + 1 })),
   // Numbers 11–18: left edge, row 1–8
-  ...Array.from({ length: 8 },  (_, i) => ({ label: String(11 + i), side: 'left' as Side, idx: i + 1 })),
+  ...Array.from({ length: 8 }, (_, i) => ({ label: String(11 + i), side: 'left' as Side, idx: i + 1 })),
   // Letters A–J: bottom edge, col 1–10
   ...'ABCDEFGHIJ'.split('').map((c, i) => ({ label: c, side: 'bottom' as Side, idx: i + 1 })),
   // Letters K–R: right edge, row 1–8
-  ...'KLMNOPQR'.split('').map((c, i)   => ({ label: c, side: 'right' as Side,  idx: i + 1 })),
+  ...'KLMNOPQR'.split('').map((c, i) => ({ label: c, side: 'right' as Side, idx: i + 1 })),
 ];
 
 // ─── Pixel helpers ─────────────────────────────────────────────────
@@ -55,21 +55,21 @@ function cellTL(col: number, row: number) {
   return { x: GX + (col - 1) * CELL, y: GY + (row - 1) * CELL };
 }
 
-function borderPx(b: BorderInfo): { x: number; y: number } {
+function borderPx(b: BorderInfo): { x: number; y: number; } {
   switch (b.side) {
-    case 'top':    return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY - BD_OFF };
-    case 'left':   return { x: GX - BD_OFF, y: GY + (b.idx - 1) * CELL + CELL / 2 };
+    case 'top': return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY - BD_OFF };
+    case 'left': return { x: GX - BD_OFF, y: GY + (b.idx - 1) * CELL + CELL / 2 };
     case 'bottom': return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF };
-    case 'right':  return { x: GX + COLS * CELL + BD_OFF, y: GY + (b.idx - 1) * CELL + CELL / 2 };
+    case 'right': return { x: GX + COLS * CELL + BD_OFF, y: GY + (b.idx - 1) * CELL + CELL / 2 };
   }
 }
 
-function notePx(b: BorderInfo): { x: number; y: number } {
+function notePx(b: BorderInfo): { x: number; y: number; } {
   switch (b.side) {
-    case 'top':    return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
-    case 'left':   return { x: GX - BD_OFF - BD_R - 8, y: GY + (b.idx - 1) * CELL + CELL / 2 };
+    case 'top': return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
+    case 'left': return { x: GX - BD_OFF - BD_R - 8, y: GY + (b.idx - 1) * CELL + CELL / 2 };
     case 'bottom': return { x: GX + (b.idx - 1) * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF + BD_R + 8 };
-    case 'right':  return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + (b.idx - 1) * CELL + CELL / 2 };
+    case 'right': return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + (b.idx - 1) * CELL + CELL / 2 };
   }
 }
 
@@ -83,11 +83,11 @@ function makeCellArcPath(inFace: number, outFace: number, x: number, y: number):
   const hs = CELL / 2;
   const cx = x + hs, cy = y + hs;
 
-  const facePt = (f: number): { x: number; y: number } => {
-    if (f === 0) return { x,          y: cy };
-    if (f === 1) return { x: cx,      y };
+  const facePt = (f: number): { x: number; y: number; } => {
+    if (f === 0) return { x, y: cy };
+    if (f === 1) return { x: cx, y };
     if (f === 2) return { x: x + CELL, y: cy };
-    return              { x: cx,      y: y + CELL };
+    return { x: cx, y: y + CELL };
   };
 
   const a = facePt(inFace);
@@ -99,11 +99,11 @@ function makeCellArcPath(inFace: number, outFace: number, x: number, y: number):
   }
 
   // 90° corner: control point is the corner shared by both faces
-  const corners: Record<string, { x: number; y: number }> = {
-    '0-1': { x,          y },           // NW corner
+  const corners: Record<string, { x: number; y: number; }> = {
+    '0-1': { x, y },           // NW corner
     '1-2': { x: x + CELL, y },          // NE corner
     '2-3': { x: x + CELL, y: y + CELL },// SE corner
-    '0-3': { x,          y: y + CELL }, // SW corner
+    '0-3': { x, y: y + CELL }, // SW corner
   };
   const cp = corners[`${inFace}-${outFace}`];
   if (!cp) return null;
@@ -113,9 +113,9 @@ function makeCellArcPath(inFace: number, outFace: number, x: number, y: number):
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
-  const [puzzle,         setPuzzle]         = useState<Puzzle>(() => setup());
-  const [revealedCells,  setRevealedCells]  = useState<Set<string>>(new Set());
-  const [showAll,        setShowAll]        = useState(false);
+  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup());
+  const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
+  const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
@@ -200,9 +200,9 @@ export default function OrapaMine() {
             const label = `c${col}r${row}`;
             const { x, y } = cellTL(col, row);
             const cx = x + CELL / 2, cy = y + CELL / 2;
-            const colors   = sightResults[label] ?? [];
+            const colors = sightResults[label] ?? [];
             const revealed = showAll || revealedCells.has(label);
-            const hasGem   = colors.length > 0;
+            const hasGem = colors.length > 0;
             const gemColor = hasGem ? getGemColor(colors) : '';
             const tileData = tileByCoord[label];
 
@@ -235,7 +235,7 @@ export default function OrapaMine() {
                 {/* Arc paths (show answer) */}
                 {showAll && tileData && Object.entries(tileData.arc_dict).map(([inFaceStr, outFace]) => {
                   const inFace = Number(inFaceStr);
-                  const path   = makeCellArcPath(inFace, outFace, x, y);
+                  const path = makeCellArcPath(inFace, outFace, x, y);
                   if (!path) return null;
                   return (
                     <path
@@ -279,8 +279,8 @@ export default function OrapaMine() {
           const bp = borderPx(b);
           const np = notePx(b);
           const isEntry = clickedBorders.has(b.label);
-          const isExit  = exitHighlights.has(b.label);
-          const result  = lightResults[b.label];
+          const isExit = exitHighlights.has(b.label);
+          const result = lightResults[b.label];
           const exitLbl = result?.end_label ?? '';
 
           const circleColors: Color[] = isEntry
