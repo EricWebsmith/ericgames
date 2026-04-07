@@ -34,6 +34,7 @@ export interface Tile {
     colors: Color[];
     opacity: number; // 0 to 100, for rendering purposes
     arcs: Arc[];
+    absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
     parent_id: number; // for generator use, to indicate tiles that belong to the same cross space
     // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.

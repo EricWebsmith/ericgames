@@ -47,8 +47,8 @@ export function traverse(
         if (currentCoordinate in tilesInBoard) {
             const tileInBoard = tilesInBoard[currentCoordinate];
 
-            // Black gem (no arcs AND no colors) – absorb the wave.
-            if (tileInBoard.tile.arcs.length === 0 && tileInBoard.tile.colors.length === 0) {
+            // Black gem – absorb the wave entirely.
+            if (tileInBoard.tile.absorbLight) {
                 return { end_label: '', colors: [] };
             }
 
