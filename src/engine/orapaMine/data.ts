@@ -28,15 +28,15 @@ export function getTiles(): ParentTile[] {
     // Red tile – 1×3 vertical strip
     const redTile: ParentTile = Math.random() < 0.5 ? {
         name: 'Red', optional: false, subTiles: [
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: false },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, arcs: [[2, 3]], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], absorbLight: false },
         ]
     } : {
         name: 'Flipped Red', optional: false, subTiles: [
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: false },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, arcs: [[0, 3]], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false },
         ]
     };
 
@@ -46,60 +46,60 @@ export function getTiles(): ParentTile[] {
         // Blue tile – irregular 6-cell shape
         {
             name: 'Blue', optional: false, subTiles: [
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: -1 }, arcs: [], absorbLight: false },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: -1 }, arcs: [], absorbLight: false },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: -1, 1: -1 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: -1 }, reflect: [], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: -1 }, reflect: [], absorbLight: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 2, 1: -1 }, reflect: [[1, 2]], absorbLight: false },
             ]
         },
         // Yellow tile – 3-cell L-shape
         {
             name: 'Yellow', optional: false, subTiles: [
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, arcs: [], absorbLight: false },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: -1 }, reflect: [[1, 2]], absorbLight: false },
             ]
         },
         // White Big tile – same 6-cell shape as Blue but white
         {
             name: 'White Big', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: -1, 1: -1 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: -1 }, arcs: [], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: -1 }, arcs: [], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: -1 }, arcs: [[1, 2]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: -1, 1: -1 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: -1 }, reflect: [], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: -1 }, reflect: [], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: -1 }, reflect: [[1, 2]], absorbLight: false },
             ]
         },
         // White Small tile – 2×2 square
         {
             name: 'White Small', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, arcs: [[1, 2]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: -1 }, arcs: [[0, 3]], absorbLight: false },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: -1 }, arcs: [[2, 3]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: -1 }, reflect: [[0, 3]], absorbLight: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: -1 }, reflect: [[2, 3]], absorbLight: false },
             ]
         },
         // Transparent tile – 1×2 vertical strip, 50% opacity
         {
             name: 'Transparent', optional: true, subTiles: [
-                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
-                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 1 }, arcs: [[1, 2]], absorbLight: false },
+                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 2]], absorbLight: false },
             ]
         },
         // Black tile – 1×2 vertical strip, absorbs light
         {
             name: 'Black', optional: true, subTiles: [
-                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [], absorbLight: true },
-                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 1 }, arcs: [], absorbLight: true },
+                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true },
+                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: true },
             ]
         },
         // Light Blue tile – single cell
         {
             name: 'Light Blue', optional: false, subTiles: [
-                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, arcs: [[0, 1]], absorbLight: false },
+                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
             ]
         },
     ];

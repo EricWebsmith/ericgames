@@ -16,8 +16,8 @@ export const LightOrSight = {
 
 export type LightOrSight = typeof LightOrSight[keyof typeof LightOrSight];
 
-// tuple[int, int] in Python is [number, number] in TS
-export type Arc = [number, number];
+// For example [0, 1] means the tile reflects light coming from west to north.
+export type Reflect = [number, number];
 
 // --- Board Models ---
 
@@ -32,7 +32,7 @@ export interface ParentTile {
 export interface Tile {
     colors: Color[];
     opacity: number; // 0 to 100, for rendering purposes
-    arcs: Arc[];
+    reflect: Reflect[];
     // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate: Record<number, number>;
@@ -42,21 +42,21 @@ export interface Tile {
 export interface ITileInBoard {
     tile: Tile;
     coordinate: string;
-    arc_dict: Record<number, number>;
-    rotate_angle: number; // 0 to 5
+    rotated_reflect: Record<number, number>;
+    rotate_angle: number; // 0 to 2
 }
 
 export class TileInBoard implements ITileInBoard {
     tile: Tile;
     coordinate: string;
-    arc_dict: Record<number, number> = {};
+    rotated_reflect: Record<number, number> = {};
     rotate_angle: number;
 
     constructor(data: Partial<ITileInBoard> & { tile: Tile; coordinate: string; }) {
         this.tile = data.tile;
         this.coordinate = data.coordinate;
         this.rotate_angle = data.rotate_angle ?? 0;
-        this.arc_dict = data.arc_dict ?? {};
+        this.rotated_reflect = data.rotated_reflect ?? {};
     }
 
     /**
@@ -65,14 +65,14 @@ export class TileInBoard implements ITileInBoard {
      */
     resolve_rotate(): this {
         // Reset arc_dict before recalculating
-        this.arc_dict = {};
+        this.rotated_reflect = {};
 
-        for (const [in_dir, out_dir] of this.tile.arcs) {
-            const a = (in_dir + this.rotate_angle) % 6;
-            const b = (out_dir + this.rotate_angle) % 6;
+        for (const [in_dir, out_dir] of this.tile.reflect) {
+            const a = (in_dir + this.rotate_angle) % 4;
+            const b = (out_dir + this.rotate_angle) % 4;
 
-            this.arc_dict[a] = b;
-            this.arc_dict[b] = a;
+            this.rotated_reflect[a] = b;
+            this.rotated_reflect[b] = a;
         }
 
         return this;
