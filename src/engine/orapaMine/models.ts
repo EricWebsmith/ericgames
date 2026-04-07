@@ -111,6 +111,8 @@ export interface Node {
 }
 
 export interface Board {
+    rows: number;
+    cols: number;
     spaces: Record<string, Node>;
 }
 

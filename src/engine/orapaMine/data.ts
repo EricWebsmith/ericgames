@@ -312,8 +312,8 @@ export function getBoard(): Board {
             // Connect to orthogonal neighbours (if they exist)
             if (col > 0) nodes[label].edges[0] = `${lebalLetters[row]}${col}`; // West
             if (row > 0) nodes[label].edges[1] = `${lebalLetters[row - 1]}${col + 1}`; // North
-            if (col < colMax - 1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
-            if (row < rowMax - 1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
+            if (col < colMax-1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
+            if (row < rowMax-1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
         }
     }
 
@@ -335,14 +335,14 @@ export function getBoard(): Board {
     const bottomLetters = 'IJKLMNOPQR'.split('');
     for (let col = 0; col < colMax; col++) {
         addBorderEdge(String(col + 1), 3, `A${col + 1}`); // Top
-        addBorderEdge(bottomLetters[col], 3, `H${col + 1}`); // Bottom
+        addBorderEdge(bottomLetters[col], 1, `H${col + 1}`); // Bottom
     }
 
     // Add left and right nodes
     for (let row = 0; row < rowMax; row++) {
         addBorderEdge(lebalLetters[row], 2, `${lebalLetters[row]}1`); // Left
-        addBorderEdge(String(10 + row + 1), 2, `${lebalLetters[row]}10`); // Right
+        addBorderEdge(String(10 + row + 1), 0, `${lebalLetters[row]}10`); // Right
     }
 
-    return { spaces: nodes };
+    return { spaces: nodes, rows: rowMax, cols: colMax };
 }

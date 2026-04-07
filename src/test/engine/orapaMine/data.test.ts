@@ -1,0 +1,27 @@
+
+import { getBoard } from '../../../engine/orapaMine/data';
+import type { Board } from '../../../engine/orapaMine/models';
+
+describe('getBoard', () => {
+    it('should return a board with spaces as an empty object', () => {
+        const board: Board = getBoard();
+        expect(board).toHaveProperty('spaces');
+        expect(Object.keys(board.spaces).length).toBe(116);
+        for (const label in board.spaces) {
+            const node = board.spaces[label];
+            console.log(node.label);
+            console.log(node.edges);
+            if (node.is_border) {
+                if (["A1", "A10", "H1", "H10"].includes(node.label)) {
+                    console.log(node.edges);
+                    expect(Object.keys(node.edges).length).toBe(2);
+                } else {
+                    expect(Object.keys(node.edges).length).toBe(1);
+                }
+            } else {
+                
+                expect(Object.keys(node.edges).length).toBe(4);
+            }
+        }
+    });
+});

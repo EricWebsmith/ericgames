@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { getBasicTiles, getBoard } from '../../engine/arclight/data';
-import { setup, traverse } from '../../engine/arclight/gameManager';
-import { TileInBoard } from '../../engine/arclight/models';
+import { getBasicTiles, getBoard } from '../../../engine/arclight/data';
+import { setup, traverse } from '../../../engine/arclight/gameManager';
+import { TileInBoard } from '../../../engine/arclight/models';
 
 describe('traverse (empty board)', () => {
   it.each([
