@@ -24,18 +24,15 @@ export type Arc = [number, number];
 
 /** This interface represents a parent tile, which can have multiple child tiles. */
 export interface ParentTile {
-    id: number;
     name: string;
     optional: boolean;
     subTiles: Tile[];
 }
 
 export interface Tile {
-    id: number;
     colors: Color[];
     opacity: number; // 0 to 100, for rendering purposes
     arcs: Arc[];
-    parent_id: number; // for generator use, to indicate tiles that belong to the same cross space
     // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate: Record<number, number>;

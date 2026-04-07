@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type Board, Color, TileInBoard } from '../../../engine/arclight/models';
+import { type Board, Color, TileInBoard } from '../../../engine/orapaMine/models';
 import { getBoard, getTiles } from '../../../engine/orapaMine/data';
 import { setup, traverse, putTile } from '../../../engine/orapaMine/gameManager';
 
