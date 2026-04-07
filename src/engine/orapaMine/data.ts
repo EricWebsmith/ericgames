@@ -99,7 +99,7 @@ export function getTiles(): ParentTile[] {
         // Light Blue tile – single cell
         {
             name: 'Light Blue', optional: false, subTiles: [
-                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
+                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false },
             ]
         },
     ];
