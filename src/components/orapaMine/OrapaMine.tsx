@@ -84,6 +84,38 @@ function notePx(b: BorderInfo): { x: number; y: number } {
   }
 }
 
+// ─── Triangle tile helper ──────────────────────────────────────────
+// Returns SVG polygon points for the triangle that results from a reflect arc.
+// arc [a, b] means faces a and b are "open" (no solid wall) – their shared
+// corner is cut away, leaving a 45-45-90 triangle.
+//
+//   0=West  1=North  2=East  3=South
+//   Shared corners: 0∩1=NW, 1∩2=NE, 2∩3=SE, 0∩3=SW
+//
+// We use 1-px inset corners to match the background <rect> geometry.
+function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]): string | null {
+  const [a, b] = arc;
+  const key = [Math.min(a, b), Math.max(a, b)].join(',');
+
+  const x0 = cellX + 1,      y0 = cellY + 1;        // NW inset
+  const x1 = cellX + CELL - 1, y1 = cellY + CELL - 1; // SE inset
+
+  const NW = `${x0},${y0}`;
+  const NE = `${x1},${y0}`;
+  const SE = `${x1},${y1}`;
+  const SW = `${x0},${y1}`;
+
+  switch (key) {
+    // '/' diagonal (SW←→NE): excludes the corner not on the "/" line
+    case '0,1': return `${NE} ${SE} ${SW}`; // open corner = NW, solid: right+bottom+/ hyp
+    case '2,3': return `${NW} ${NE} ${SW}`; // open corner = SE, solid: top+left+/ hyp
+    // '\' diagonal (NW←→SE): excludes the corner not on the "\" line
+    case '1,2': return `${NW} ${SW} ${SE}`; // open corner = NE, solid: left+bottom+\ hyp
+    case '0,3': return `${NW} ${NE} ${SE}`; // open corner = SW, solid: top+right+\ hyp
+    default:    return null;
+  }
+}
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
@@ -180,15 +212,29 @@ export default function OrapaMine() {
             const gemColor = hasGem ? getGemColor(colors) : '';
             const tileData = tileByCoord[label];
 
-            // Fill: gem colour when revealed; black-hole tile → black;
-            // transparent tile (arcs, no colour) → light grey; else dark brown.
-            let fillColor = revealed && hasGem ? gemColor : '#3d2410';
-            if (revealed && tileData && !hasGem) {
-              fillColor = tileData.tile.reflect.length === 0 ? '#000000' : '#eeeeee';
+            // Triangle tiles: any tile whose reflect array is non-empty.
+            const reflectArcs = tileData?.tile.reflect ?? [];
+            const isTriangle = reflectArcs.length > 0;
+
+            // Tile fill colour (only relevant when revealed and a tile exists).
+            let tileFill = '';
+            if (revealed && tileData) {
+              if (hasGem) {
+                tileFill = gemColor;
+              } else {
+                tileFill = isTriangle ? '#eeeeee' : '#000000';
+              }
             }
 
             // Opacity from tile data (transparent gem is 50%); only when revealed.
             const fillOpacity = revealed && tileData ? tileData.tile.opacity / 100 : 1;
+
+            // SVG polygon points for triangle tiles.
+            // reflectArcs[0] is safe here: isTriangle guarantees length > 0,
+            // and Reflect is typed as [number, number].
+            const trianglePoints = revealed && isTriangle && reflectArcs[0]
+              ? getTrianglePoints(x, y, reflectArcs[0])
+              : null;
 
             return (
               <g
@@ -197,17 +243,38 @@ export default function OrapaMine() {
                 style={{ cursor: 'pointer' }}
                 aria-label={t('orapaMine.cellAriaLabel', { col, row })}
               >
+                {/* Background rect – always shown; provides the grid outline. */}
                 <rect
                   x={x + 1} y={y + 1}
                   width={CELL - 2} height={CELL - 2}
-                  fill={fillColor}
-                  fillOpacity={fillOpacity}
+                  fill="#3d2410"
                   stroke="#6a4420"
                   strokeWidth={1.5}
                   rx={2}
-                  filter={revealed && hasGem ? 'url(#mine-glow)' : undefined}
                 />
 
+                {/* Revealed tile drawn on top of the background. */}
+                {revealed && tileData && (
+                  isTriangle && trianglePoints ? (
+                    /* Triangle tile: polygon covers only the solid portion of the cell. */
+                    <polygon
+                      points={trianglePoints}
+                      fill={tileFill}
+                      fillOpacity={fillOpacity}
+                      filter={hasGem ? 'url(#mine-glow)' : undefined}
+                    />
+                  ) : (
+                    /* Non-triangle tile: full rectangle (colored gem or black hole). */
+                    <rect
+                      x={x + 1} y={y + 1}
+                      width={CELL - 2} height={CELL - 2}
+                      fill={tileFill}
+                      fillOpacity={fillOpacity}
+                      rx={2}
+                      filter={hasGem ? 'url(#mine-glow)' : undefined}
+                    />
+                  )
+                )}
 
                 {/* X cross for revealed empty cells (no gem piece placed) */}
                 {revealed && !hasGem && !tileData && (
