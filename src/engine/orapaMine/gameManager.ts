@@ -92,7 +92,7 @@ export function putTile(
     rotateAngle: number = 0,
 ): Record<string, TileInBoard> {
     const rowLetters = 'ABCDEFGH';
-    const m = anchorLabel.match(/^([A-H])(\d+)$/);
+    const m = anchorLabel.match(/^([A-H])(\d{1,2})$/);
     if (!m) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
     const anchorRow = rowLetters.indexOf(m[1]);
     const anchorCol = parseInt(m[2], 10);
@@ -143,7 +143,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             const anchorCoord = randomChoice(internalCoords);
             if (unavailableCoords.has(anchorCoord)) continue;
 
-            const m = anchorCoord.match(/^([A-H])(\d+)$/);
+            const m = anchorCoord.match(/^([A-H])(\d{1,2})$/);
             if (!m) continue;
             const anchorRow = rowLetters.indexOf(m[1]);
             const anchorCol = parseInt(m[2], 10);
