@@ -168,6 +168,43 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     return tilesInBoard;
 }
 
+/**
+ * Place all subtiles of a single piece (identified by parentId) at a specific
+ * anchor coordinate on the board.
+ *
+ * The anchor tile is the subtile whose relative coordinate is (0, 0).
+ * Every other subtile is placed at anchorCoord offset by its (col, row) delta.
+ *
+ * Coordinate format: `{Letter}{Number}` where A–H are rows 0–7 and 1–10 are
+ * columns (matching the labels produced by getBoard()).
+ */
+export function putTile(
+    tiles: Tile[],
+    parentId: number,
+    anchorCoord: string,
+    rotateAngle: number = 0,
+): Record<string, TileInBoard> {
+    const rowLetters = 'ABCDEFGH';
+    const m = anchorCoord.match(/^([A-H])(\d+)$/);
+    if (!m) throw new Error(`Invalid anchor coordinate: ${anchorCoord}`);
+    const anchorRow = rowLetters.indexOf(m[1]);
+    const anchorCol = parseInt(m[2], 10);
+
+    const group = tiles.filter(t => t.parent_id === parentId);
+    const result: Record<string, TileInBoard> = {};
+
+    for (const tile of group) {
+        const row = anchorRow + tile.coordinate[1];
+        const col = anchorCol + tile.coordinate[0];
+        const coord = `${rowLetters[row]}${col}`;
+        const tib = new TileInBoard({ tile, coordinate: coord, rotate_angle: rotateAngle });
+        tib.resolve_rotate();
+        result[coord] = tib;
+    }
+
+    return result;
+}
+
 /** Create a random Orapa Mine puzzle and pre-compute all wave results. */
 export function setup(): Puzzle {
     const board = getBoard();

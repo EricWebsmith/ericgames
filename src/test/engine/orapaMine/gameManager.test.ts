@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { type Board, Color, TileInBoard } from '../../../engine/arclight/models';
 import { getBasicTiles, getBoard } from '../../../engine/orapaMine/data';
-import { setup, traverse } from '../../../engine/orapaMine/gameManager';
+import { setup, traverse, putTile } from '../../../engine/orapaMine/gameManager';
 
 describe('traverse (yellow tile at D5)', () => {
   // Tile 12 (yellow, arcs [[1,2]]) is placed at D5 and tile 14 (yellow, arcs [[1,2]])
@@ -63,10 +63,10 @@ describe('setup', () => {
 });
 
 describe('traverse (black tile at D5)', () => {
-  // The black tile (parent 7) is a two-subtile piece:
+  // The black tile (parent 7) is a two-subtile piece placed via putTile:
   //   Tile 27 (absorbLight: true, coordinate {0:0, 1:0}) → anchor placed at D5.
-  //   Tile 28 (absorbLight: true, coordinate {0:0, 1:1}) → one row north  → C5.
-  // Any beam that reaches either D5 or C5 is absorbed entirely: end_label '' and colors [].
+  //   Tile 28 (absorbLight: true, coordinate {0:0, 1:1}) → row offset +1 → E5.
+  // Any beam that reaches either D5 or E5 is absorbed entirely: end_label '' and colors [].
   // Beams on other columns pass through unaffected.
   let board: Board;
   let tiles: Record<string, TileInBoard>;
@@ -74,24 +74,20 @@ describe('traverse (black tile at D5)', () => {
   beforeEach(() => {
     const basicTiles = getBasicTiles();
     board = getBoard();
-    tiles = {};
-    tiles['D5'] = new TileInBoard({ tile: basicTiles[27], coordinate: 'D5', rotate_angle: 0 });
-    tiles['D5'].resolve_rotate();
-    tiles['C5'] = new TileInBoard({ tile: basicTiles[28], coordinate: 'C5', rotate_angle: 0 });
-    tiles['C5'].resolve_rotate();
+    tiles = putTile(basicTiles, 7, 'D5', 0);
   });
 
   it.each([
-    // Beam enters from top border 5 (→ A5 South), absorbed at C5 (first subtile encountered)
+    // Beam enters from top border 5 (→ A5 South), absorbed at D5
     ['5', '', []],
     // Beam enters left border D (→ D1 East), absorbed at D5
     ['D', '', []],
     // Beam enters right border 14 (→ D10 West), absorbed at D5
     ['14', '', []],
-    // Beam enters left border C (→ C1 East), absorbed at C5
-    ['C', '', []],
-    // Beam enters right border 13 (→ C10 West), absorbed at C5
-    ['13', '', []],
+    // Beam enters left border E (→ E1 East), absorbed at E5
+    ['E', '', []],
+    // Beam enters right border 15 (→ E10 West), absorbed at E5
+    ['15', '', []],
     // Column 2 is empty – straight pass-through from top border 2 to bottom border J
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
