@@ -151,6 +151,80 @@ export function borderTouch(board: Board, tilesInBoard: Record<string, TileInBoa
 }
 
 /**
+ * Travel in a straight line from a border node (no reflections) and return the
+ * parentName of the first gem tile encountered, or null if no gem is found.
+ *
+ * A "gem tile" is any tile whose colors array is non-empty.
+ * Any occupied tile (including black and transparent tiles) blocks the line of
+ * sight – if the first occupied cell is not a gem, null is returned.
+ */
+export function firstSee(
+    board: Board,
+    tilesInBoard: Record<string, TileInBoard>,
+    startCoordinate: string,
+): string | null {
+    const startNode = board.spaces[startCoordinate];
+    const travelDir = Number(Object.keys(startNode.edges)[0]);
+    let currentCoordinate = startNode.edges[travelDir];
+
+    while (true) {
+        const currentNode = board.spaces[currentCoordinate];
+        if (currentNode.is_border) break;
+
+        if (currentCoordinate in tilesInBoard) {
+            const tileInBoard = tilesInBoard[currentCoordinate];
+            if (tileInBoard.tile.colors.length > 0) {
+                return tileInBoard.tile.parentName ?? null;
+            }
+            // Non-gem tile (black, transparent) blocks the line of sight.
+            return null;
+        }
+
+        currentCoordinate = currentNode.edges[travelDir];
+    }
+
+    return null;
+}
+
+/**
+ * Check whether all gem tiles in the combined board (tilesInBoard + newTilesInBoard)
+ * are visible from at least one border direction via a straight-line beam.
+ *
+ * Returns true if every gem's parentName appears among the first-seen gems from
+ * at least one border node, false if any gem is fully hidden.
+ */
+export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoard>, newTilesInBoard: Record<string, TileInBoard>): boolean {
+    const combinedTiles = { ...tilesInBoard, ...newTilesInBoard };
+
+    // Collect parentNames of all gem tiles in the combined board.
+    const allGemParentNames = new Set<string>();
+    for (const tib of Object.values(combinedTiles)) {
+        if (tib.tile.colors.length > 0 && tib.tile.parentName) {
+            allGemParentNames.add(tib.tile.parentName);
+        }
+    }
+
+    if (allGemParentNames.size === 0) return true;
+
+    // Find all gem parentNames visible from any border node.
+    const visibleParentNames = new Set<string>();
+    for (const borderCoord of borderNodeCoordinates) {
+        const parentName = firstSee(board, combinedTiles, borderCoord);
+        if (parentName !== null) {
+            visibleParentNames.add(parentName);
+        }
+    }
+
+    // Every gem must be visible from at least one direction.
+    for (const name of allGemParentNames) {
+        if (!visibleParentNames.has(name)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Place a set of gem pieces on the board.
  *
  * Each ParentTile carries its subTiles with (col, row) offsets relative to the
@@ -207,7 +281,6 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             if (borderTouched) continue;
 
             for (const [coord, tib] of Object.entries(newTiles)) {
-                newTiles;
                 tilesInBoard[coord] = tib;
                 occupiedSpaces.add(coord);
             }
