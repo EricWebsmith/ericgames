@@ -17,13 +17,9 @@ function Home() {
             {/* Pointy-top hex tile, matching in-game tile style */}
             <polygon points="40,12 63,26 63,54 40,68 17,54 17,26" fill="#1a0a04" stroke="#8a5a30" strokeWidth={2} />
             {/* Amber gem in the center (revealed tile) */}
-            <circle cx={40} cy={40} r={9} fill="#ffaa00" opacity={0.9} />
+            {/* <circle cx={40} cy={40} r={9} fill="#ffaa00" opacity={0.9} /> */}
             {/* Light-beam arc: upper-right edge → right edge (tight 120° corner) */}
             <path d="M 51.5,21.5 A 13,13 0 0,0 63,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" />
-            {/* Long red arc: enters from outside lower-left, exits outside upper-right (crosses two borders) */}
-            <path d="M 5,52 Q 35,25 70,20" fill="none" stroke="#ff5555" strokeWidth={2} strokeLinecap="round" opacity={0.9} />
-            {/* Long yellow arc: enters from outside upper-left, exits outside lower-right (crosses two borders) */}
-            <path d="M 10,20 Q 40,52 75,56" fill="none" stroke="#ccaa00" strokeWidth={2} strokeLinecap="round" opacity={0.9} />
           </svg>
           <h2>Arclight</h2>
           <p>{t('home.arclight.description')}</p>
