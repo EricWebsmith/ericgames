@@ -34,7 +34,7 @@ describe('firstSee', () => {
 
         // Border '5' shoots South: hits B5 (black, no colors) first → null
         const result = firstSee(board, combined, '5');
-        expect(result).toBeNull();
+        expect(result).toBe("Black");
     });
 });
 
@@ -53,7 +53,7 @@ describe('allVisible', () => {
         expect(allVisible(board, {}, {})).toBe(true);
     });
 
-    it('returns false when a gem is completely hidden by non-gem tiles', () => {
+    it('returns false when a gem is completely hidden by other gem tiles', () => {
         const board = getBoard();
         const tiles = getTiles();
 
@@ -66,8 +66,8 @@ describe('allVisible', () => {
         //   rotateAngle=3 → second subtile is one col east  (same row)
         const blackTop    = putTile(tiles[6], 'A5', 0); // A5 & B5  – blocks top   border '5'
         const blackBottom = putTile(tiles[6], 'G5', 0); // G5 & H5  – blocks bottom border 'M'
-        const blackLeft   = putTile(tiles[6], 'D4', 1); // D4 & D3  – blocks left  border 'D'
-        const blackRight  = putTile(tiles[6], 'D6', 3); // D6 & D7  – blocks right border '14'
+        const blackLeft   = putTile(tiles[6], 'D1', 1); // D4 & D3  – blocks left  border 'D'
+        const blackRight  = putTile(tiles[6], 'D10', 3); // D6 & D7  – blocks right border '14'
 
         const allTiles = { ...lightBlueTiles, ...blackTop, ...blackBottom, ...blackLeft, ...blackRight };
 

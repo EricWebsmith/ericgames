@@ -172,12 +172,7 @@ export function firstSee(
         if (currentNode.is_border) break;
 
         if (currentCoordinate in tilesInBoard) {
-            const tileInBoard = tilesInBoard[currentCoordinate];
-            if (tileInBoard.tile.colors.length > 0) {
-                return tileInBoard.tile.parentName ?? null;
-            }
-            // Non-gem tile (black, transparent) blocks the line of sight.
-            return null;
+            return tilesInBoard[currentCoordinate].tile.parentName;
         }
 
         currentCoordinate = currentNode.edges[travelDir];
@@ -215,6 +210,7 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
         }
     }
 
+    console.log("visibleParentNames", visibleParentNames)
     // Every gem must be visible from at least one direction.
     for (const name of allGemParentNames) {
         if (!visibleParentNames.has(name)) {
