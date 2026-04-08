@@ -53,23 +53,29 @@ export function traverse(
 
             // Colored cell with no arcs: beam passes through unaffected (picks up color only).
             // Only enter this block when the tile has arcs that can redirect the beam.
+
+            let turned90 = false;
             if (tileInBoard.tile.reflect.length > 0) {
+
                 const entryFace = (outDir + 2) % 4;
 
                 if (entryFace in tileInBoard.rotated_reflect) {
                     // Arc matched: redirect to the exit face (which equals the new travel direction).
                     outDir = tileInBoard.rotated_reflect[entryFace];
-                } else {
-                    // No matching arc: reflect straight back.
-                    outDir = (outDir + 2) % 4;
+                    turned90 = true;
                 }
+            }
+
+            // If not turned 90 degree, turn 180 degree, 
+            if (!turned90) {
+                // No matching arc: reflect straight back.
+                outDir = (outDir + 2) % 4;
             }
 
             for (const color of tileInBoard.tile.colors) {
                 colors.add(color);
             }
         }
-
         currentCoordinate = currentNode.edges[outDir];
     }
 

@@ -21,25 +21,15 @@ describe('traverse (yellow tile at D5)', () => {
   });
 
   it.each([
-    // Beam enters from top border 5 (→ A5 South), deflected East at D5, exits right border 14
     ['5', '14', [Color.Yellow]],
-    // Bidirectional: enters right border 14 (→ D10 West), passes D6, deflected North at D5, exits top border 5
     ['14', '5', [Color.Yellow]],
-    // Beam enters from top border 6 (→ A6 South), deflected East at C6, exits right border 13
-    ['6', '13', [Color.Yellow]],
-    // Bidirectional: enters right border 13 (→ C10 West), deflected North at C6, exits top border 6
-    ['13', '6', [Color.Yellow]],
-    // Beam enters left border D (→ D1 East), West-face of D5 has no matching arc → reflects back
+    ['6', '15', [Color.Yellow]],
+    ['15', '6', [Color.Yellow]],
     ['D', 'D', [Color.Yellow]],
-    // Beam enters left border E (→ E1 East), row E is empty → passes straight through to right border 15
-    ['E', '15', []],
-    // Beam enters bottom border M (→ H5 North), South-face of D5 has no matching arc → reflects back
+    ['E', 'E', [Color.Yellow]],
     ['M', 'M', [Color.Yellow]],
-    // Beam enters bottom border N (→ H6 North), passes D6, South-face of C6 has no matching arc → reflects back
     ['N', 'N', [Color.Yellow]],
-    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
     ['2', 'J', []],
-    // Column 7 is empty – straight pass-through from top border 7 to bottom border O
     ['7', 'O', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
     const result = traverse(board, tiles, startCoordinate);
@@ -103,19 +93,12 @@ describe('traverse (white tile at D5)', () => {
   });
 
   it.each([
-    // Beam enters left border D (→ D1 East), deflected North at D5, deflected West at C5, exits left border C
-    ['D', 'C', [Color.White]],
-    // Bidirectional: enters left border C (→ C1 East), deflected South at C5, deflected West at D5, exits left border D
-    ['C', 'D', [Color.White]],
-    // Beam enters top border 5 (→ A5 South), North-face of C5 has no matching arc → reflects back
-    ['5', '5', [Color.White]],
-    // Beam enters right border 14 (→ D10 West), deflected North at D6, deflected East at C6, exits right border 13
-    ['14', '13', [Color.White]],
-    // Bidirectional: enters right border 13 (→ C10 West), deflected South at C6, deflected East at D6, exits right border 14
-    ['13', '14', [Color.White]],
-    // Beam enters bottom border M (→ H5 North), South-face of D5 has no matching arc → reflects back
-    ['M', 'M', [Color.White]],
-    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['D', '5', [Color.White]],
+    ['6', '14', [Color.White]],
+    ['15', 'N', [Color.White]],
+    ['M', 'E', [Color.White]],
+    ['13', 'C', []],
+    ['8', 'P', []],
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
     const result = traverse(board, tiles, startCoordinate);
@@ -138,15 +121,11 @@ describe('traverse (transparent tile at D5)', () => {
   });
 
   it.each([
-    // Beam enters left border D (→ D1 East), deflected North at D5, exits top border 5 – no color
     ['D', '5', []],
-    // Bidirectional: enters top border 5 (→ A5 South), deflected West at D5, exits left border D – no color
     ['5', 'D', []],
-    // Beam enters right border 14 (→ D10 West), East face of D5 has no matching arc → reflects back – no color
-    ['14', '14', []],
-    // Beam enters bottom border M (→ H5 North), South face of E5 has no matching arc → reflects back – no color
+    ['14', '6', []],
     ['M', 'M', []],
-    // Column 2 is empty – straight pass-through from top border 2 to bottom border J
+    ['N', 'N', []],
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
     const result = traverse(board, tiles, startCoordinate);

@@ -94,7 +94,7 @@ export function getTiles(): ParentTile[] {
         {
             name: 'Transparent', optional: true, subTiles: [
                 { colors: [], opacity: 50, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false },
-                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false },
+                { colors: [], opacity: 50, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false },
             ]
         },
         // Black tile – 1×2 vertical strip, absorbs light
