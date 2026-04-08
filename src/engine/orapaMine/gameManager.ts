@@ -116,6 +116,27 @@ export function putTile(
     return result;
 }
 
+export function borderTouch(board: Board, tilesInBoard: Record<string, TileInBoard>, newTilesInBoard: Record<string, TileInBoard>): boolean {
+    for (const [label, tile] of Object.entries(newTilesInBoard)) {
+        for (let dir = 0; dir < 4; dir++) {
+            if (dir in tile.rotated_reflect) {
+                continue;
+            }
+            const space = board.spaces[label];
+            const neiborSpaceLabel = space.edges[dir];
+            if (!(neiborSpaceLabel in tilesInBoard)) {
+                continue;
+            }
+            const neiborTile = tilesInBoard[neiborSpaceLabel];
+            const neiborDir = (dir + 2) % 4;
+            if (!(neiborDir in neiborTile.rotated_reflect)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 /**
  * Place a set of gem pieces on the board.
  *
@@ -130,11 +151,11 @@ export function putTile(
  */
 function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard> {
     const tilesInBoard: Record<string, TileInBoard> = {};
-    const unavailableCoords = new Set<string>();
+    const occupiedSpaces = new Set<string>();
 
     // Mark all border nodes as unavailable.
     for (const [coord, node] of Object.entries(board.spaces)) {
-        if (node.is_border) unavailableCoords.add(coord);
+        if (node.is_border) occupiedSpaces.add(coord);
     }
 
     const internalCoords = Object.keys(board.spaces).filter(k => !board.spaces[k].is_border);
@@ -146,7 +167,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
 
         for (let attempt = 0; attempt < 1000 && !placed; attempt++) {
             const anchorCoord = randomChoice(internalCoords);
-            if (unavailableCoords.has(anchorCoord)) continue;
+            if (occupiedSpaces.has(anchorCoord)) continue;
 
             const m = anchorCoord.match(/^([A-H])(\d{1,2})$/);
             if (!m) continue;
@@ -160,23 +181,27 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
                 const col = anchorCol + subTile.coordinate[0];
                 if (row < 0 || row >= 8 || col < 1 || col > 10) { valid = false; break; }
                 const coord = `${rowLetters[row]}${col}`;
-                if (unavailableCoords.has(coord)) { valid = false; break; }
+                if (occupiedSpaces.has(coord)) { valid = false; break; }
             }
             if (!valid) continue;
 
             // Place the piece via putTile and merge into tilesInBoard.
             const newTiles = putTile(parentTile, anchorCoord, 0);
+            const borderTouched = borderTouch(board, tilesInBoard, newTiles);
+            if (borderTouched) continue;
+
             for (const [coord, tib] of Object.entries(newTiles)) {
+                newTiles;
                 tilesInBoard[coord] = tib;
-                unavailableCoords.add(coord);
+                occupiedSpaces.add(coord);
             }
 
-            // Enforce non-adjacency: mark all orthogonal neighbours as unavailable.
-            for (const coord of Object.keys(newTiles)) {
-                for (const neighbour of Object.values(board.spaces[coord].edges)) {
-                    unavailableCoords.add(neighbour);
-                }
-            }
+            // // Enforce non-adjacency: mark all orthogonal neighbours as unavailable.
+            // for (const coord of Object.keys(newTiles)) {
+            //     for (const neighbour of Object.values(board.spaces[coord].edges)) {
+            //         unavailableCoords.add(neighbour);
+            //     }
+            // }
 
             placed = true;
         }
