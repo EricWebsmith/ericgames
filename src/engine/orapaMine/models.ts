@@ -37,6 +37,7 @@ export interface Tile {
     // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate: Record<number, number>;
     absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
+    parentName: string; // the name of the parent tile this sub-tile belongs to
 }
 
 export interface ITileInBoard {
