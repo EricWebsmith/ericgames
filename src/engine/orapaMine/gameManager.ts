@@ -83,10 +83,22 @@ export function traverse(
 }
 
 /**
+ * Rotate a (col, row) offset clockwise by `times` × 90°.
+ * One 90° CW step in screen coordinates (y increases downward): (col, row) → (−row, col).
+ */
+function rotateCoord(col: number, row: number, times: number): [number, number] {
+    let c = col, r = row;
+    for (let i = 0; i < times % 4; i++) {
+        [c, r] = [-r, c];
+    }
+    return [c, r];
+}
+
+/**
  * Place all subtiles of a single piece at a specific anchor coordinate on the board.
  *
  * The anchor subtile has relative coordinate (0, 0); every other subtile is placed
- * at anchorLabel offset by its (col, row) delta.
+ * at anchorLabel offset by its (col, row) delta, rotated clockwise by rotateAngle × 90°.
  *
  * Coordinate format: `{Letter}{Number}` where A–H are rows 0–7 and 1–10 are
  * columns (matching the labels produced by getBoard()).
@@ -105,8 +117,9 @@ export function putTile(
     const result: Record<string, TileInBoard> = {};
 
     for (const subTile of tile.subTiles) {
-        const row = anchorRow + subTile.coordinate[1];
-        const col = anchorCol + subTile.coordinate[0];
+        const [rotCol, rotRow] = rotateCoord(subTile.coordinate[0], subTile.coordinate[1], rotateAngle);
+        const row = anchorRow + rotRow;
+        const col = anchorCol + rotCol;
         const coord = `${rowLetters[row]}${col}`;
         const tib = new TileInBoard({ tile: subTile, coordinate: coord, rotate_angle: rotateAngle });
         tib.resolve_rotate();
@@ -174,11 +187,14 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             const anchorRow = rowLetters.indexOf(m[1]);
             const anchorCol = parseInt(m[2], 10);
 
-            // Verify all subtile positions are in-bounds and free.
+            const rotateAngle = Math.floor(Math.random() * 4);
+
+            // Verify all subtile positions (after rotation) are in-bounds and free.
             let valid = true;
             for (const subTile of parentTile.subTiles) {
-                const row = anchorRow + subTile.coordinate[1];
-                const col = anchorCol + subTile.coordinate[0];
+                const [rotCol, rotRow] = rotateCoord(subTile.coordinate[0], subTile.coordinate[1], rotateAngle);
+                const row = anchorRow + rotRow;
+                const col = anchorCol + rotCol;
                 if (row < 0 || row >= 8 || col < 1 || col > 10) { valid = false; break; }
                 const coord = `${rowLetters[row]}${col}`;
                 if (occupiedSpaces.has(coord)) { valid = false; break; }
@@ -186,7 +202,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             if (!valid) continue;
 
             // Place the piece via putTile and merge into tilesInBoard.
-            const newTiles = putTile(parentTile, anchorCoord, 0);
+            const newTiles = putTile(parentTile, anchorCoord, rotateAngle);
             const borderTouched = borderTouch(board, tilesInBoard, newTiles);
             if (borderTouched) continue;
 

@@ -167,6 +167,50 @@ describe('red (red tile at D5)', () => {
 });
 
 
+describe('traverse (yellow tile at D5, rotateAngle=1)', () => {
+  // Yellow tile rotated 90° CW (rotateAngle=1) at anchor D5.
+  // rotateCoord applies (col, row) → (−row, col):
+  //   subTile (0,0) → (0,0)  → D5, reflect [[1,2]] rotated → [[2,3]], rotated_reflect {2:3, 3:2}
+  //   subTile (0,1) → (−1,0) → D4, reflect []
+  //   subTile (1,1) → (−1,1) → E4, reflect [[1,2]] rotated → [[2,3]], rotated_reflect {2:3, 3:2}
+  let board: Board;
+  let tiles: Record<string, TileInBoard>;
+
+  beforeEach(() => {
+    board = getBoard();
+    tiles = putTile(getTiles()[2], 'D5', 1);
+  });
+
+  it('places subtiles at rotated coordinates', () => {
+    expect(Object.keys(tiles).sort()).toEqual(['D4', 'D5', 'E4'].sort());
+  });
+
+  it.each([
+    // Beam from top-5 hits D5 North face (not in {2:3,3:2}) → reflects back → border 5
+    ['5', '5', [Color.Yellow]],
+    // Beam from bottom-M hits D5 South face (3 → 2 East) → continues East → border 14
+    ['M', '14', [Color.Yellow]],
+    // Beam from right-14 hits D5 East face (2 → 3 South) → continues South → border M
+    ['14', 'M', [Color.Yellow]],
+    // Beam from left-D hits D4 West face (not in {}) → reflects back → border D
+    ['D', 'D', [Color.Yellow]],
+    // Beam from top-4 hits D4 North face (not in {}) → reflects back → border 4
+    ['4', '4', [Color.Yellow]],
+    // Beam from bottom-N passes through col 6 (no tiles) → exits at top border 6
+    ['N', '6', []],
+    // Beam from right-15 hits E4 East face (2 → 3 South) → continues South → border L (bottom col 4)
+    ['15', 'L', [Color.Yellow]],
+    // Beam from bottom-L hits E4 South face (3 → 2 East) → continues East → border 15
+    ['L', '15', [Color.Yellow]],
+    // Unrelated column – passes through
+    ['2', 'J', []],
+  ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
+    const result = traverse(board, tiles, startCoordinate);
+    expect(result.end_label).toBe(expectedEnd);
+    expect(result.colors).toEqual(expectedColors);
+  });
+});
+
 describe('light blue D5', () => {
   // Light Blue (parent 7) is placed with anchor at D5:
   //   tile 7 (arcs [[0,1]], colors [Color.Blue, Color.White]) at D5.
