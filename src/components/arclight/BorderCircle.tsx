@@ -46,9 +46,11 @@ export default function BorderCircle({
   // 1 color  → full circle (handled separately)
   // 2 colors → two 180° halves
   // 3 colors → three 120° thirds
+  // 4 colors → four 90° quarters
   const arcs: [number, number][] =
     count === 2 ? [[-90, 90], [90, 270]]
     : count === 3 ? [[-90, 30], [30, 150], [150, 270]]
+    : count === 4 ? [[-90, 0], [0, 90], [90, 180], [180, 270]]
     : [];
 
   return (
