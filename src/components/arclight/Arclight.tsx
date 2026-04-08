@@ -240,6 +240,10 @@ export default function Arclight() {
     });
   }, []);
 
+  const handleClickAllBorders = useCallback(() => {
+    setClickedBorders(new Set(ALL_BORDERS.map(b => b.label)));
+  }, []);
+
   const handleNewGame = useCallback(() => {
     setPuzzle(setup());
     setRevealedTiles(new Set());
@@ -446,6 +450,9 @@ export default function Arclight() {
           onClick={() => setShowAll(!showAll)}
         >
           {t('arclight.showAnswer')}
+        </button>
+        <button className="btn-reset" onClick={handleClickAllBorders}>
+          {t('arclight.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
           {t('arclight.newGame')}

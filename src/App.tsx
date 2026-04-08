@@ -14,9 +14,12 @@ function Home() {
       <div className="game-grid">
         <NavLink to="/ericgames/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
-            <circle cx={40} cy={40} r={30} fill="#0a0a1a" stroke="#00e5ff" strokeWidth={2} />
-            <circle cx={40} cy={40} r={18} fill="#00e5ff" opacity={0.8} />
-            <path d="M 26 40 A 14 14 0 0 1 54 40" fill="none" stroke="white" strokeWidth={3} />
+            {/* Pointy-top hex tile, matching in-game tile style */}
+            <polygon points="40,12 63,26 63,54 40,68 17,54 17,26" fill="#1a0a04" stroke="#8a5a30" strokeWidth={2} />
+            {/* Amber gem in the center (revealed tile) */}
+            {/* <circle cx={40} cy={40} r={9} fill="#ffaa00" opacity={0.9} /> */}
+            {/* Light-beam arc: upper-right edge → right edge (tight 120° corner) */}
+            <path d="M 51.5,21.5 A 13,13 0 0,0 63,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" />
           </svg>
           <h2>Arclight</h2>
           <p>{t('home.arclight.description')}</p>

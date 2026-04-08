@@ -167,6 +167,10 @@ export default function OrapaMine() {
     });
   }, []);
 
+  const handleClickAllBorders = useCallback(() => {
+    setClickedBorders(new Set(ALL_BORDERS.map(b => b.label)));
+  }, []);
+
   const handleNewGame = useCallback(() => {
     setPuzzle(setup());
     setRevealedCells(new Set());
@@ -362,6 +366,9 @@ export default function OrapaMine() {
       <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
         <button className="btn-reset" onClick={() => setShowAll(!showAll)}>
           {t('orapaMine.showAnswer')}
+        </button>
+        <button className="btn-reset" onClick={handleClickAllBorders}>
+          {t('orapaMine.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
           {t('orapaMine.newGame')}
