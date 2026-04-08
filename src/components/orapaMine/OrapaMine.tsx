@@ -216,7 +216,11 @@ export default function OrapaMine() {
             // The triangle shape is only revealed in "See Answer" mode (showAll);
             // during normal play the full square is painted with the tile colour so
             // the player has to figure out the shape themselves.
-            const reflectArcs = tileData?.tile.reflect ?? [];
+            const rawReflectArcs = tileData?.tile.reflect ?? [];
+            const rotAngle = tileData?.rotate_angle ?? 0;
+            const reflectArcs: [number, number][] = rawReflectArcs.map(
+              ([a, b]) => [(a + rotAngle) % 4, (b + rotAngle) % 4],
+            );
             const isTriangle = reflectArcs.length > 0;
 
             // Tile fill colour (only relevant when revealed and a tile exists).
