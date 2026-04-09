@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/orapa/gameManager';
-import { getBoard, getTiles } from '../engine/orapa/mineData';
+import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
 import BorderCircle from './BorderCircle';
 
@@ -120,7 +120,8 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles()));
+  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -173,11 +174,11 @@ export default function OrapaMine() {
   }, []);
 
   const handleNewGame = useCallback(() => {
-    setPuzzle(setup(getBoard(), getTiles()));
+    setPuzzle(setup(getBoard(), getTiles(tileOptions)));
     setRevealedCells(new Set());
     setClickedBorders(new Set());
     setShowAll(false);
-  }, []);
+  }, [tileOptions]);
 
   return (
     <div className="game-container">
@@ -374,6 +375,25 @@ export default function OrapaMine() {
         <button className="btn-reset" onClick={handleNewGame}>
           {t('orapaMine.newGame')}
         </button>
+      </div>
+
+      <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={tileOptions.includeTransparent}
+            onChange={e => setTileOptions(prev => ({ ...prev, includeTransparent: e.target.checked }))}
+          />
+          {t('orapaMine.includeTransparent')}
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            type="checkbox"
+            checked={tileOptions.includeBlack}
+            onChange={e => setTileOptions(prev => ({ ...prev, includeBlack: e.target.checked }))}
+          />
+          {t('orapaMine.includeBlack')}
+        </label>
       </div>
     </div>
   );

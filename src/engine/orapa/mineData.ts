@@ -33,7 +33,17 @@ export function getAlternativeRedTile(): ParentTile {
     };
 }
 
-export function getTiles(): ParentTile[] {
+export interface TileOptions {
+    includeTransparent: boolean;
+    includeBlack: boolean;
+}
+
+export const defaultTileOptions: TileOptions = {
+    includeTransparent: true,
+    includeBlack: true,
+};
+
+export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[] {
 
     // Red tile – 1×3 vertical strip
     const redTile: ParentTile = Math.random() < 0.5 ? getRedTile() : getAlternativeRedTile();
@@ -100,7 +110,11 @@ export function getTiles(): ParentTile[] {
                 new Tile({ colors: [Color.Blue, Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [], parentName: 'Light Blue' }),
             ]
         },
-    ];
+    ].filter(tile => {
+        if (tile.name === 'Transparent') return options.includeTransparent;
+        if (tile.name === 'Black') return options.includeBlack;
+        return true;
+    });
 }
 
 

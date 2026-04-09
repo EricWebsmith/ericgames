@@ -35,7 +35,9 @@
     "newGame": "New Game",
     "boardAriaLabel": "Orapa Mine puzzle board",
     "cellAriaLabel": "Cell column {{col}}, row {{row}}",
-    "borderAriaLabel": "Border {{label}}"
+    "borderAriaLabel": "Border {{label}}",
+    "includeTransparent": "Transparent tile",
+    "includeBlack": "Black tile"
   },
   "orapaSpace": {
     "title": "Orapa Space",
