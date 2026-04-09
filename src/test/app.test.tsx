@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import Arclight from '../components/Arclight';
-import OrapaMine from '../components/orapaMine/OrapaMine';
+import OrapaMine from '../components/OrapaMine';
 
 
 describe('App', () => {

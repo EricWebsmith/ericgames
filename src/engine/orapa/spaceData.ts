@@ -76,7 +76,7 @@ export function getTiles(): ParentTile[] {
         },
         {
             name: 'Black Hole', optional: true, subTiles: [
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole' }),
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole', blackHole: true }),
             ]
         },
     ];

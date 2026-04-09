@@ -41,17 +41,17 @@ export interface ParentTile {
 }
 
 export class Tile {
-    // These now act as the true "Default Values"
-    opacity: number = 100;
-    absorbLight: boolean = false;
-    belt: number = -1;
-    connectBorder: boolean = false;
-
-    // These will be assigned in the constructor
     colors: Color[];
     parentName: string;
     coordinate: Record<number, number>;
     reflect: Reflect[];
+
+    opacity: number = 100;
+    absorbLight: boolean = false;
+    belt: number = -1;
+    connectBorder: boolean = false;
+    blackHole: boolean = false;
+
 
     constructor(data: {
         colors: Color[];
