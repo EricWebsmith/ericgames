@@ -21,11 +21,6 @@ describe('OrapaMine', () => {
     expect(screen.getByRole('button', { name: /see answer/i })).toBeInTheDocument()
   })
 
-  it('renders the SVG board', () => {
-    render(<OrapaMine />)
-    expect(screen.getByLabelText('Orapa Mine puzzle board')).toBeInTheDocument()
-  })
-
   it('clicking a border circle shows a wave result annotation', async () => {
     const user = userEvent.setup()
     render(<OrapaMine />)

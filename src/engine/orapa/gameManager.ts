@@ -50,8 +50,7 @@ function getBlackHoleVirtualTiles(board: Board, tilesInBoard: Record<string, Til
                     coordinate: downRightSpace.label,
                     rotate_angle: 0,
                     rotated_reflect: { 1: 0, 0: 1 }
-                }
-                );
+                });
             }
 
             break; // There is only one black hole tile
