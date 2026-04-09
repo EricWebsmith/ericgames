@@ -3,47 +3,51 @@
     "brand": "卡坦王Eric的遊戲"
   },
   "home": {
-    "title": "卡坦王Eric的游戏",
-    "subtitle": "闲鱼卡坦王Eric",
+    "title": "卡坦王Eric的遊戲",
+    "subtitle": "閒魚卡坦王Eric",
     "arclight": {
       "title": "弧光",
       "description": "弧光"
     },
     "orapaMine": {
-      "title": "奥拉帕矿山",
-      "description": "奥拉帕矿山"
+      "title": "奧拉帕礦山",
+      "description": "奧拉帕礦山"
     },
     "orapaSpace": {
-      "title": "奥拉帕宇宙",
-      "description": "奥拉帕宇宙"
+      "title": "奧拉帕宇宙",
+      "description": "奧拉帕宇宙"
     }
   },
   "arclight": {
     "title": "弧光",
-    "lightAction": "导光",
-    "sightAction": "验光",
-    "instructions": "每回合你有两个操作：导光（从边界圆发射光线）或验光（查看格子里的宝石颜色）。点击六边形执行验光，点击边界圆执行导光！当你准备好挑战答案时，点击「看答案」揭晓所有宝石和光线路径。",
+    "instructions": "每回合你有兩個操作：導光（從邊界圓發射光線）或驗光（查看格子裡的寶石顏色）。點擊六邊形執行驗光，點擊邊界圓執行導光！當你準備好挑戰答案時，點擊「看答案」揭曉所有寶石和光線路徑。",
     "showAnswer": "看答案",
-    "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
-    "includeTransparent": "透明扩展",
-    "includeBlackHole": "黑洞扩展"
+    "clickAllBorders": "點擊所有邊界",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "弧光拼圖棋盤",
+    "tileAriaLabel": "格子 {{label}}",
+    "includeTransparent": "透明擴展",
+    "includeBlackHole": "黑寶石擴展"
   },
   "orapaMine": {
-    "title": "奥拉帕矿山",
-    "instructions": "从边界位置（数字或字母）发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
+    "title": "奧拉帕礦山",
+    "instructions": "從邊界位置（數字或字母）發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
     "showAnswer": "看答案",
-    "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
-    "includeTransparent": "透明扩展",
-    "includeBlack": "黑宝石扩展"
+    "clickAllBorders": "點擊所有邊界",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "奧拉帕礦山拼圖棋盤",
+    "cellAriaLabel": "第{{col}}欄第{{row}}行",
+    "includeTransparent": "透明擴展",
+    "includeBlack": "黑寶石擴展"
   },
   "orapaSpace": {
-    "title": "奥拉帕宇宙",
-    "instructions": "从边界位置发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
+    "title": "奧拉帕宇宙",
+    "instructions": "從邊界位置發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
     "showAnswer": "看答案",
-    "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
-    "includeBlackHole": "黑洞扩展"
+    "clickAllBorders": "點擊所有邊界",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "奧拉帕宇宙拼圖棋盤",
+    "cellAriaLabel": "第{{col}}欄第{{row}}行",
+    "includeBlackHole": "黑洞擴展"
   }
 }

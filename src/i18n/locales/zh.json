@@ -20,12 +20,12 @@
   },
   "arclight": {
     "title": "弧光",
-    "lightAction": "导光",
-    "sightAction": "验光",
     "instructions": "每回合你有两个操作：导光（从边界圆发射光线）或验光（查看格子里的宝石颜色）。点击六边形执行验光，点击边界圆执行导光！当你准备好挑战答案时，点击「看答案」揭晓所有宝石和光线路径。",
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "newGame": "新游戏",
+    "boardAriaLabel": "弧光拼图棋盘",
+    "tileAriaLabel": "格子 {{label}}",
     "includeTransparent": "透明扩展",
     "includeBlackHole": "黑宝石扩展"
   },
@@ -35,6 +35,8 @@
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "newGame": "新游戏",
+    "boardAriaLabel": "奥拉帕矿山拼图棋盘",
+    "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeTransparent": "透明扩展",
     "includeBlack": "黑宝石扩展"
   },
@@ -44,6 +46,8 @@
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "newGame": "新游戏",
+    "boardAriaLabel": "奥拉帕宇宙拼图棋盘",
+    "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeBlackHole": "黑洞扩展"
   }
 }

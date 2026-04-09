@@ -24,6 +24,8 @@
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
     "newGame": "New Game",
+    "boardAriaLabel": "Arclight puzzle board",
+    "tileAriaLabel": "Tile {{label}}",
     "includeTransparent": "Transparent Gem Expansion",
     "includeBlackHole": "Black Gem Expansion"
   },
@@ -33,14 +35,19 @@
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
     "newGame": "New Game",
+    "boardAriaLabel": "Orapa Mine puzzle board",
+    "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeTransparent": "Transparent Gem Expansion",
     "includeBlack": "Black Gem Expansion"
   },
   "orapaSpace": {
     "title": "Orapa Space",
+    "instructions": "Fire a wave from a border position to discover where it exits and what gem colours it carries. Click a cell to reveal the gem inside. Click border circles to fire waves.",
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
     "newGame": "New Game",
+    "boardAriaLabel": "Orapa Space puzzle board",
+    "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeBlackHole": "Black Hole Expansion"
   }
 }
