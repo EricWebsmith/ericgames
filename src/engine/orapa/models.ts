@@ -108,11 +108,10 @@ export class TileInBoard implements ITileInBoard {
         this.rotated_reflect = {};
 
         for (const [in_dir, out_dir] of this.tile.reflect) {
-            const a = (in_dir + this.rotate_angle) % 4;
-            const b = (out_dir + this.rotate_angle) % 4;
+            const rotatedInDir = (in_dir + this.rotate_angle) % 4;
+            const rotatedOutDir = (out_dir + this.rotate_angle) % 4;
 
-            this.rotated_reflect[a] = b;
-            this.rotated_reflect[b] = a;
+            this.rotated_reflect[rotatedInDir] = rotatedOutDir;
         }
 
         if (this.onlyBorder !== -1) {

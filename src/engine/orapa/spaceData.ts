@@ -17,10 +17,10 @@ export function getTiles(): ParentTile[] {
     return [
         {
             name: 'White Big', optional: false, subTiles: [
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [], connectBorder: true, parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [], parentName: 'White Big' }),
@@ -34,44 +34,44 @@ export function getTiles(): ParentTile[] {
         },
         {
             name: 'Red Big', optional: false, subTiles: [
-                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Red Big' }),
-                new Tile({ colors: [Color.Red], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], parentName: 'Red Big' }),
-                new Tile({ colors: [Color.Red], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], parentName: 'Red Big' }),
-                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], parentName: 'Red Big' }),
+                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'Red Big' }),
+                new Tile({ colors: [Color.Red], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Red Big' }),
+                new Tile({ colors: [Color.Red], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3], [3, 2]], parentName: 'Red Big' }),
+                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3], [3, 0]], parentName: 'Red Big' }),
             ]
         },
         {
             name: 'Blue', optional: false, subTiles: [
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3], [3, 2]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3], [3, 0]], parentName: 'Blue' }),
             ]
         },
         {
             name: 'Yellow', optional: false, subTiles: [
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 0 }, reflect: [], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 1 }, reflect: [], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3], [3, 0]], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 2 }, reflect: [], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3], [3, 2]], parentName: 'Yellow' }),
             ]
         },
 
         {
             name: 'White Small', optional: false, subTiles: [
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 2]], belt: 3, parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2]], belt: 3, parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 2]], belt: 1, parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2]], belt: 1, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], belt: 3, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], belt: 3, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 0]], belt: 1, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3], [3, 0]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2], [2, 3]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 1]], belt: 1, parentName: 'White Small' }),
             ]
         },
         {

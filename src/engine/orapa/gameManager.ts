@@ -1,4 +1,59 @@
+import { borderNodeCoordinates } from '../arclight/data';
 import { borderLabels, TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
+
+function getBlackHoleVirtualTiles(board: Board, tilesInBoard: Record<string, TileInBoard>): Record<string, TileInBoard> {
+    const virtualTiles: Record<string, TileInBoard> = {};
+
+    for (const [label, tileInBoard] of Object.entries(tilesInBoard)) {
+        if (tileInBoard.tile.blackHole) {
+            const centerSpace = board.spaces[label];
+            const upSpace = board.spaces[centerSpace.edges[1]];
+            const upLeftSpace = board.spaces[upSpace.edges[0]];
+            const upRightSpace = board.spaces[upSpace.edges[2]];
+            const downSpace = board.spaces[centerSpace.edges[3]];
+            const downLeftSpace = board.spaces[downSpace.edges[0]];
+            const downRightSpace = board.spaces[downSpace.edges[2]];
+
+            virtualTiles[upLeftSpace.label] = new TileInBoard({
+                tile: tileInBoard.tile,
+                coordinate: upLeftSpace.label,
+                rotate_angle: 0,
+                rotated_reflect: { 3: 2, 2: 3 }
+            }
+            );
+
+            virtualTiles[upRightSpace.label] = new TileInBoard({
+                tile: tileInBoard.tile,
+                coordinate: upRightSpace.label,
+                rotate_angle: 0,
+                rotated_reflect: { 3: 0, 0: 3 }
+            }
+            );
+
+            virtualTiles[downLeftSpace.label] = new TileInBoard({
+                tile: tileInBoard.tile,
+                coordinate: downLeftSpace.label,
+                rotate_angle: 0,
+                rotated_reflect: { 1: 2, 2: 1 }
+            }
+            );
+
+            virtualTiles[downRightSpace.label] = new TileInBoard({
+                tile: tileInBoard.tile,
+                coordinate: downRightSpace.label,
+                rotate_angle: 0,
+                rotated_reflect: { 1: 0, 0: 1 }
+            }
+            );
+
+            break; // There is only one black hole tile
+        }
+
+    }
+
+    return virtualTiles;
+
+}
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -23,11 +78,15 @@ import { borderLabels, TileInBoard, type Board, type Color, type LightResult, ty
  * After redirecting via an arc, the new travel direction equals the exit face
  * (face 1 = North face → travel North, etc.).
  */
-export function traverse(
+export function tranverse(
     board: Board,
     tilesInBoard: Record<string, TileInBoard>,
     startCoordinate: string,
 ): LightResult {
+    // Before tranverse, add virtual tiles
+    let virtualTiles = getBlackHoleVirtualTiles(board, tilesInBoard);
+    console.log("virtualTiles", virtualTiles);
+
     const startNode = board.spaces[startCoordinate];
     // Border nodes have exactly one edge: the direction into the grid.
     const travelDir = Number(Object.keys(startNode.edges)[0]);
@@ -36,12 +95,13 @@ export function traverse(
     const colors = new Set<Color>();
 
     // Guard against infinite reflection loops (e.g. two gems facing each other).
-    const MAX_STEPS = 400;
+    const MAX_STEPS = 100;
 
     for (let step = 0; step < MAX_STEPS; step++) {
-        console.log("currentCoordinate", currentCoordinate);
+        console.log("================== currentCoordinate =================", currentCoordinate);
         const currentNode = board.spaces[currentCoordinate];
         if (currentNode.is_border) break;
+        const inDir = (outDir + 2) % 4;
 
         if (currentCoordinate in tilesInBoard) {
             const tileInBoard = tilesInBoard[currentCoordinate];
@@ -55,14 +115,15 @@ export function traverse(
             // Only enter this block when the tile has arcs that can redirect the beam.
 
             let turned = false; // including turning 0 degree (pass through)
+
             if (tileInBoard.tile.reflect.length > 0) {
 
-                const entryFace = (outDir + 2) % 4;
-                console.log("entryFace", entryFace);
 
-                if (entryFace in tileInBoard.rotated_reflect) {
+                console.log("entryFace", inDir);
+
+                if (inDir in tileInBoard.rotated_reflect) {
                     // Arc matched: redirect to the exit face (which equals the new travel direction).
-                    outDir = tileInBoard.rotated_reflect[entryFace];
+                    outDir = tileInBoard.rotated_reflect[inDir];
                     console.log("redirected to outDir", outDir);
                     turned = true;
                 }
@@ -74,16 +135,39 @@ export function traverse(
                 outDir = (outDir + 2) % 4;
             }
 
+
+
+
             for (const color of tileInBoard.tile.colors) {
                 colors.add(color);
             }
         }
+
+
+        console.log("In out", inDir, outDir);
+        console.log("Math.abs(outDir - inDir)", Math.abs(outDir - inDir));
+        // If the light is not affected by the actual tile, use the virtual tile    
+        if (Math.abs(outDir - inDir) == 2) {
+            if (currentCoordinate in virtualTiles) {
+                const virtualTile = virtualTiles[currentCoordinate];
+                if (inDir in virtualTile.rotated_reflect) {
+                    outDir = virtualTile.rotated_reflect[inDir];
+                    console.log("virtual tile redirected to outDir", outDir);
+                    virtualTiles = {}; // virtual tiles only work for one reflection
+                }
+            }
+        }
+
         console.log("currentNode.edges", currentNode.edges, outDir);
         currentCoordinate = currentNode.edges[outDir];
-        
+
     }
 
-    return { end_label: currentCoordinate, colors: [...colors] };
+    if (borderNodeCoordinates.includes(currentCoordinate)) {
+        return { end_label: currentCoordinate, colors: [...colors] };
+    } else {
+        return { end_label: '', colors: [] };
+    }
 }
 
 /**
@@ -214,7 +298,7 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
         }
     }
 
-    console.log("visibleParentNames", visibleParentNames)
+    console.log("visibleParentNames", visibleParentNames);
     // Every gem must be visible from at least one direction.
     for (const name of allGemParentNames) {
         if (!visibleParentNames.has(name)) {
@@ -301,7 +385,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             if (!checkBorderConnection(board, Object.values(newTiles))) continue;
 
             // Place the piece via putTile and merge into tilesInBoard.
-            
+
             const borderTouched = borderTouch(board, tilesInBoard, newTiles);
             if (borderTouched) continue;
 
@@ -331,7 +415,7 @@ export function setup(board: Board, tiles: ParentTile[]): Puzzle {
     // Compute wave results for every border position.
     const lightResults: Record<string, LightResult> = {};
     for (const coord of borderLabels) {
-        lightResults[coord] = traverse(board, tilesInBoard, coord);
+        lightResults[coord] = tranverse(board, tilesInBoard, coord);
     }
 
     // Compute sight results (which gem, if any, occupies each internal cell).

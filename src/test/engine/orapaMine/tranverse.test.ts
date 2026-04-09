@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { putTile, setup, traverse } from '../../../engine/orapa/gameManager';
+import { putTile, setup, tranverse } from '../../../engine/orapa/gameManager';
 import { getBoard, getRedTile, getTiles } from '../../../engine/orapa/mineData';
 import { type Board, Color, TileInBoard } from '../../../engine/orapa/models';
 
@@ -32,7 +32,7 @@ describe('traverse (yellow tile at D5)', () => {
     ['2', 'J', []],
     ['7', 'O', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -72,7 +72,7 @@ describe('traverse (black tile at D5)', () => {
     // Column 2 is empty – straight pass-through from top border 2 to bottom border J
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -101,7 +101,7 @@ describe('traverse (white tile at D5)', () => {
     ['8', 'P', []],
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -128,7 +128,7 @@ describe('traverse (transparent tile at D5)', () => {
     ['N', 'N', []],
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -160,7 +160,7 @@ describe('red (red tile at D5)', () => {
     ['2', 'J', []],
     ['8', 'P', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -205,7 +205,7 @@ describe('traverse (yellow tile at D5, rotateAngle=1)', () => {
     // Unrelated column – passes through
     ['2', 'J', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });
@@ -234,7 +234,7 @@ describe('light blue D5', () => {
     ['2', 'J', []],
     ['8', 'P', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = traverse(board, tiles, startCoordinate);
+    const result = tranverse(board, tiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });

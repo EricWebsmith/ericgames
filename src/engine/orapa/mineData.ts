@@ -44,47 +44,47 @@ export function getTiles(): ParentTile[] {
         // Blue tile – irregular 6-cell shape
         {
             name: 'Blue', optional: false, subTiles: [
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1], [1, 0]], parentName: 'Blue' }),
                 new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Blue' }),
                 new Tile({ colors: [Color.Blue], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2], [2, 1]], parentName: 'Blue' }),
             ]
         },
         // Yellow tile – 3-cell L-shape
         {
             name: 'Yellow', optional: false, subTiles: [
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 1 }, reflect: [[1, 2]], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 1 }, reflect: [[1, 2], [2, 1]], parentName: 'Yellow' }),
             ]
         },
         // White Big tile – same 6-cell shape as Blue but white
         {
             name: 'White Big', optional: false, subTiles: [
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1], [1, 0]], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2], [2, 1]], parentName: 'White Big' }),
             ]
         },
         // White Small tile – 2×2 square
         {
             name: 'White Small', optional: false, subTiles: [
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3], [3, 0]], parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3], [3, 2]], parentName: 'White Small' }),
             ]
         },
         // Transparent tile – 1×2 vertical strip, 50% opacity
         {
             name: 'Transparent', optional: true, subTiles: [
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], opacity: 50, parentName: 'Transparent' }),
-                new Tile({ colors: [], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], opacity: 50, parentName: 'Transparent' }),
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], opacity: 50, parentName: 'Transparent' }),
+                new Tile({ colors: [], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], opacity: 50, parentName: 'Transparent' }),
             ]
         },
         // Black tile – 1×2 vertical strip, absorbs light
