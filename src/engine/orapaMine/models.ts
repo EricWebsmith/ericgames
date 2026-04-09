@@ -44,11 +44,10 @@ export interface Tile {
     colors: Color[];
     opacity: number; // 0 to 100, for rendering purposes
     reflect: Reflect[];
-    // For Arclight hexagonal tiles, the coordinates are determined by axial coordinates. Using QR.  
-    // For Orapa Mine square tiles, the coordinates are determined by Cartesian coordinates. Using XY.
     coordinate: Record<number, number>;
     absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
     parentName: string; // the name of the parent tile this sub-tile belongs to
+    onlyBorder: number; // -1 if this tile is not a border. 0-3 for the border direction if this tile is a border (0=west, 1=north, 2=east, 3=south).
 }
 
 export interface ITileInBoard {

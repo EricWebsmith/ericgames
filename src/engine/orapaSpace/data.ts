@@ -17,65 +17,65 @@ export function getTiles(): ParentTile[] {
     return [
         {
             name: 'Red Small', optional: false, subTiles: [
-                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Red Small' }
+                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Red Small', onlyBorder: -1 },
             ]
         },
         {
             name: 'Red Big', optional: false, subTiles: [
-                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Red Big' },
-                { colors: [Color.Red], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Red Big' },
-                { colors: [Color.Red], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Red Big' },
-                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Red Big' },
+                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Red Big', onlyBorder: -1 },
+                { colors: [Color.Red], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Red Big', onlyBorder: -1 },
+                { colors: [Color.Red], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Red Big', onlyBorder: -1 },
+                { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Red Big', onlyBorder: -1 },
             ]
         },
         {
             name: 'Blue', optional: false, subTiles: [
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue' },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue' },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Blue' },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Blue' },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
             ]
         },
         {
             name: 'Yellow', optional: false, subTiles: [
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 2 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Yellow' },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 2 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
             ]
         },
         {
             name: 'White Big', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
             ]
         },
         {
             name: 'White Small', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2]], absorbLight: false, parentName: 'White Small' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small' },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
             ]
         },
         {
             name: 'Black Hole', optional: true, subTiles: [
-                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole' },
+                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole', onlyBorder: -1 },
             ]
         },
     ];
