@@ -378,16 +378,18 @@ export default function OrapaMine() {
       </div>
 
       <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <label htmlFor="option-transparent" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <input
+            id="option-transparent"
             type="checkbox"
             checked={tileOptions.includeTransparent}
             onChange={e => setTileOptions(prev => ({ ...prev, includeTransparent: e.target.checked }))}
           />
           {t('orapaMine.includeTransparent')}
         </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <label htmlFor="option-black" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <input
+            id="option-black"
             type="checkbox"
             checked={tileOptions.includeBlack}
             onChange={e => setTileOptions(prev => ({ ...prev, includeBlack: e.target.checked }))}
