@@ -1,4 +1,4 @@
-import { borderNodeCoordinates, getBasicTiles, getBoard } from './data';
+import { borderNodeCoordinates, getBasicTiles, getBoard, type TileOptions, defaultTileOptions } from './data';
 import { type Board, type Color, type LightResult, type Puzzle, type Tile, TileInBoard } from './models';
 
 export function traverse(board: Board, tilesInBoard: Record<string, TileInBoard>, startCoordinate: string): LightResult {
@@ -118,9 +118,9 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     return tilesInBoard;
 }
 
-export function setup(): Puzzle {
+export function setup(options: TileOptions = defaultTileOptions): Puzzle {
     const board = getBoard();
-    const tilesInBoard = putTiles(board, getBasicTiles());
+    const tilesInBoard = putTiles(board, getBasicTiles(options));
 
     // Resolve Light Actions
     const lightResults: Record<string, LightResult> = {};

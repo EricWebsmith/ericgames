@@ -11,7 +11,20 @@ const DIR5_OFFSET = { 0: -1, 1: 1 };
 // Origin offset for anchor tiles within a group.
 const ORIGIN_OFFSET = { 0: 0, 1: 0 };
 
-export function getBasicTiles(): Tile[] {
+const TRANSPARENT_TILE_ID = 8;
+const BLACK_HOLE_TILE_ID = 9;
+
+export interface TileOptions {
+    includeTransparent: boolean;
+    includeBlackHole: boolean;
+}
+
+export const defaultTileOptions: TileOptions = {
+    includeTransparent: true,
+    includeBlackHole: true,
+};
+
+export function getBasicTiles(options: TileOptions = defaultTileOptions): Tile[] {
     const tiles: Tile[] = [
         {
             id: 0,
@@ -106,7 +119,11 @@ export function getBasicTiles(): Tile[] {
         },
     ];
 
-    return tiles;
+    return tiles.filter(tile => {
+        if (tile.id === TRANSPARENT_TILE_ID) return options.includeTransparent;
+        if (tile.id === BLACK_HOLE_TILE_ID) return options.includeBlackHole;
+        return true;
+    });
 }
 
 export function getBoard(): Board {

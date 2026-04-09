@@ -25,7 +25,9 @@
     "newGame": "새 게임",
     "boardAriaLabel": "호광 (弧光) 퍼즐 보드",
     "tileAriaLabel": "타일 {{label}}",
-    "borderAriaLabel": "경계 {{label}}"
+    "borderAriaLabel": "경계 {{label}}",
+    "includeTransparent": "투명 타일",
+    "includeBlackHole": "블랙홀 타일"
   },
   "orapaMine": {
     "title": "오라파 광산",
@@ -49,6 +51,7 @@
     "newRound": "새 라운드",
     "boardAriaLabel": "오라파 스페이스 게임 보드",
     "cellAriaLabel": "{{row}}행 {{col}}열",
-    "cellAriaLabelWithPlayer": "{{row}}행 {{col}}열, 플레이어 {{player}}"
+    "cellAriaLabelWithPlayer": "{{row}}행 {{col}}열, 플레이어 {{player}}",
+    "includeBlackHole": "블랙홀 타일"
   }
 }

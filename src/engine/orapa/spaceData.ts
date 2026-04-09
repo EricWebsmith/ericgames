@@ -1,5 +1,15 @@
 import { type ParentTile, Color, Tile } from './models';
 
+const BLACK_HOLE_TILE_NAME = 'Black Hole';
+
+export interface TileOptions {
+    includeBlackHole: boolean;
+}
+
+export const defaultTileOptions: TileOptions = {
+    includeBlackHole: true,
+};
+
 // There are four directions for the square grid:
 // 0: West
 // 1: North
@@ -11,7 +21,7 @@ import { type ParentTile, Color, Tile } from './models';
 // If no arc matches the entry face, light is reflected straight back (reverses direction).
 // A tile with arcs: [] absorbs light entirely (black gem behaviour).
 
-export function getTiles(): ParentTile[] {
+export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[] {
 
 
     return [
@@ -75,9 +85,12 @@ export function getTiles(): ParentTile[] {
             ]
         },
         {
-            name: 'Black Hole', optional: true, subTiles: [
+            name: BLACK_HOLE_TILE_NAME, optional: true, subTiles: [
                 new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole', blackHole: true }),
             ]
         },
-    ];
+    ].filter(tile => {
+        if (tile.name === BLACK_HOLE_TILE_NAME) return options.includeBlackHole;
+        return true;
+    });
 }

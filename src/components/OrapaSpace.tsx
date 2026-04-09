@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/orapa/gameManager';
 import { getBoard, } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
-import { getTiles } from '../engine/orapa/spaceData';
+import { getTiles, defaultTileOptions, type TileOptions } from '../engine/orapa/spaceData';
 import BorderCircle from './BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -138,7 +138,8 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaSpace() {
     const { t } = useTranslation();
-    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles()));
+    const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
+    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
     const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
     const [showAll, setShowAll] = useState(false);
     const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -191,16 +192,16 @@ export default function OrapaSpace() {
     }, []);
 
     const handleNewGame = useCallback(() => {
-        setPuzzle(setup(getBoard(), getTiles()));
+        setPuzzle(setup(getBoard(), getTiles(tileOptions)));
         setRevealedCells(new Set());
         setClickedBorders(new Set());
         setShowAll(false);
-    }, []);
+    }, [tileOptions]);
 
     return (
         <div className="game-container">
             <h2 className="game-title">{t('orapaSpace.title')}</h2>
-            <p className="status-message">{t('orapaMine.instructions')}</p>
+            <p className="status-message">{t('orapaSpace.instructions')}</p>
 
             <svg
                 width={SVG_W}
@@ -279,7 +280,7 @@ export default function OrapaSpace() {
                                 key={label}
                                 onClick={() => handleCellClick(label)}
                                 style={{ cursor: 'pointer' }}
-                                aria-label={t('orapaMine.cellAriaLabel', { col, row })}
+                                aria-label={t('orapaSpace.cellAriaLabel', { col, row })}
                             >
                                 {/* Background rect – always shown; provides the grid outline. */}
                                 <rect
@@ -401,14 +402,26 @@ export default function OrapaSpace() {
 
             <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
                 <button className="btn-reset" onClick={() => setShowAll(!showAll)}>
-                    {t('orapaMine.showAnswer')}
+                    {t('orapaSpace.showAnswer')}
                 </button>
                 <button className="btn-reset" onClick={handleClickAllBorders}>
-                    {t('orapaMine.clickAllBorders')}
+                    {t('orapaSpace.clickAllBorders')}
                 </button>
                 <button className="btn-reset" onClick={handleNewGame}>
-                    {t('orapaMine.newGame')}
+                    {t('orapaSpace.newGame')}
                 </button>
+            </div>
+
+            <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <label htmlFor="space-option-blackhole" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <input
+                        id="space-option-blackhole"
+                        type="checkbox"
+                        checked={tileOptions.includeBlackHole}
+                        onChange={e => setTileOptions(prev => ({ ...prev, includeBlackHole: e.target.checked }))}
+                    />
+                    {t('orapaSpace.includeBlackHole')}
+                </label>
             </div>
         </div>
     );

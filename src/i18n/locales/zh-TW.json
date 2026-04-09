@@ -3,52 +3,47 @@
     "brand": "卡坦王Eric的遊戲"
   },
   "home": {
-    "title": "卡坦王Eric的遊戲",
-    "subtitle": "閒魚卡坦王Eric",
+    "title": "卡坦王Eric的游戏",
+    "subtitle": "闲鱼卡坦王Eric",
     "arclight": {
-      "description": "解謎遊戲"
+      "title": "弧光",
+      "description": "弧光"
     },
-    "mine": {
-      "description": "超音波寶石推理遊戲"
+    "orapaMine": {
+      "title": "奥拉帕矿山",
+      "description": "奥拉帕矿山"
     },
-    "space": {
-      "description": "星際4連棋"
+    "orapaSpace": {
+      "title": "奥拉帕宇宙",
+      "description": "奥拉帕宇宙"
     }
   },
   "arclight": {
     "title": "弧光",
-    "lightAction": "導光",
-    "sightAction": "驗光",
-    "instructions": "每回合你有兩個操作：導光（從邊界圓發射光線）或驗光（查看格子裡的寶石顏色）。點擊六邊形執行驗光，點擊邊界圓執行導光！當你準備好挑戰答案時，點擊「看答案」揭曉所有寶石和光線路徑。",
+    "lightAction": "导光",
+    "sightAction": "验光",
+    "instructions": "每回合你有两个操作：导光（从边界圆发射光线）或验光（查看格子里的宝石颜色）。点击六边形执行验光，点击边界圆执行导光！当你准备好挑战答案时，点击「看答案」揭晓所有宝石和光线路径。",
     "showAnswer": "看答案",
-    "clickAllBorders": "點擊所有邊界",
-    "newGame": "新遊戲",
-    "boardAriaLabel": "弧光謎題棋盤",
-    "tileAriaLabel": "格{{label}}",
-    "borderAriaLabel": "邊界{{label}}"
+    "clickAllBorders": "点击所有边界",
+    "newGame": "新游戏",
+    "includeTransparent": "透明扩展",
+    "includeBlackHole": "黑洞扩展"
   },
   "orapaMine": {
-    "title": "Orapa Mine",
-    "instructions": "從邊界位置（數字或字母）發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
+    "title": "奥拉帕矿山",
+    "instructions": "从边界位置（数字或字母）发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
     "showAnswer": "看答案",
-    "clickAllBorders": "點擊所有邊界",
-    "newGame": "新遊戲",
-    "boardAriaLabel": "Orapa Mine謎題棋盤",
-    "cellAriaLabel": "第{{col}}列第{{row}}行",
-    "borderAriaLabel": "邊界{{label}}",
-    "includeTransparent": "透明磚",
-    "includeBlack": "黑色磚"
+    "clickAllBorders": "点击所有边界",
+    "newGame": "新游戏",
+    "includeTransparent": "透明扩展",
+    "includeBlack": "黑宝石扩展"
   },
   "orapaSpace": {
-    "title": "Orapa Space",
-    "player1Name": "藍星球",
-    "player2Name": "橙星星",
-    "win": "{{name}}征服了銀河系！🚀",
-    "draw": "宇宙保持平衡！",
-    "turn": "{{name}}的回合",
-    "newRound": "新回合",
-    "boardAriaLabel": "Orapa Space遊戲棋盤",
-    "cellAriaLabel": "第{{row}}行，第{{col}}列",
-    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+    "title": "奥拉帕宇宙",
+    "instructions": "从边界位置发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
+    "showAnswer": "看答案",
+    "clickAllBorders": "点击所有边界",
+    "newGame": "新游戏",
+    "includeBlackHole": "黑洞扩展"
   }
 }

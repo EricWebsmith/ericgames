@@ -8,43 +8,51 @@ function getBlackHoleVirtualTiles(board: Board, tilesInBoard: Record<string, Til
         if (tileInBoard.tile.blackHole) {
             const centerSpace = board.spaces[label];
             const upSpace = board.spaces[centerSpace.edges[1]];
-            const upLeftSpace = board.spaces[upSpace.edges[0]];
-            const upRightSpace = board.spaces[upSpace.edges[2]];
+            const upLeftSpace = board.spaces?.[upSpace.edges[0]];
+            const upRightSpace = board.spaces?.[upSpace.edges[2]];
             const downSpace = board.spaces[centerSpace.edges[3]];
-            const downLeftSpace = board.spaces[downSpace.edges[0]];
-            const downRightSpace = board.spaces[downSpace.edges[2]];
+            const downLeftSpace = board.spaces?.[downSpace.edges[0]];
+            const downRightSpace = board.spaces?.[downSpace.edges[2]];
 
-            virtualTiles[upLeftSpace.label] = new TileInBoard({
-                tile: tileInBoard.tile,
-                coordinate: upLeftSpace.label,
-                rotate_angle: 0,
-                rotated_reflect: { 3: 2, 2: 3 }
+            if (upLeftSpace) {
+                virtualTiles[upLeftSpace.label] = new TileInBoard({
+                    tile: tileInBoard.tile,
+                    coordinate: upLeftSpace.label,
+                    rotate_angle: 0,
+                    rotated_reflect: { 3: 2, 2: 3 }
+                }
+                );
             }
-            );
 
-            virtualTiles[upRightSpace.label] = new TileInBoard({
-                tile: tileInBoard.tile,
-                coordinate: upRightSpace.label,
-                rotate_angle: 0,
-                rotated_reflect: { 3: 0, 0: 3 }
+            if (upRightSpace) {
+                virtualTiles[upRightSpace.label] = new TileInBoard({
+                    tile: tileInBoard.tile,
+                    coordinate: upRightSpace.label,
+                    rotate_angle: 0,
+                    rotated_reflect: { 3: 0, 0: 3 }
+                }
+                );
             }
-            );
 
-            virtualTiles[downLeftSpace.label] = new TileInBoard({
-                tile: tileInBoard.tile,
-                coordinate: downLeftSpace.label,
-                rotate_angle: 0,
-                rotated_reflect: { 1: 2, 2: 1 }
+            if (downLeftSpace) {
+                virtualTiles[downLeftSpace.label] = new TileInBoard({
+                    tile: tileInBoard.tile,
+                    coordinate: downLeftSpace.label,
+                    rotate_angle: 0,
+                    rotated_reflect: { 1: 2, 2: 1 }
+                }
+                );
             }
-            );
 
-            virtualTiles[downRightSpace.label] = new TileInBoard({
-                tile: tileInBoard.tile,
-                coordinate: downRightSpace.label,
-                rotate_angle: 0,
-                rotated_reflect: { 1: 0, 0: 1 }
+            if (downRightSpace) {
+                virtualTiles[downRightSpace.label] = new TileInBoard({
+                    tile: tileInBoard.tile,
+                    coordinate: downRightSpace.label,
+                    rotate_angle: 0,
+                    rotated_reflect: { 1: 0, 0: 1 }
+                }
+                );
             }
-            );
 
             break; // There is only one black hole tile
         }
@@ -52,7 +60,6 @@ function getBlackHoleVirtualTiles(board: Board, tilesInBoard: Record<string, Til
     }
 
     return virtualTiles;
-
 }
 
 /**
@@ -130,14 +137,10 @@ export function tranverse(
                 outDir = (outDir + 2) % 4;
             }
 
-
-
-
             for (const color of tileInBoard.tile.colors) {
                 colors.add(color);
             }
         }
-
 
         // If the light is not affected by the actual tile, use the virtual tile    
         if (Math.abs(outDir - inDir) == 2) {
@@ -156,7 +159,6 @@ export function tranverse(
         }
 
         currentCoordinate = currentNode.edges[outDir];
-
     }
 
     if (borderNodeCoordinates.includes(currentCoordinate)) {
@@ -388,13 +390,6 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
                 tilesInBoard[coord] = tib;
                 occupiedSpaces.add(coord);
             }
-
-            // // Enforce non-adjacency: mark all orthogonal neighbours as unavailable.
-            // for (const coord of Object.keys(newTiles)) {
-            //     for (const neighbour of Object.values(board.spaces[coord].edges)) {
-            //         unavailableCoords.add(neighbour);
-            //     }
-            // }
 
             placed = true;
         }
