@@ -246,10 +246,10 @@ export default function OrapaSpace() {
                         );
                         const isTriangle = reflectArcs.length > 0;
 
-                        // onlyBorder: -1 means full tile; 0/1/2/3 means draw only a bar on that side.
-                        // TileInBoard.onlyBorder already has the rotation applied.
-                        const onlyBorder = tileData?.onlyBorder ?? -1;
-                        const isOnlyBorder = onlyBorder !== -1;
+                        // belt: -1 means full tile; 0/1/2/3 means draw only a bar on that side.
+                        // TileInBoard.belt already has the rotation applied.
+                        const belt = tileData?.belt ?? -1;
+                        const isBelt = belt !== -1;
 
                         // Tile fill colour (only relevant when revealed and a tile exists).
                         let tileFill = '';
@@ -267,12 +267,12 @@ export default function OrapaSpace() {
                         // SVG polygon points for triangle tiles – only computed in showAll mode.
                         // reflectArcs[0] is safe here: isTriangle guarantees length > 0,
                         // and Reflect is typed as [number, number].
-                        const trianglePoints = showAll && isTriangle && !isOnlyBorder && reflectArcs[0]
+                        const trianglePoints = showAll && isTriangle && !isBelt && reflectArcs[0]
                             ? getTrianglePoints(x, y, reflectArcs[0])
                             : null;
 
-                        // Bar rect for onlyBorder tiles – computed once when needed.
-                        const barRect = isOnlyBorder ? getBarRect(x, y, onlyBorder) : null;
+                        // Bar rect for belt tiles – computed once when needed.
+                        const barRect = isBelt ? getBarRect(x, y, belt) : null;
 
                         return (
                             <g
@@ -293,7 +293,7 @@ export default function OrapaSpace() {
 
                                 {/* Revealed tile drawn on top of the background. */}
                                 {revealed && tileData && (
-                                    isOnlyBorder && barRect ? (
+                                    isBelt && barRect ? (
                                         /* Border bar tile: only draw a thin bar on the specified side. */
                                         <rect
                                             x={barRect.x} y={barRect.y}
