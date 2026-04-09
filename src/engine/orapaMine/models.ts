@@ -62,11 +62,13 @@ export class TileInBoard implements ITileInBoard {
     coordinate: string;
     rotated_reflect: Record<number, number> = {};
     rotate_angle: number;
+    onlyBorder: number;
 
     constructor(data: Partial<ITileInBoard> & { tile: Tile; coordinate: string; }) {
         this.tile = data.tile;
         this.coordinate = data.coordinate;
         this.rotate_angle = data.rotate_angle ?? 0;
+        this.onlyBorder = data.tile.onlyBorder ?? -1;
         this.rotated_reflect = data.rotated_reflect ?? {};
     }
 
@@ -84,6 +86,10 @@ export class TileInBoard implements ITileInBoard {
 
             this.rotated_reflect[a] = b;
             this.rotated_reflect[b] = a;
+        }
+
+        if (this.onlyBorder !== -1) {
+            this.onlyBorder = (this.onlyBorder + this.rotate_angle) % 4;
         }
 
         return this;

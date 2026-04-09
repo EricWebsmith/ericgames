@@ -1,7 +1,6 @@
 import { type Board, type Node, type ParentTile, Color } from './models';
 
 
-
 // There are four directions for the square grid:
 // 0: West
 // 1: North

@@ -63,14 +63,14 @@ export function getTiles(): ParentTile[] {
         },
         {
             name: 'White Small', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: 3 },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: 3 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[1, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: 1 },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: 1 },
             ]
         },
         {
