@@ -6,7 +6,7 @@
 //                       K–R  (8 letters) along the right edge.
 //   Numbers 1–18 (18): 1–10 along the top edge,
 //                       11–18 along the left edge.
-export const borderNodeCoordinates: string[] = [
+export const borderLabels: string[] = [
     ...'ABCDEFGHIJKLMNOPQR'.split(''),
     ...Array.from({ length: 18 }, (_, i) => String(i + 1)),
 ];
@@ -47,7 +47,8 @@ export interface Tile {
     coordinate: Record<number, number>;
     absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
     parentName: string; // the name of the parent tile this sub-tile belongs to
-    onlyBorder: number; // -1 if this tile is not a border. 0-3 for the border direction if this tile is a border (0=west, 1=north, 2=east, 3=south).
+    belt: number; // -1 if this tile is not a belt. 0-3 for the belt at (0=west, 1=north, 2=east, 3=south).
+    connectBorder: boolean; // true if this tile must connect a border space.
 }
 
 export interface ITileInBoard {
@@ -68,7 +69,7 @@ export class TileInBoard implements ITileInBoard {
         this.tile = data.tile;
         this.coordinate = data.coordinate;
         this.rotate_angle = data.rotate_angle ?? 0;
-        this.onlyBorder = data.tile.onlyBorder ?? -1;
+        this.onlyBorder = data.tile.belt ?? -1;
         this.rotated_reflect = data.rotated_reflect ?? {};
     }
 

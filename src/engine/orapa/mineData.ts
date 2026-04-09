@@ -16,9 +16,9 @@ import { type Board, type Node, type ParentTile, Color } from './models';
 export function getRedTile(): ParentTile {
     return {
         name: 'Red', optional: false, subTiles: [
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Red', onlyBorder: -1 },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Red', onlyBorder: -1 },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Red', onlyBorder: -1 },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Red', belt: -1, connectBorder: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Red', belt: -1, connectBorder: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Red', belt: -1, connectBorder: false },
         ]
     };
 };
@@ -26,9 +26,9 @@ export function getRedTile(): ParentTile {
 export function getAlternativeRedTile(): ParentTile {
     return {
         name: 'Flipped Red', optional: false, subTiles: [
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Flipped Red', onlyBorder: -1 },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Flipped Red', onlyBorder: -1 },
-            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Flipped Red', onlyBorder: -1 },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Flipped Red', belt: -1, connectBorder: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Flipped Red', belt: -1, connectBorder: false },
+            { colors: [Color.Red], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Flipped Red', belt: -1, connectBorder: false },
         ]
     };
 }
@@ -44,60 +44,60 @@ export function getTiles(): ParentTile[] {
         // Blue tile – irregular 6-cell shape
         {
             name: 'Blue', optional: false, subTiles: [
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
-                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue', onlyBorder: -1 },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
+                { colors: [Color.Blue], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Blue', belt: -1, connectBorder: false },
             ]
         },
         // Yellow tile – 3-cell L-shape
         {
             name: 'Yellow', optional: false, subTiles: [
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow', onlyBorder: -1 },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow', belt: -1, connectBorder: false },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow', belt: -1, connectBorder: false },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow', belt: -1, connectBorder: false },
             ]
         },
         // White Big tile – same 6-cell shape as Blue but white
         {
             name: 'White Big', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: -1, 1: 1 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big', belt: -1, connectBorder: false },
             ]
         },
         // White Small tile – 2×2 square
         {
             name: 'White Small', optional: false, subTiles: [
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'White Small', onlyBorder: -1 },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'White Small', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Small', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [[0, 3]], absorbLight: false, parentName: 'White Small', belt: -1, connectBorder: false },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [[2, 3]], absorbLight: false, parentName: 'White Small', belt: -1, connectBorder: false },
             ]
         },
         // Transparent tile – 1×2 vertical strip, 50% opacity
         {
             name: 'Transparent', optional: true, subTiles: [
-                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Transparent', onlyBorder: -1 },
-                { colors: [], opacity: 50, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Transparent', onlyBorder: -1 },
+                { colors: [], opacity: 50, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Transparent', belt: -1, connectBorder: false },
+                { colors: [], opacity: 50, coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Transparent', belt: -1, connectBorder: false },
             ]
         },
         // Black tile – 1×2 vertical strip, absorbs light
         {
             name: 'Black', optional: true, subTiles: [
-                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black', onlyBorder: -1 },
-                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: true, parentName: 'Black', onlyBorder: -1 },
+                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black', belt: -1, connectBorder: false },
+                { colors: [], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: true, parentName: 'Black', belt: -1, connectBorder: false },
             ]
         },
         // Light Blue tile – single cell
         {
             name: 'Light Blue', optional: false, subTiles: [
-                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Light Blue', onlyBorder: -1 },
+                { colors: [Color.Blue, Color.White], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Light Blue', belt: -1, connectBorder: false },
             ]
         },
     ];

@@ -1,4 +1,4 @@
-import { borderNodeCoordinates, TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
+import { borderLabels, TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -207,7 +207,7 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
 
     // Find all gem parentNames visible from any border node.
     const visibleParentNames = new Set<string>();
-    for (const borderCoord of borderNodeCoordinates) {
+    for (const borderCoord of borderLabels) {
         const parentName = firstSee(board, combinedTiles, borderCoord);
         if (parentName !== null) {
             visibleParentNames.add(parentName);
@@ -221,6 +221,27 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
             return false;
         }
     }
+    return true;
+}
+
+function checkBorderConnection(board: Board, tiles: TileInBoard[]): boolean {
+    for (const tile of tiles) {
+        if (!tile.tile.connectBorder) {
+            continue;
+        }
+
+        let connected = false;
+        for (let dir = 0; dir < 4; dir++) {
+            const label = board.spaces[tile.coordinate].edges[dir];
+            if (borderLabels.includes(label)) {
+                connected = true;
+            }
+        }
+        if (!connected) {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -275,8 +296,12 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             }
             if (!valid) continue;
 
-            // Place the piece via putTile and merge into tilesInBoard.
+            // Check border connection
             const newTiles = putTile(parentTile, anchorCoord, rotateAngle);
+            if (!checkBorderConnection(board, Object.values(newTiles))) continue;
+
+            // Place the piece via putTile and merge into tilesInBoard.
+            
             const borderTouched = borderTouch(board, tilesInBoard, newTiles);
             if (borderTouched) continue;
 
@@ -305,7 +330,7 @@ export function setup(board: Board, tiles: ParentTile[]): Puzzle {
 
     // Compute wave results for every border position.
     const lightResults: Record<string, LightResult> = {};
-    for (const coord of borderNodeCoordinates) {
+    for (const coord of borderLabels) {
         lightResults[coord] = traverse(board, tilesInBoard, coord);
     }
 
