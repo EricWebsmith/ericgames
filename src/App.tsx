@@ -1,9 +1,10 @@
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
-import Arclight from './components/arclight/Arclight';
-import OrapaMine from './components/orapaMine/OrapaMine';
-import LanguageSwitcher from './components/shared/LanguageSwitcher';
+import Arclight from './components/Arclight';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import OrapaMine from './components/OrapaMine';
+import OrapaSpace from './components/OrapaSpace';
 
 function Home() {
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ function Home() {
           <p>{t('home.mine.description')}</p>
         </NavLink>
 
-        {/* <NavLink to="/ericgames/orapa-space" className="game-card space-card">
+        <NavLink to="/ericgames/orapa-space" className="game-card space-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#03030f" rx={4} />
             <circle cx={20} cy={15} r={1} fill="white" opacity={0.8} />
@@ -56,7 +57,7 @@ function Home() {
           </svg>
           <h2>Orapa Space</h2>
           <p>{t('home.space.description')}</p>
-        </NavLink> */}
+        </NavLink>
       </div>
     </div>
   )
@@ -70,7 +71,7 @@ function Nav() {
       <ul className="nav-links">
         <li><NavLink to="/ericgames/arclight">Arclight</NavLink></li>
         <li><NavLink to="/ericgames/orapa-mine">Orapa Mine</NavLink></li>
-        {/* <li><NavLink to="/ericgames/orapa-space">Orapa Space</NavLink></li> */}
+        <li><NavLink to="/ericgames/orapa-space">Orapa Space</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -86,7 +87,7 @@ export default function App() {
           <Route path="/ericgames" element={<Home />} />
           <Route path="/ericgames/arclight" element={<Arclight />} />
           <Route path="/ericgames/orapa-mine" element={<OrapaMine />} />
-          {/* <Route path="/ericgames/orapa-space" element={<OrapaSpace />} /> */}
+          <Route path="/ericgames/orapa-space" element={<OrapaSpace />} />
         </Routes>
       </main>
     </BrowserRouter>

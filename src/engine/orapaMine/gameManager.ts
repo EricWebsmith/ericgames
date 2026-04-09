@@ -1,5 +1,4 @@
-import { borderNodeCoordinates, getBoard, getTiles } from './data';
-import { TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
+import { borderNodeCoordinates, TileInBoard, type Board, type Color, type LightResult, type ParentTile, type Puzzle } from './models';
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -296,9 +295,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
 }
 
 /** Create a random Orapa Mine puzzle and pre-compute all wave results. */
-export function setup(): Puzzle {
-    const board = getBoard();
-    const tiles = getTiles();
+export function setup(board: Board, tiles: ParentTile[]): Puzzle {
     const tilesInBoard = putTiles(board, tiles);
 
     // Compute wave results for every border position.

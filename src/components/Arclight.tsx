@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../../engine/arclight/gameManager';
-import type { Color, Puzzle } from '../../engine/arclight/models';
+import { setup } from '../engine/arclight/gameManager';
+import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './BorderCircle';
 import { GEM_FILL } from './colors';
 

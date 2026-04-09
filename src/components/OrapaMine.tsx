@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../../engine/orapaMine/gameManager';
-import type { Color, Puzzle } from '../../engine/orapaMine/models';
-import BorderCircle from '../arclight/BorderCircle';
+import { getBoard, getTiles } from '../engine/orapaMine/data';
+import { setup } from '../engine/orapaMine/gameManager';
+import type { Color, Puzzle } from '../engine/orapaMine/models';
+import BorderCircle from './BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;
@@ -119,7 +120,7 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup());
+  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles()));
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -172,7 +173,7 @@ export default function OrapaMine() {
   }, []);
 
   const handleNewGame = useCallback(() => {
-    setPuzzle(setup());
+    setPuzzle(setup(getBoard(), getTiles()));
     setRevealedCells(new Set());
     setClickedBorders(new Set());
     setShowAll(false);

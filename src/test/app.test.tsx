@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import Arclight from '../components/arclight/Arclight';
+import Arclight from '../components/Arclight';
 import OrapaMine from '../components/orapaMine/OrapaMine';
 
 

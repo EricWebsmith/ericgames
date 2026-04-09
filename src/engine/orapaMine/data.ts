@@ -1,15 +1,6 @@
 import { type Board, type Node, type ParentTile, Color } from './models';
 
-// Border positions for a 10×8 square grid (10 columns, 8 rows).
-// A 10×8 grid has 2×(10+8) = 36 border positions total, split evenly:
-//   Letters A–R  (18): A–J (10 letters) along the bottom edge,
-//                       K–R  (8 letters) along the right edge.
-//   Numbers 1–18 (18): 1–10 along the top edge,
-//                       11–18 along the left edge.
-export const borderNodeCoordinates: string[] = [
-    ...'ABCDEFGHIJKLMNOPQR'.split(''),
-    ...Array.from({ length: 18 }, (_, i) => String(i + 1)),
-];
+
 
 // There are four directions for the square grid:
 // 0: West

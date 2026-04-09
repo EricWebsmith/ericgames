@@ -11,9 +11,6 @@ import { type ParentTile, Color } from '../orapaMine/models';
 // If no arc matches the entry face, light is reflected straight back (reverses direction).
 // A tile with arcs: [] absorbs light entirely (black gem behaviour).
 
-
-
-
 export function getTiles(): ParentTile[] {
 
 
@@ -44,11 +41,11 @@ export function getTiles(): ParentTile[] {
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], absorbLight: false, parentName: 'Yellow' },
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 2 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
-                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Yellow' },
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], absorbLight: false, parentName: 'Yellow' },
+                { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 1, 1: 2 }, reflect: [], absorbLight: false, parentName: 'Yellow' },
                 { colors: [Color.Yellow], opacity: 100, coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3]], absorbLight: false, parentName: 'Yellow' },
             ]
         },
@@ -58,10 +55,10 @@ export function getTiles(): ParentTile[] {
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big' },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big' },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 0 }, reflect: [], absorbLight: false, parentName: 'White Big' },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
                 { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 2 }, reflect: [], absorbLight: false, parentName: 'White Big' },
-                { colors: [Color.White], opacity: 100, coordinate: { 0: 1, 1: 3 }, reflect: [], absorbLight: false, parentName: 'White Big' },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 2, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
+                { colors: [Color.White], opacity: 100, coordinate: { 0: 3, 1: 1 }, reflect: [], absorbLight: false, parentName: 'White Big' },
             ]
         },
         {
