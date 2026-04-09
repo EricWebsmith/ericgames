@@ -18,18 +18,18 @@ export function getTiles(): ParentTile[] {
         {
             name: 'White Big', optional: false, subTiles: [
                 new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, connectBorder: true, parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, connectBorder: true, parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [], connectBorder: true, parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, reflect: [], connectBorder: true, parentName: 'White Big' }),
             ]
         },
         {
             name: 'Red Small', optional: false, subTiles: [
-                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, parentName: 'Red Small' }),
+                new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [], parentName: 'Red Small' }),
             ]
         },
         {
@@ -51,13 +51,13 @@ export function getTiles(): ParentTile[] {
         {
             name: 'Yellow', optional: false, subTiles: [
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 0 }, parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 0 }, reflect: [], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2]], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 1 }, parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 1 }, parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 1 }, parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 1 }, reflect: [], parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 1 }, reflect: [], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], parentName: 'Yellow' }),
-                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 2 }, parentName: 'Yellow' }),
+                new Tile({ colors: [Color.Yellow], coordinate: { 0: 1, 1: 2 }, reflect: [], parentName: 'Yellow' }),
                 new Tile({ colors: [Color.Yellow], coordinate: { 0: 2, 1: 2 }, reflect: [[2, 3]], parentName: 'Yellow' }),
             ]
         },
@@ -76,7 +76,7 @@ export function getTiles(): ParentTile[] {
         },
         {
             name: 'Black Hole', optional: true, subTiles: [
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, absorbLight: true, parentName: 'Black Hole' }),
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black Hole' }),
             ]
         },
     ];

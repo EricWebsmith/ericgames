@@ -46,24 +46,24 @@ export class Tile {
     absorbLight: boolean = false;
     belt: number = -1;
     connectBorder: boolean = false;
-    reflect: Reflect[] = [];
 
     // These will be assigned in the constructor
     colors: Color[];
     parentName: string;
     coordinate: Record<number, number>;
+    reflect: Reflect[];
 
     constructor(data: {
         colors: Color[];
         parentName: string;
         coordinate: Record<number, number>;
-        reflect?: Reflect[];
+        reflect: Reflect[];
         opacity?: number;
         absorbLight?: boolean;
         belt?: number;
         connectBorder?: boolean;
     }) {
-        const { reflect = [], opacity = 100, absorbLight = false, belt = -1, connectBorder = false } = data;
+        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false } = data;
         this.colors = data.colors;
         this.parentName = data.parentName;
         this.coordinate = data.coordinate;
