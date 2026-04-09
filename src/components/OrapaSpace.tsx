@@ -86,6 +86,20 @@ function notePx(b: BorderInfo): { x: number; y: number; } {
     }
 }
 
+// ─── Border bar helper ─────────────────────────────────────────────
+// Returns the x, y, width, height of a thin bar drawn on the given side of a cell.
+// border: 0=west, 1=north, 2=east, 3=south
+const BAR_THICKNESS = 4;
+function getBarRect(cellX: number, cellY: number, border: number): { x: number; y: number; width: number; height: number } | null {
+    switch (border) {
+        case 0: return { x: cellX + 1, y: cellY + 1, width: BAR_THICKNESS, height: CELL - 2 };
+        case 1: return { x: cellX + 1, y: cellY + 1, width: CELL - 2, height: BAR_THICKNESS };
+        case 2: return { x: cellX + CELL - 1 - BAR_THICKNESS, y: cellY + 1, width: BAR_THICKNESS, height: CELL - 2 };
+        case 3: return { x: cellX + 1, y: cellY + CELL - 1 - BAR_THICKNESS, width: CELL - 2, height: BAR_THICKNESS };
+        default: return null;
+    }
+}
+
 // ─── Triangle tile helper ──────────────────────────────────────────
 // Returns SVG polygon points for the triangle that results from a reflect arc.
 // arc [a, b] means faces a and b are "open" (no solid wall) – their shared
@@ -229,6 +243,11 @@ export default function OrapaSpace() {
                         );
                         const isTriangle = reflectArcs.length > 0;
 
+                        // onlyBorder: -1 means full tile; 0/1/2/3 means draw only a bar on that side.
+                        // TileInBoard.onlyBorder already has the rotation applied.
+                        const onlyBorder = tileData?.onlyBorder ?? -1;
+                        const isOnlyBorder = onlyBorder !== -1;
+
                         // Tile fill colour (only relevant when revealed and a tile exists).
                         let tileFill = '';
                         if (revealed && tileData) {
@@ -245,9 +264,12 @@ export default function OrapaSpace() {
                         // SVG polygon points for triangle tiles – only computed in showAll mode.
                         // reflectArcs[0] is safe here: isTriangle guarantees length > 0,
                         // and Reflect is typed as [number, number].
-                        const trianglePoints = showAll && isTriangle && reflectArcs[0]
+                        const trianglePoints = showAll && isTriangle && !isOnlyBorder && reflectArcs[0]
                             ? getTrianglePoints(x, y, reflectArcs[0])
                             : null;
+
+                        // Bar rect for onlyBorder tiles – computed once when needed.
+                        const barRect = isOnlyBorder ? getBarRect(x, y, onlyBorder) : null;
 
                         return (
                             <g
@@ -268,7 +290,16 @@ export default function OrapaSpace() {
 
                                 {/* Revealed tile drawn on top of the background. */}
                                 {revealed && tileData && (
-                                    isTriangle && trianglePoints ? (
+                                    isOnlyBorder && barRect ? (
+                                        /* Border bar tile: only draw a thin bar on the specified side. */
+                                        <rect
+                                            x={barRect.x} y={barRect.y}
+                                            width={barRect.width} height={barRect.height}
+                                            fill={tileFill}
+                                            fillOpacity={fillOpacity}
+                                            filter={hasGem ? 'url(#space-glow)' : undefined}
+                                        />
+                                    ) : isTriangle && trianglePoints ? (
                                         /* Triangle tile (See Answer mode): polygon covers only the solid portion. */
                                         <polygon
                                             points={trianglePoints}
