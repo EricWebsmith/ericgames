@@ -85,7 +85,6 @@ export function tranverse(
 ): LightResult {
     // Before tranverse, add virtual tiles
     let virtualTiles = getBlackHoleVirtualTiles(board, tilesInBoard);
-    console.log("virtualTiles", virtualTiles);
 
     const startNode = board.spaces[startCoordinate];
     // Border nodes have exactly one edge: the direction into the grid.
@@ -98,7 +97,6 @@ export function tranverse(
     const MAX_STEPS = 100;
 
     for (let step = 0; step < MAX_STEPS; step++) {
-        console.log("================== currentCoordinate =================", currentCoordinate);
         const currentNode = board.spaces[currentCoordinate];
         if (currentNode.is_border) break;
         const inDir = (outDir + 2) % 4;
@@ -106,8 +104,6 @@ export function tranverse(
 
         if (currentCoordinate in tilesInBoard) {
             const tileInBoard = tilesInBoard[currentCoordinate];
-            console.log("tileInBoard", tileInBoard);
-            console.log("tileInBoard.rotatedLateReflect", tileInBoard.rotatedLateReflect);
             lateReflect = tileInBoard.rotatedLateReflect;
 
             // Black gem – absorb the wave entirely.
@@ -121,14 +117,9 @@ export function tranverse(
             let turned = false; // including turning 0 degree (pass through)
 
             if (tileInBoard.tile.reflect.length > 0) {
-
-
-                console.log("entryFace", inDir);
-
                 if (inDir in tileInBoard.rotated_reflect) {
                     // Arc matched: redirect to the exit face (which equals the new travel direction).
                     outDir = tileInBoard.rotated_reflect[inDir];
-                    console.log("redirected to outDir", outDir);
                     turned = true;
                 }
             }
@@ -148,28 +139,22 @@ export function tranverse(
         }
 
 
-        console.log("In out", inDir, outDir);
-        console.log("Math.abs(outDir - inDir)", Math.abs(outDir - inDir));
         // If the light is not affected by the actual tile, use the virtual tile    
         if (Math.abs(outDir - inDir) == 2) {
             if (currentCoordinate in virtualTiles) {
                 const virtualTile = virtualTiles[currentCoordinate];
                 if (inDir in virtualTile.rotated_reflect) {
                     outDir = virtualTile.rotated_reflect[inDir];
-                    console.log("virtual tile redirected to outDir", outDir);
                     virtualTiles = {}; // virtual tiles only work for one reflection
                 }
             }
         }
 
         // Handle Late reflect after all other reflections, but before moving to the next cell.
-        console.log("lateReflect", lateReflect);
         if (outDir in lateReflect) {
             outDir = lateReflect[outDir];
-            console.log("late reflect changed outDir to", outDir);
         }
 
-        console.log("currentNode.edges", currentNode.edges, outDir);
         currentCoordinate = currentNode.edges[outDir];
 
     }
@@ -309,7 +294,6 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
         }
     }
 
-    console.log("visibleParentNames", visibleParentNames);
     // Every gem must be visible from at least one direction.
     for (const name of allGemParentNames) {
         if (!visibleParentNames.has(name)) {

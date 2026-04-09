@@ -4,7 +4,7 @@ import { getBoard } from '../../../engine/orapa/mineData';
 import { type Board, Color, TileInBoard } from '../../../engine/orapa/models';
 import { getTiles } from '../../../engine/orapa/spaceData';
 
-describe('traverse (yellow tile at D5)', () => {
+describe('traverse belt at D5', () => {
   let board: Board;
   let tiles: Record<string, TileInBoard>;
 
