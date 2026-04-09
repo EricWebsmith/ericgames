@@ -62,8 +62,9 @@ export class Tile {
         absorbLight?: boolean;
         belt?: number;
         connectBorder?: boolean;
+        blackHole?: boolean;
     }) {
-        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false } = data;
+        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false, blackHole = false } = data;
         this.colors = data.colors;
         this.parentName = data.parentName;
         this.coordinate = data.coordinate;
@@ -72,6 +73,7 @@ export class Tile {
         this.absorbLight = absorbLight;
         this.belt = belt;
         this.connectBorder = connectBorder;
+        this.blackHole = blackHole;
     }
 }
 
