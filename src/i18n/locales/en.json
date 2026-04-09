@@ -25,7 +25,9 @@
     "newGame": "New Game",
     "boardAriaLabel": "Arclight puzzle board",
     "tileAriaLabel": "Tile {{label}}",
-    "borderAriaLabel": "Border {{label}}"
+    "borderAriaLabel": "Border {{label}}",
+    "includeTransparent": "Transparent tile",
+    "includeBlackHole": "Black hole tile"
   },
   "orapaMine": {
     "title": "Orapa Mine",
@@ -49,6 +51,7 @@
     "newRound": "New Round",
     "boardAriaLabel": "Orapa Space game board",
     "cellAriaLabel": "Row {{row}}, Column {{col}}",
-    "cellAriaLabelWithPlayer": "Row {{row}}, Column {{col}}, Player {{player}}"
+    "cellAriaLabelWithPlayer": "Row {{row}}, Column {{col}}, Player {{player}}",
+    "includeBlackHole": "Black hole tile"
   }
 }

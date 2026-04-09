@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/orapa/gameManager';
 import { getBoard, } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
-import { getTiles } from '../engine/orapa/spaceData';
+import { getTiles, defaultTileOptions, type TileOptions } from '../engine/orapa/spaceData';
 import BorderCircle from './BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -138,7 +138,8 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaSpace() {
     const { t } = useTranslation();
-    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles()));
+    const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
+    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
     const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
     const [showAll, setShowAll] = useState(false);
     const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -191,11 +192,11 @@ export default function OrapaSpace() {
     }, []);
 
     const handleNewGame = useCallback(() => {
-        setPuzzle(setup(getBoard(), getTiles()));
+        setPuzzle(setup(getBoard(), getTiles(tileOptions)));
         setRevealedCells(new Set());
         setClickedBorders(new Set());
         setShowAll(false);
-    }, []);
+    }, [tileOptions]);
 
     return (
         <div className="game-container">
@@ -409,6 +410,18 @@ export default function OrapaSpace() {
                 <button className="btn-reset" onClick={handleNewGame}>
                     {t('orapaMine.newGame')}
                 </button>
+            </div>
+
+            <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <label htmlFor="space-option-blackhole" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <input
+                        id="space-option-blackhole"
+                        type="checkbox"
+                        checked={tileOptions.includeBlackHole}
+                        onChange={e => setTileOptions(prev => ({ ...prev, includeBlackHole: e.target.checked }))}
+                    />
+                    {t('orapaSpace.includeBlackHole')}
+                </label>
             </div>
         </div>
     );

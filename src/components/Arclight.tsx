@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/arclight/gameManager';
+import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
 import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './BorderCircle';
 import { GEM_FILL } from './colors';
@@ -183,7 +184,8 @@ const getGemColor = (colors: string[]): string => {
 // ─── Component ────────────────────────────────────────────────────
 export default function Arclight() {
   const { t } = useTranslation();
-  const [puzzle,         setPuzzle]         = useState<Puzzle>(() => setup());
+  const [tileOptions,    setTileOptions]    = useState<TileOptions>(defaultTileOptions);
+  const [puzzle,         setPuzzle]         = useState<Puzzle>(() => setup(defaultTileOptions));
   const [revealedTiles,  setRevealedTiles]  = useState<Set<string>>(new Set());
   const [showAll,        setShowAll]        = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -245,11 +247,11 @@ export default function Arclight() {
   }, []);
 
   const handleNewGame = useCallback(() => {
-    setPuzzle(setup());
+    setPuzzle(setup(tileOptions));
     setRevealedTiles(new Set());
     setClickedBorders(new Set());
     setShowAll(false);
-  }, []);
+  }, [tileOptions]);
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
@@ -457,6 +459,27 @@ export default function Arclight() {
         <button className="btn-reset" onClick={handleNewGame}>
           {t('arclight.newGame')}
         </button>
+      </div>
+
+      <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+        <label htmlFor="al-option-transparent" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            id="al-option-transparent"
+            type="checkbox"
+            checked={tileOptions.includeTransparent}
+            onChange={e => setTileOptions(prev => ({ ...prev, includeTransparent: e.target.checked }))}
+          />
+          {t('arclight.includeTransparent')}
+        </label>
+        <label htmlFor="al-option-blackhole" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            id="al-option-blackhole"
+            type="checkbox"
+            checked={tileOptions.includeBlackHole}
+            onChange={e => setTileOptions(prev => ({ ...prev, includeBlackHole: e.target.checked }))}
+          />
+          {t('arclight.includeBlackHole')}
+        </label>
       </div>
     </div>
   );

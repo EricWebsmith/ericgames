@@ -25,7 +25,9 @@
     "newGame": "新しいゲーム",
     "boardAriaLabel": "弧光パズルボード",
     "tileAriaLabel": "タイル{{label}}",
-    "borderAriaLabel": "境界{{label}}"
+    "borderAriaLabel": "境界{{label}}",
+    "includeTransparent": "透明タイル",
+    "includeBlackHole": "ブラックホールタイル"
   },
   "orapaMine": {
     "title": "オラパ鉱山",
@@ -49,6 +51,7 @@
     "newRound": "新しいラウンド",
     "boardAriaLabel": "オラパスペースゲームボード",
     "cellAriaLabel": "{{row}}行{{col}}列",
-    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}"
+    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}",
+    "includeBlackHole": "ブラックホールタイル"
   }
 }

@@ -25,7 +25,9 @@
     "newGame": "新游戏",
     "boardAriaLabel": "弧光谜题棋盘",
     "tileAriaLabel": "格{{label}}",
-    "borderAriaLabel": "边界{{label}}"
+    "borderAriaLabel": "边界{{label}}",
+    "includeTransparent": "透明砖",
+    "includeBlackHole": "黑洞砖"
   },
   "orapaMine": {
     "title": "Orapa Mine",
@@ -49,6 +51,7 @@
     "newRound": "新回合",
     "boardAriaLabel": "Orapa Space游戏棋盘",
     "cellAriaLabel": "第{{row}}行，第{{col}}列",
-    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}"
+    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}",
+    "includeBlackHole": "黑洞砖"
   }
 }
