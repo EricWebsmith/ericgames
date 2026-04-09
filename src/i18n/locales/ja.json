@@ -35,7 +35,9 @@
     "newGame": "新しいゲーム",
     "boardAriaLabel": "オラパ鉱山パズルボード",
     "cellAriaLabel": "{{col}}列{{row}}行",
-    "borderAriaLabel": "境界{{label}}"
+    "borderAriaLabel": "境界{{label}}",
+    "includeTransparent": "透明タイル",
+    "includeBlack": "黒タイル"
   },
   "orapaSpace": {
     "title": "オラパスペース",

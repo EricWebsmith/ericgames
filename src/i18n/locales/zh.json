@@ -35,7 +35,9 @@
     "newGame": "新游戏",
     "boardAriaLabel": "Orapa Mine谜题棋盘",
     "cellAriaLabel": "第{{col}}列第{{row}}行",
-    "borderAriaLabel": "边界{{label}}"
+    "borderAriaLabel": "边界{{label}}",
+    "includeTransparent": "透明砖",
+    "includeBlack": "黑色砖"
   },
   "orapaSpace": {
     "title": "Orapa Space",

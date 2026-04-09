@@ -35,7 +35,9 @@
     "newGame": "새 게임",
     "boardAriaLabel": "오라파 광산 퍼즐 보드",
     "cellAriaLabel": "{{col}}열 {{row}}행",
-    "borderAriaLabel": "경계 {{label}}"
+    "borderAriaLabel": "경계 {{label}}",
+    "includeTransparent": "투명 타일",
+    "includeBlack": "검은 타일"
   },
   "orapaSpace": {
     "title": "오라파 스페이스",

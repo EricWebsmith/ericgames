@@ -1,5 +1,8 @@
 import { type Board, type Node, type ParentTile, Color, Tile } from './models';
 
+const TRANSPARENT_TILE_NAME = 'Transparent';
+const BLACK_TILE_NAME = 'Black';
+
 
 // There are four directions for the square grid:
 // 0: West
@@ -33,7 +36,17 @@ export function getAlternativeRedTile(): ParentTile {
     };
 }
 
-export function getTiles(): ParentTile[] {
+export interface TileOptions {
+    includeTransparent: boolean;
+    includeBlack: boolean;
+}
+
+export const defaultTileOptions: TileOptions = {
+    includeTransparent: true,
+    includeBlack: true,
+};
+
+export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[] {
 
     // Red tile – 1×3 vertical strip
     const redTile: ParentTile = Math.random() < 0.5 ? getRedTile() : getAlternativeRedTile();
@@ -82,16 +95,16 @@ export function getTiles(): ParentTile[] {
         },
         // Transparent tile – 1×2 vertical strip, 50% opacity
         {
-            name: 'Transparent', optional: true, subTiles: [
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], opacity: 50, parentName: 'Transparent' }),
-                new Tile({ colors: [], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], opacity: 50, parentName: 'Transparent' }),
+            name: TRANSPARENT_TILE_NAME, optional: true, subTiles: [
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], opacity: 50, parentName: TRANSPARENT_TILE_NAME }),
+                new Tile({ colors: [], coordinate: { 0: 1, 1: 0 }, reflect: [[1, 2], [2, 1]], opacity: 50, parentName: TRANSPARENT_TILE_NAME }),
             ]
         },
         // Black tile – 1×2 vertical strip, absorbs light
         {
-            name: 'Black', optional: true, subTiles: [
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: 'Black' }),
-                new Tile({ colors: [], coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: true, parentName: 'Black' }),
+            name: BLACK_TILE_NAME, optional: true, subTiles: [
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 0 }, reflect: [], absorbLight: true, parentName: BLACK_TILE_NAME }),
+                new Tile({ colors: [], coordinate: { 0: 0, 1: 1 }, reflect: [], absorbLight: true, parentName: BLACK_TILE_NAME }),
             ]
         },
         // Light Blue tile – single cell
@@ -100,7 +113,11 @@ export function getTiles(): ParentTile[] {
                 new Tile({ colors: [Color.Blue, Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [], parentName: 'Light Blue' }),
             ]
         },
-    ];
+    ].filter(tile => {
+        if (tile.name === TRANSPARENT_TILE_NAME) return options.includeTransparent;
+        if (tile.name === BLACK_TILE_NAME) return options.includeBlack;
+        return true;
+    });
 }
 
 
