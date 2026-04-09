@@ -182,18 +182,18 @@ export default function OrapaSpace() {
 
     return (
         <div className="game-container">
-            <h2 className="game-title">{t('orapaMine.title')}</h2>
+            <h2 className="game-title">{t('orapaSpace.title')}</h2>
             <p className="status-message">{t('orapaMine.instructions')}</p>
 
             <svg
                 width={SVG_W}
                 height={SVG_H}
                 viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-                className="game-svg mine-svg"
-                aria-label={t('orapaMine.boardAriaLabel')}
+                className="game-svg space-svg"
+                aria-label={t('orapaSpace.boardAriaLabel')}
             >
                 <defs>
-                    <filter id="mine-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <filter id="space-glow" x="-30%" y="-30%" width="160%" height="160%">
                         <feGaussianBlur stdDeviation="3" result="blur" />
                         <feMerge>
                             <feMergeNode in="blur" />
