@@ -6,26 +6,26 @@
     "title": "カタン王Ericのゲーム",
     "subtitle": "カタン王 Eric",
     "arclight": {
+      "title": "弧光",
       "description": "パズルゲーム"
     },
-    "mine": {
+    "orapaMine": {
+      "title": "オラパ鉱山",
       "description": "超音波宝石推理ゲーム"
     },
-    "space": {
+    "orapaSpace": {
+      "title": "オラパスペース",
       "description": "宇宙4目並べ"
     }
   },
   "arclight": {
     "title": "弧光",
-    "lightAction": "導光",
-    "sightAction": "験光",
     "instructions": "各ターンに2つのアクションがあります：導光（境界の円から光線を送る）または験光（タイルの宝石の色を確認する）。六角形をクリックして験光を行い、境界の円をクリックして導光を行いましょう！答えを確認する準備ができたら「答えを見る」をクリックすると、すべての宝石と光線のパスが表示されます。",
     "showAnswer": "答えを見る",
     "clickAllBorders": "全境界をクリック",
     "newGame": "新しいゲーム",
     "boardAriaLabel": "弧光パズルボード",
     "tileAriaLabel": "タイル{{label}}",
-    "borderAriaLabel": "境界{{label}}",
     "includeTransparent": "透明タイル",
     "includeBlackHole": "ブラックホールタイル"
   },
@@ -37,21 +37,17 @@
     "newGame": "新しいゲーム",
     "boardAriaLabel": "オラパ鉱山パズルボード",
     "cellAriaLabel": "{{col}}列{{row}}行",
-    "borderAriaLabel": "境界{{label}}",
     "includeTransparent": "透明タイル",
     "includeBlack": "黒タイル"
   },
   "orapaSpace": {
     "title": "オラパスペース",
-    "player1Name": "青い惑星",
-    "player2Name": "オレンジの星",
-    "win": "{{name}}が銀河を征服！🚀",
-    "draw": "宇宙のバランスが保たれています！",
-    "turn": "{{name}}のターン",
-    "newRound": "新しいラウンド",
+    "instructions": "境界位置から超音波を発射し、どこから出てきてどの宝石の色を持っているかを調べます。セルをクリックして中の宝石を確認し、境界の円をクリックして超音波を発射しましょう。",
+    "showAnswer": "答えを見る",
+    "clickAllBorders": "全境界をクリック",
+    "newGame": "新しいゲーム",
     "boardAriaLabel": "オラパスペースゲームボード",
     "cellAriaLabel": "{{row}}行{{col}}列",
-    "cellAriaLabelWithPlayer": "{{row}}行{{col}}列、プレイヤー{{player}}",
     "includeBlackHole": "ブラックホールタイル"
   }
 }
