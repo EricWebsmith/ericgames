@@ -63,14 +63,15 @@ export class Tile {
         belt?: number;
         connectBorder?: boolean;
     }) {
+        const { reflect = [], opacity = 100, absorbLight = false, belt = -1, connectBorder = false } = data;
         this.colors = data.colors;
         this.parentName = data.parentName;
         this.coordinate = data.coordinate;
-        if (data.reflect !== undefined) this.reflect = data.reflect;
-        if (data.opacity !== undefined) this.opacity = data.opacity;
-        if (data.absorbLight !== undefined) this.absorbLight = data.absorbLight;
-        if (data.belt !== undefined) this.belt = data.belt;
-        if (data.connectBorder !== undefined) this.connectBorder = data.connectBorder;
+        this.reflect = reflect;
+        this.opacity = opacity;
+        this.absorbLight = absorbLight;
+        this.belt = belt;
+        this.connectBorder = connectBorder;
     }
 }
 

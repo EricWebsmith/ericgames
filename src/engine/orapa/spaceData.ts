@@ -18,8 +18,8 @@ export function getTiles(): ParentTile[] {
         {
             name: 'White Big', optional: false, subTiles: [
                 new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [], parentName: 'White Big' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [], parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, parentName: 'White Big' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[1, 2]], parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, connectBorder: true, parentName: 'White Big' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, parentName: 'White Big' }),
