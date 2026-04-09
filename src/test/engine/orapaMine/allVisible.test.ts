@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getBoard, getTiles } from '../../../engine/orapaMine/data';
-import { allVisible, firstSee, putTile } from '../../../engine/orapaMine/gameManager';
+import { allVisible, firstSee, putTile } from '../../../engine/orapa/gameManager';
+import { getBoard, getTiles } from '../../../engine/orapa/mineData';
 
 describe('firstSee', () => {
     it('returns parentName of the first gem seen from top border', () => {

@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getBoard, getTiles } from '../engine/orapaMine/data';
-import { setup } from '../engine/orapaMine/gameManager';
-import type { Color, Puzzle } from '../engine/orapaMine/models';
+import { setup } from '../engine/orapa/gameManager';
+import { getBoard, getTiles } from '../engine/orapa/mineData';
+import type { Color, Puzzle } from '../engine/orapa/models';
 import BorderCircle from './BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────

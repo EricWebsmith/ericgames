@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getBoard, getTiles } from '../../../engine/orapaMine/data';
-import { borderTouch, putTile } from '../../../engine/orapaMine/gameManager';
+import { borderTouch, putTile } from '../../../engine/orapa/gameManager';
+import { getBoard, getTiles } from '../../../engine/orapa/mineData';
 
 describe('Two tiles touch each other', () => {
     it("Yellow touches lightblue", () => {

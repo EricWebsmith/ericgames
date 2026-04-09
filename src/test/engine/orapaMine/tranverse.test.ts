@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getBoard, getRedTile, getTiles } from '../../../engine/orapaMine/data';
-import { putTile, setup, traverse } from '../../../engine/orapaMine/gameManager';
-import { type Board, Color, TileInBoard } from '../../../engine/orapaMine/models';
+import { putTile, setup, traverse } from '../../../engine/orapa/gameManager';
+import { getBoard, getRedTile, getTiles } from '../../../engine/orapa/mineData';
+import { type Board, Color, TileInBoard } from '../../../engine/orapa/models';
 
 describe('traverse (yellow tile at D5)', () => {
   // Yellow (parent 3) is placed with anchor at D5, forming an L-shape:
@@ -40,7 +40,7 @@ describe('traverse (yellow tile at D5)', () => {
 
 describe('setup', () => {
   it('runs without error', () => {
-    expect(() => setup()).not.toThrow();
+    expect(() => setup(getBoard(), getTiles())).not.toThrow();
   });
 });
 

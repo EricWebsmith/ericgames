@@ -1,6 +1,6 @@
 
-import { getBoard } from '../../../engine/orapaMine/data';
-import type { Board } from '../../../engine/orapaMine/models';
+import { getBoard } from '../../../engine/orapa/mineData';
+import type { Board } from '../../../engine/orapa/models';
 
 describe('getBoard', () => {
     it('should return a board with spaces as an empty object', () => {

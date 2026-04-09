@@ -39,6 +39,7 @@ export function traverse(
     const MAX_STEPS = 400;
 
     for (let step = 0; step < MAX_STEPS; step++) {
+        console.log("currentCoordinate", currentCoordinate);
         const currentNode = board.spaces[currentCoordinate];
         if (currentNode.is_border) break;
 
@@ -53,20 +54,22 @@ export function traverse(
             // Colored cell with no arcs: beam passes through unaffected (picks up color only).
             // Only enter this block when the tile has arcs that can redirect the beam.
 
-            let turned90 = false;
+            let turned = false; // including turning 0 degree (pass through)
             if (tileInBoard.tile.reflect.length > 0) {
 
                 const entryFace = (outDir + 2) % 4;
+                console.log("entryFace", entryFace);
 
                 if (entryFace in tileInBoard.rotated_reflect) {
                     // Arc matched: redirect to the exit face (which equals the new travel direction).
                     outDir = tileInBoard.rotated_reflect[entryFace];
-                    turned90 = true;
+                    console.log("redirected to outDir", outDir);
+                    turned = true;
                 }
             }
 
             // If not turned 90 degree, turn 180 degree, 
-            if (!turned90) {
+            if (!turned) {
                 // No matching arc: reflect straight back.
                 outDir = (outDir + 2) % 4;
             }
@@ -75,7 +78,9 @@ export function traverse(
                 colors.add(color);
             }
         }
+        console.log("currentNode.edges", currentNode.edges, outDir);
         currentCoordinate = currentNode.edges[outDir];
+        
     }
 
     return { end_label: currentCoordinate, colors: [...colors] };
