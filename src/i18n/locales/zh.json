@@ -6,13 +6,16 @@
     "title": "卡坦王Eric的游戏",
     "subtitle": "闲鱼卡坦王Eric",
     "arclight": {
-      "description": "解谜游戏"
+      "title": "弧光",
+      "description": "弧光"
     },
-    "mine": {
-      "description": "超音波宝石推理游戏"
+    "orapaMine": {
+      "title": "奥拉帕矿山",
+      "description": "奥拉帕矿山"
     },
-    "space": {
-      "description": "星际4连棋"
+    "orapaSpace": {
+      "title": "奥拉帕宇宙",
+      "description": "奥拉帕宇宙"
     }
   },
   "arclight": {
@@ -23,35 +26,24 @@
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "newGame": "新游戏",
-    "boardAriaLabel": "弧光谜题棋盘",
-    "tileAriaLabel": "格{{label}}",
-    "borderAriaLabel": "边界{{label}}",
-    "includeTransparent": "透明砖",
-    "includeBlackHole": "黑洞砖"
+    "includeTransparent": "透明扩展",
+    "includeBlackHole": "黑宝石扩展"
   },
   "orapaMine": {
-    "title": "Orapa Mine",
+    "title": "奥拉帕矿山",
     "instructions": "从边界位置（数字或字母）发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "newGame": "新游戏",
-    "boardAriaLabel": "Orapa Mine谜题棋盘",
-    "cellAriaLabel": "第{{col}}列第{{row}}行",
-    "borderAriaLabel": "边界{{label}}",
-    "includeTransparent": "透明砖",
-    "includeBlack": "黑色砖"
+    "includeTransparent": "透明扩展",
+    "includeBlack": "黑宝石扩展"
   },
   "orapaSpace": {
-    "title": "Orapa Space",
-    "player1Name": "蓝星球",
-    "player2Name": "橙星星",
-    "win": "{{name}}征服了银河系！🚀",
-    "draw": "宇宙保持平衡！",
-    "turn": "{{name}}的回合",
-    "newRound": "新回合",
-    "boardAriaLabel": "Orapa Space游戏棋盘",
-    "cellAriaLabel": "第{{row}}行，第{{col}}列",
-    "cellAriaLabelWithPlayer": "第{{row}}行，第{{col}}列，玩家{{player}}",
-    "includeBlackHole": "黑洞砖"
+    "title": "奥拉帕宇宙",
+    "instructions": "从边界位置发射超音波，观察其从哪里弹出及携带的宝石颜色。点击格子可查看其中的宝石，点击边界圆发射超音波。",
+    "showAnswer": "看答案",
+    "clickAllBorders": "点击所有边界",
+    "newGame": "新游戏",
+    "includeBlackHole": "黑洞扩展"
   }
 }

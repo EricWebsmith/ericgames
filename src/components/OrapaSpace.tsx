@@ -201,7 +201,7 @@ export default function OrapaSpace() {
     return (
         <div className="game-container">
             <h2 className="game-title">{t('orapaSpace.title')}</h2>
-            <p className="status-message">{t('orapaMine.instructions')}</p>
+            <p className="status-message">{t('orapaSpace.instructions')}</p>
 
             <svg
                 width={SVG_W}
@@ -280,7 +280,7 @@ export default function OrapaSpace() {
                                 key={label}
                                 onClick={() => handleCellClick(label)}
                                 style={{ cursor: 'pointer' }}
-                                aria-label={t('orapaMine.cellAriaLabel', { col, row })}
+                                aria-label={t('orapaSpace.cellAriaLabel', { col, row })}
                             >
                                 {/* Background rect – always shown; provides the grid outline. */}
                                 <rect
@@ -402,13 +402,13 @@ export default function OrapaSpace() {
 
             <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
                 <button className="btn-reset" onClick={() => setShowAll(!showAll)}>
-                    {t('orapaMine.showAnswer')}
+                    {t('orapaSpace.showAnswer')}
                 </button>
                 <button className="btn-reset" onClick={handleClickAllBorders}>
-                    {t('orapaMine.clickAllBorders')}
+                    {t('orapaSpace.clickAllBorders')}
                 </button>
                 <button className="btn-reset" onClick={handleNewGame}>
-                    {t('orapaMine.newGame')}
+                    {t('orapaSpace.newGame')}
                 </button>
             </div>
 

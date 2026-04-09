@@ -22,7 +22,7 @@ function Home() {
             {/* Light-beam arc: upper-right edge → right edge (tight 120° corner) */}
             <path d="M 51.5,21.5 A 13,13 0 0,0 63,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" />
           </svg>
-          <h2>Arclight</h2>
+          <h2>{t('home.arclight.title')}</h2>
           <p>{t('home.arclight.description')}</p>
         </NavLink>
 
@@ -36,8 +36,8 @@ function Home() {
             <circle cx={10} cy={20} r={5} fill="#1e1e5a" stroke="#7777ee" strokeWidth={1.5} />
             <circle cx={70} cy={60} r={5} fill="#1a3a1a" stroke="#44cc44" strokeWidth={1.5} />
           </svg>
-          <h2>Orapa Mine</h2>
-          <p>{t('home.mine.description')}</p>
+          <h2>{t('home.orapaMine.title')}</h2>
+          <p>{t('home.orapaMine.description')}</p>
         </NavLink>
 
         <NavLink to="/ericgames/orapa-space" className="game-card space-card">
@@ -55,8 +55,8 @@ function Home() {
             </defs>
             <ellipse cx={40} cy={40} rx={22} ry={5} fill="none" stroke="#90caf9" strokeWidth={1.5} opacity={0.6} />
           </svg>
-          <h2>Orapa Space</h2>
-          <p>{t('home.space.description')}</p>
+          <h2>{t('home.orapaSpace.title')}</h2>
+          <p>{t('home.orapaSpace.description')}</p>
         </NavLink>
       </div>
     </div>
@@ -69,9 +69,9 @@ function Nav() {
     <nav className="main-nav">
       <NavLink to="/ericgames" end className="nav-brand">{t('nav.brand')}</NavLink>
       <ul className="nav-links">
-        <li><NavLink to="/ericgames/arclight">Arclight</NavLink></li>
-        <li><NavLink to="/ericgames/orapa-mine">Orapa Mine</NavLink></li>
-        <li><NavLink to="/ericgames/orapa-space">Orapa Space</NavLink></li>
+        <li><NavLink to="/ericgames/arclight">{t('home.arclight.title')}</NavLink></li>
+        <li><NavLink to="/ericgames/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
+        <li><NavLink to="/ericgames/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
