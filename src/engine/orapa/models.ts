@@ -40,15 +40,38 @@ export interface ParentTile {
     subTiles: Tile[];
 }
 
-export interface Tile {
+export class Tile {
+    // These now act as the true "Default Values"
+    opacity: number = 100;
+    absorbLight: boolean = false;
+    belt: number = -1;
+    connectBorder: boolean = false;
+    reflect: Reflect[] = [];
+
+    // These will be assigned in the constructor
     colors: Color[];
-    opacity: number; // 0 to 100, for rendering purposes
-    reflect: Reflect[];
+    parentName: string;
     coordinate: Record<number, number>;
-    absorbLight: boolean; // true for black gem tiles that absorb the beam entirely
-    parentName: string; // the name of the parent tile this sub-tile belongs to
-    belt: number; // -1 if this tile is not a belt. 0-3 for the belt at (0=west, 1=north, 2=east, 3=south).
-    connectBorder: boolean; // true if this tile must connect a border space.
+
+    constructor(data: {
+        colors: Color[];
+        parentName: string;
+        coordinate: Record<number, number>;
+        reflect?: Reflect[];
+        opacity?: number;
+        absorbLight?: boolean;
+        belt?: number;
+        connectBorder?: boolean;
+    }) {
+        this.colors = data.colors;
+        this.parentName = data.parentName;
+        this.coordinate = data.coordinate;
+        if (data.reflect !== undefined) this.reflect = data.reflect;
+        if (data.opacity !== undefined) this.opacity = data.opacity;
+        if (data.absorbLight !== undefined) this.absorbLight = data.absorbLight;
+        if (data.belt !== undefined) this.belt = data.belt;
+        if (data.connectBorder !== undefined) this.connectBorder = data.connectBorder;
+    }
 }
 
 export interface ITileInBoard {
