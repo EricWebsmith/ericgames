@@ -102,9 +102,13 @@ export function tranverse(
         const currentNode = board.spaces[currentCoordinate];
         if (currentNode.is_border) break;
         const inDir = (outDir + 2) % 4;
+        let lateReflect: Record<number, number> = {};
 
         if (currentCoordinate in tilesInBoard) {
             const tileInBoard = tilesInBoard[currentCoordinate];
+            console.log("tileInBoard", tileInBoard);
+            console.log("tileInBoard.rotatedLateReflect", tileInBoard.rotatedLateReflect);
+            lateReflect = tileInBoard.rotatedLateReflect;
 
             // Black gem – absorb the wave entirely.
             if (tileInBoard.tile.absorbLight) {
@@ -156,6 +160,13 @@ export function tranverse(
                     virtualTiles = {}; // virtual tiles only work for one reflection
                 }
             }
+        }
+
+        // Handle Late reflect after all other reflections, but before moving to the next cell.
+        console.log("lateReflect", lateReflect);
+        if (outDir in lateReflect) {
+            outDir = lateReflect[outDir];
+            console.log("late reflect changed outDir to", outDir);
         }
 
         console.log("currentNode.edges", currentNode.edges, outDir);

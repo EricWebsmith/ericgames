@@ -51,6 +51,7 @@ export class Tile {
     belt: number = -1;
     connectBorder: boolean = false;
     blackHole: boolean = false;
+    lateReflect: Reflect[] = [];
 
 
     constructor(data: {
@@ -63,8 +64,9 @@ export class Tile {
         belt?: number;
         connectBorder?: boolean;
         blackHole?: boolean;
+        lateReflect?: Reflect[];
     }) {
-        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false, blackHole = false } = data;
+        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false, blackHole = false, lateReflect = [] } = data;
         this.colors = data.colors;
         this.parentName = data.parentName;
         this.coordinate = data.coordinate;
@@ -74,6 +76,7 @@ export class Tile {
         this.belt = belt;
         this.connectBorder = connectBorder;
         this.blackHole = blackHole;
+        this.lateReflect = lateReflect;
     }
 }
 
@@ -82,22 +85,26 @@ export interface ITileInBoard {
     coordinate: string;
     rotated_reflect: Record<number, number>;
     rotate_angle: number; // 0 to 2
+    rotatedLateReflect: Record<number, number>;
 }
 
 export class TileInBoard implements ITileInBoard {
     tile: Tile;
     coordinate: string;
     rotated_reflect: Record<number, number> = {};
+    rotatedLateReflect: Record<number, number> = {};
     rotate_angle: number;
-    onlyBorder: number;
+    belt: number;
 
     constructor(data: Partial<ITileInBoard> & { tile: Tile; coordinate: string; }) {
         this.tile = data.tile;
         this.coordinate = data.coordinate;
         this.rotate_angle = data.rotate_angle ?? 0;
-        this.onlyBorder = data.tile.belt ?? -1;
+        this.belt = data.tile.belt ?? -1;
         this.rotated_reflect = data.rotated_reflect ?? {};
+        this.rotatedLateReflect = data.rotatedLateReflect ?? {};
     }
+
 
     /**
      * Rotate the tile clockwise by rotate_angle * 60 degrees.
@@ -114,8 +121,15 @@ export class TileInBoard implements ITileInBoard {
             this.rotated_reflect[rotatedInDir] = rotatedOutDir;
         }
 
-        if (this.onlyBorder !== -1) {
-            this.onlyBorder = (this.onlyBorder + this.rotate_angle) % 4;
+        for (const [in_dir, out_dir] of this.tile.lateReflect) {
+            const rotatedInDir = (in_dir + this.rotate_angle) % 4;
+            const rotatedOutDir = (out_dir + this.rotate_angle) % 4;
+
+            this.rotatedLateReflect[rotatedInDir] = rotatedOutDir;
+        }
+
+        if (this.belt !== -1) {
+            this.belt = (this.belt + this.rotate_angle) % 4;
         }
 
         return this;

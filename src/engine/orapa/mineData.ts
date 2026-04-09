@@ -16,9 +16,9 @@ import { type Board, type Node, type ParentTile, Color, Tile } from './models';
 export function getRedTile(): ParentTile {
     return {
         name: 'Red', optional: false, subTiles: [
-            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1]], parentName: 'Red' }),
+            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'Red' }),
             new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Red' }),
-            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3]], parentName: 'Red' }),
+            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 2 }, reflect: [[2, 3], [3, 2]], parentName: 'Red' }),
         ]
     };
 };
@@ -26,9 +26,9 @@ export function getRedTile(): ParentTile {
 export function getAlternativeRedTile(): ParentTile {
     return {
         name: 'Flipped Red', optional: false, subTiles: [
-            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2]], parentName: 'Flipped Red' }),
+            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'Flipped Red' }),
             new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 1 }, reflect: [], parentName: 'Flipped Red' }),
-            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3]], parentName: 'Flipped Red' }),
+            new Tile({ colors: [Color.Red], coordinate: { 0: 0, 1: 2 }, reflect: [[0, 3], [3, 0]], parentName: 'Flipped Red' }),
         ]
     };
 }

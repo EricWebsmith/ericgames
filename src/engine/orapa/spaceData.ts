@@ -64,14 +64,14 @@ export function getTiles(): ParentTile[] {
 
         {
             name: 'White Small', optional: false, subTiles: [
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], belt: 3, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], lateReflect: [[3, 1]], belt: 3, parentName: 'White Small' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 0 }, reflect: [[0, 1], [1, 0]], parentName: 'White Small' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 0 }, reflect: [[1, 2], [2, 1]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], belt: 3, parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 0]], belt: 1, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 0 }, reflect: [[0, 2], [1, 3], [2, 0]], lateReflect:[[3, 1]], belt: 3, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 0, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 0]], lateReflect: [[1, 3]], belt: 1, parentName: 'White Small' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 1, 1: 1 }, reflect: [[0, 3], [3, 0]], parentName: 'White Small' }),
                 new Tile({ colors: [Color.White], coordinate: { 0: 2, 1: 1 }, reflect: [[3, 2], [2, 3]], parentName: 'White Small' }),
-                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 1]], belt: 1, parentName: 'White Small' }),
+                new Tile({ colors: [Color.White], coordinate: { 0: 3, 1: 1 }, reflect: [[0, 2], [3, 1], [2, 0]], lateReflect: [[1, 3]], belt: 1, parentName: 'White Small' }),
             ]
         },
         {
