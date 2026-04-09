@@ -89,13 +89,16 @@ function notePx(b: BorderInfo): { x: number; y: number; } {
 // ─── Border bar helper ─────────────────────────────────────────────
 // Returns the x, y, width, height of a thin bar drawn on the given side of a cell.
 // border: 0=west, 1=north, 2=east, 3=south
+// The +1 / -2 insets match the background <rect> geometry (x+1, y+1, CELL-2 × CELL-2).
 const BAR_THICKNESS = 4;
+const CELL_INSET = 1; // 1px inset on each side to align with background rect
 function getBarRect(cellX: number, cellY: number, border: number): { x: number; y: number; width: number; height: number } | null {
+    const innerSize = CELL - 2 * CELL_INSET; // inner dimension matches background rect
     switch (border) {
-        case 0: return { x: cellX + 1, y: cellY + 1, width: BAR_THICKNESS, height: CELL - 2 };
-        case 1: return { x: cellX + 1, y: cellY + 1, width: CELL - 2, height: BAR_THICKNESS };
-        case 2: return { x: cellX + CELL - 1 - BAR_THICKNESS, y: cellY + 1, width: BAR_THICKNESS, height: CELL - 2 };
-        case 3: return { x: cellX + 1, y: cellY + CELL - 1 - BAR_THICKNESS, width: CELL - 2, height: BAR_THICKNESS };
+        case 0: return { x: cellX + CELL_INSET, y: cellY + CELL_INSET, width: BAR_THICKNESS, height: innerSize };
+        case 1: return { x: cellX + CELL_INSET, y: cellY + CELL_INSET, width: innerSize, height: BAR_THICKNESS };
+        case 2: return { x: cellX + CELL - CELL_INSET - BAR_THICKNESS, y: cellY + CELL_INSET, width: BAR_THICKNESS, height: innerSize };
+        case 3: return { x: cellX + CELL_INSET, y: cellY + CELL - CELL_INSET - BAR_THICKNESS, width: innerSize, height: BAR_THICKNESS };
         default: return null;
     }
 }
