@@ -311,6 +311,21 @@ export default function Arclight() {
         {/* Brown background */}
         <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
 
+        {/* Dig-for-diamond watermark */}
+        <g opacity={0.18} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          {/* Diamond outline: flat-top crown + pointed pavilion */}
+          <path d="M275,185 L425,185 L455,295 L350,420 L245,295 Z" strokeWidth={2} fill="#4a3015" fillOpacity={0.35} />
+          {/* Girdle line */}
+          <line x1={245} y1={295} x2={455} y2={295} strokeWidth={1} />
+          {/* Crown star facets */}
+          <line x1={275} y1={185} x2={350} y2={295} strokeWidth={1} />
+          <line x1={350} y1={185} x2={350} y2={295} strokeWidth={1} />
+          <line x1={425} y1={185} x2={350} y2={295} strokeWidth={1} />
+          {/* Pavilion facets */}
+          <line x1={282} y1={295} x2={350} y2={420} strokeWidth={1} />
+          <line x1={418} y1={295} x2={350} y2={420} strokeWidth={1} />
+        </g>
+
         {/* ── Hex tiles ── */}
         {ALL_TILES.map(({ label }) => {
           const { x, y } = tilePx[label];

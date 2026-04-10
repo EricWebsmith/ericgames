@@ -226,6 +226,21 @@ export default function OrapaMine() {
         {/* Mine background */}
         <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
 
+        {/* Dig-for-diamond watermark */}
+        <g opacity={0.18} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          {/* Diamond outline: flat-top crown + pointed pavilion */}
+          <path d="M224,148 L364,148 L394,248 L294,368 L194,248 Z" strokeWidth={2} fill="#4a3015" fillOpacity={0.35} />
+          {/* Girdle line */}
+          <line x1={194} y1={248} x2={394} y2={248} strokeWidth={1} />
+          {/* Crown star facets */}
+          <line x1={224} y1={148} x2={294} y2={248} strokeWidth={1} />
+          <line x1={294} y1={148} x2={294} y2={248} strokeWidth={1} />
+          <line x1={364} y1={148} x2={294} y2={248} strokeWidth={1} />
+          {/* Pavilion facets */}
+          <line x1={234} y1={248} x2={294} y2={368} strokeWidth={1} />
+          <line x1={354} y1={248} x2={294} y2={368} strokeWidth={1} />
+        </g>
+
         {/* Rock pebbles */}
         {PEBBLES.map((p, i) => (
           <ellipse key={`pebble-${i}`} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill="#4a2e18" opacity={0.5} />
