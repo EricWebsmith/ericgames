@@ -135,6 +135,25 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
     }
 }
 
+// ─── Stars ────────────────────────────────────────────────────────
+// Deterministic star positions for the space background.
+const LCG_MULTIPLIER = 1664525;
+const LCG_INCREMENT = 1013904223;
+
+function seededStars(count: number): { x: number; y: number; r: number }[] {
+    const stars: { x: number; y: number; r: number }[] = [];
+    let seed = 7919;
+    for (let i = 0; i < count; i++) {
+        seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
+        const x = seed % SVG_W;
+        seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
+        const y = seed % SVG_H;
+        stars.push({ x, y, r: i % 6 === 0 ? 1.5 : 0.8 });
+    }
+    return stars;
+}
+const STARS = seededStars(70);
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaSpace() {
     const { t } = useTranslation();
@@ -220,8 +239,13 @@ export default function OrapaSpace() {
                     </filter>
                 </defs>
 
-                {/* Brown background */}
-                <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
+                {/* Space background */}
+                <rect width={SVG_W} height={SVG_H} fill="#060614" rx={10} />
+
+                {/* Stars */}
+                {STARS.map((s, i) => (
+                    <circle key={`star-${i}`} cx={s.x} cy={s.y} r={s.r} fill="white" opacity={0.6 + (i % 4) * 0.1} />
+                ))}
 
                 {/* ── Grid cells ── */}
                 {Array.from({ length: COLS }, (_, ci) =>
@@ -287,8 +311,8 @@ export default function OrapaSpace() {
                                 <rect
                                     x={x + 1} y={y + 1}
                                     width={CELL - 2} height={CELL - 2}
-                                    fill="#3d2410"
-                                    stroke="#6a4420"
+                                    fill="#0a1828"
+                                    stroke="#1e3d5c"
                                     strokeWidth={1.5}
                                     rx={2}
                                 />
@@ -327,7 +351,7 @@ export default function OrapaSpace() {
 
                                 {/* X cross for revealed empty cells (no gem piece placed) */}
                                 {revealed && !hasGem && !tileData && (
-                                    <g stroke="#7a4a20" strokeWidth={2} strokeLinecap="round">
+                                    <g stroke="#1e5a8a" strokeWidth={2} strokeLinecap="round">
                                         <line x1={cx - 10} y1={cy - 10} x2={cx + 10} y2={cy + 10} />
                                         <line x1={cx + 10} y1={cy - 10} x2={cx - 10} y2={cy + 10} />
                                     </g>
@@ -338,7 +362,7 @@ export default function OrapaSpace() {
                                     x={cx} y={cy}
                                     textAnchor="middle"
                                     dominantBaseline="middle"
-                                    fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#7a4a20'}
+                                    fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#2a5a8a'}
                                     fontSize={9}
                                     fontWeight="bold"
                                     style={{ pointerEvents: 'none', userSelect: 'none' }}

@@ -117,6 +117,27 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
   }
 }
 
+// ─── Rock pebbles ─────────────────────────────────────────────────
+// Deterministic pebble positions for the mine background texture.
+const LCG_MULTIPLIER = 1664525;
+const LCG_INCREMENT = 1013904223;
+
+function seededPebbles(count: number): { x: number; y: number; rx: number; ry: number }[] {
+  const pebbles: { x: number; y: number; rx: number; ry: number }[] = [];
+  let seed = 3571;
+  for (let i = 0; i < count; i++) {
+    seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
+    const x = seed % SVG_W;
+    seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
+    const y = seed % SVG_H;
+    const rx = 2 + (i % 4);
+    const ry = 1 + (i % 3);
+    pebbles.push({ x, y, rx, ry });
+  }
+  return pebbles;
+}
+const PEBBLES = seededPebbles(50);
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
@@ -202,8 +223,13 @@ export default function OrapaMine() {
           </filter>
         </defs>
 
-        {/* Brown background */}
+        {/* Mine background */}
         <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
+
+        {/* Rock pebbles */}
+        {PEBBLES.map((p, i) => (
+          <ellipse key={`pebble-${i}`} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill="#4a2e18" opacity={0.5} />
+        ))}
 
         {/* ── Grid cells ── */}
         {Array.from({ length: COLS }, (_, ci) =>
