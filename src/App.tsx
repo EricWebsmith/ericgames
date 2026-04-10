@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Arclight from './components/Arclight';
 import LanguageSwitcher from './components/LanguageSwitcher';
@@ -80,7 +80,7 @@ function Nav() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Nav />
       <main className="main-content">
         <Routes>
@@ -90,6 +90,6 @@ export default function App() {
           <Route path="/ericgames/orapa-space" element={<OrapaSpace />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
