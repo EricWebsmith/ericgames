@@ -275,6 +275,7 @@ export default function OrapaSpace() {
                         // TileInBoard.belt already has the rotation applied.
                         const belt = tileData?.belt ?? -1;
                         const isBelt = belt !== -1;
+                        const isBlackHole = tileData?.tile.blackHole ?? false;
 
                         // Tile fill colour (only relevant when revealed and a tile exists).
                         let tileFill = '';
@@ -319,7 +320,20 @@ export default function OrapaSpace() {
 
                                 {/* Revealed tile drawn on top of the background. */}
                                 {revealed && tileData && (
-                                    isBelt && barRect ? (
+                                    isBlackHole ? (
+                                        /* Black hole: glowing purple accretion-disk ring with dark event horizon. */
+                                        <>
+                                            <circle cx={cx} cy={cy} r={(CELL - 4) / 2} fill="#050010" />
+                                            <circle
+                                                cx={cx} cy={cy} r={(CELL - 10) / 2}
+                                                fill="none"
+                                                stroke="#aa44ff"
+                                                strokeWidth={3}
+                                                filter="url(#space-glow)"
+                                            />
+                                            <circle cx={cx} cy={cy} r={(CELL - 20) / 2} fill="#000008" />
+                                        </>
+                                    ) : isBelt && barRect ? (
                                         /* Border bar tile: only draw a thin bar on the specified side. */
                                         <rect
                                             x={barRect.x} y={barRect.y}
