@@ -272,8 +272,9 @@ export default function OrapaSpace() {
                             ? getTrianglePoints(x, y, reflectArcs[0])
                             : null;
 
-                        // Bar rect for belt tiles – computed once when needed.
-                        const barRect = isBelt ? getBarRect(x, y, belt) : null;
+                        // Bar rect for belt tiles – only computed in showAll mode so that
+                        // during normal play the full square is painted (same approach as trianglePoints).
+                        const barRect = showAll && isBelt ? getBarRect(x, y, belt) : null;
 
                         return (
                             <g
