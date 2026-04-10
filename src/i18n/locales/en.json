@@ -49,8 +49,5 @@
     "boardAriaLabel": "Orapa Space puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeBlackHole": "Black Hole Expansion"
-  },
-  "footer": {
-    "contact": "QQ: 961422707"
   }
 }

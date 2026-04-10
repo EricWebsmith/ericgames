@@ -79,10 +79,9 @@ function Nav() {
 }
 
 function Footer() {
-  const { t } = useTranslation();
   return (
     <footer className="main-footer">
-      <p>{t('footer.contact')}</p>
+      <p>QQ: 961422707</p>
     </footer>
   )
 }
