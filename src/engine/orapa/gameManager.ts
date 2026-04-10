@@ -246,21 +246,21 @@ export function borderTouch(board: Board, tilesInBoard: Record<string, TileInBoa
 export function firstSee(
     board: Board,
     tilesInBoard: Record<string, TileInBoard>,
-    startCoordinate: string,
+    startLabel: string,
 ): string | null {
-    const startNode = board.spaces[startCoordinate];
+    const startNode = board.spaces[startLabel];
     const travelDir = Number(Object.keys(startNode.edges)[0]);
-    let currentCoordinate = startNode.edges[travelDir];
+    let currentLabel = startNode.edges[travelDir];
 
     while (true) {
-        const currentNode = board.spaces[currentCoordinate];
+        const currentNode = board.spaces[currentLabel];
         if (currentNode.is_border) break;
 
-        if (currentCoordinate in tilesInBoard) {
-            return tilesInBoard[currentCoordinate].tile.parentName;
+        if (currentLabel in tilesInBoard) {
+            return tilesInBoard[currentLabel].tile.parentName;
         }
 
-        currentCoordinate = currentNode.edges[travelDir];
+        currentLabel = currentNode.edges[travelDir];
     }
 
     return null;
@@ -288,8 +288,8 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
 
     // Find all gem parentNames visible from any border node.
     const visibleParentNames = new Set<string>();
-    for (const borderCoord of borderLabels) {
-        const parentName = firstSee(board, combinedTiles, borderCoord);
+    for (const borderLabel of borderLabels) {
+        const parentName = firstSee(board, combinedTiles, borderLabel);
         if (parentName !== null) {
             visibleParentNames.add(parentName);
         }
@@ -304,6 +304,12 @@ export function allVisible(board: Board, tilesInBoard: Record<string, TileInBoar
     return true;
 }
 
+/**
+ * The White Big tile must connect to the border.
+ * @param board 
+ * @param tiles 
+ * @returns 
+ */
 function checkBorderConnection(board: Board, tiles: TileInBoard[]): boolean {
     for (const tile of tiles) {
         if (!tile.tile.connectBorder) {
@@ -379,6 +385,8 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             // Check border connection
             const newTiles = putTile(parentTile, anchorCoord, rotateAngle);
             if (!checkBorderConnection(board, Object.values(newTiles))) continue;
+
+            if (!allVisible(board, tilesInBoard, newTiles)) continue;
 
             // Place the piece via putTile and merge into tilesInBoard.
 
