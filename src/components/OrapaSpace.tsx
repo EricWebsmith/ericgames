@@ -4,6 +4,7 @@ import { setup } from '../engine/orapa/gameManager';
 import { getBoard, } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
 import { getTiles, defaultTileOptions, type TileOptions } from '../engine/orapa/spaceData';
+import BlackHole from './BlackHole';
 import BorderCircle from './BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -275,6 +276,7 @@ export default function OrapaSpace() {
                         // TileInBoard.belt already has the rotation applied.
                         const belt = tileData?.belt ?? -1;
                         const isBelt = belt !== -1;
+                        const isBlackHole = tileData?.tile.blackHole ?? false;
 
                         // Tile fill colour (only relevant when revealed and a tile exists).
                         let tileFill = '';
@@ -319,7 +321,15 @@ export default function OrapaSpace() {
 
                                 {/* Revealed tile drawn on top of the background. */}
                                 {revealed && tileData && (
-                                    isBelt && barRect ? (
+                                    isBlackHole ? (
+                                        /* Black hole: SVG icon (svgrepo.com #187751), colored purple. */
+                                        <BlackHole
+                                            x={x + 1}
+                                            y={y + 1}
+                                            size={CELL - 2}
+                                            filter="url(#space-glow)"
+                                        />
+                                    ) : isBelt && barRect ? (
                                         /* Border bar tile: only draw a thin bar on the specified side. */
                                         <rect
                                             x={barRect.x} y={barRect.y}
