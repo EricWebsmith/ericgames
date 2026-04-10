@@ -78,6 +78,14 @@ function Nav() {
   )
 }
 
+function Footer() {
+  return (
+    <footer className="main-footer">
+      <p>QQ: 961422707</p>
+    </footer>
+  )
+}
+
 export default function App() {
   return (
     <HashRouter>
@@ -90,6 +98,7 @@ export default function App() {
           <Route path="/orapa-space" element={<OrapaSpace />} />
         </Routes>
       </main>
+      <Footer />
     </HashRouter>
   )
 }
