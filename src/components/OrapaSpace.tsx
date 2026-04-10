@@ -310,7 +310,7 @@ export default function OrapaSpace() {
                                             points={trianglePoints}
                                             fill={tileFill}
                                             fillOpacity={fillOpacity}
-                                            filter={hasGem ? 'url(#mine-glow)' : undefined}
+                                            filter={hasGem ? 'url(#space-glow)' : undefined}
                                         />
                                     ) : (
                                         /* Normal play or non-triangle tile: full rectangle. */
@@ -320,7 +320,7 @@ export default function OrapaSpace() {
                                             fill={tileFill}
                                             fillOpacity={fillOpacity}
                                             rx={2}
-                                            filter={hasGem ? 'url(#mine-glow)' : undefined}
+                                            filter={hasGem ? 'url(#space-glow)' : undefined}
                                         />
                                     )
                                 )}
@@ -379,7 +379,7 @@ export default function OrapaSpace() {
                                 isExit={isExit}
                                 label={b.label}
                                 onClick={() => handleBorderClick(b.label)}
-                                glowFilter="url(#mine-glow)"
+                                glowFilter="url(#space-glow)"
                             />
 
                             {/* Wave result annotation */}
