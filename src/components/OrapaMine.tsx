@@ -227,7 +227,7 @@ export default function OrapaMine() {
         <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
 
         {/* Dig-for-diamond watermark */}
-        <g opacity={0.18} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <g opacity={0.4} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
           {/* Diamond outline: flat-top crown + pointed pavilion */}
           <path d="M224,148 L364,148 L394,248 L294,368 L194,248 Z" strokeWidth={2} fill="#4a3015" fillOpacity={0.35} />
           {/* Girdle line */}
@@ -297,11 +297,11 @@ export default function OrapaMine() {
                 style={{ cursor: 'pointer' }}
                 aria-label={t('orapaMine.cellAriaLabel', { col, row })}
               >
-                {/* Background rect – always shown; provides the grid outline. */}
+                {/* Background rect – always shown; provides the grid outline. Diamond watermark shows through. */}
                 <rect
                   x={x + 1} y={y + 1}
                   width={CELL - 2} height={CELL - 2}
-                  fill="#3d2410"
+                  fill="none"
                   stroke="#6a4420"
                   strokeWidth={1.5}
                   rx={2}

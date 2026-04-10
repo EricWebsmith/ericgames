@@ -312,7 +312,7 @@ export default function Arclight() {
         <rect width={SVG_W} height={SVG_H} fill="#2b1a0e" rx={10} />
 
         {/* Dig-for-diamond watermark */}
-        <g opacity={0.18} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <g opacity={0.4} stroke="#c8a050" fill="none" strokeLinecap="round" strokeLinejoin="round">
           {/* Diamond outline: flat-top crown + pointed pavilion */}
           <path d="M275,185 L425,185 L455,295 L350,420 L245,295 Z" strokeWidth={2} fill="#4a3015" fillOpacity={0.35} />
           {/* Girdle line */}
@@ -335,9 +335,9 @@ export default function Arclight() {
           const gemColor = hasGem ? getGemColor(colors) : '';
           const tileData = tileByCoord[label];
 
-          // Fill colour: gem colour when revealed, else dark; black-hole → black,
-          // transparent tile (arcs but no gem) → light grey.
-          let fillColor = revealed && hasGem ? gemColor : '#3d2410';
+          // Fill colour: transparent when unrevealed (diamond shows through); gem colour when revealed;
+          // black-hole → black, transparent tile (arcs but no gem) → light grey.
+          let fillColor = revealed && hasGem ? gemColor : 'none';
           if (revealed && tileData && !hasGem) {
             fillColor = tileData.tile.arcs.length === 0 ? '#000000' : '#EEEEEE';
           }
