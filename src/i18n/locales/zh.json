@@ -49,5 +49,8 @@
     "boardAriaLabel": "奥拉帕宇宙拼图棋盘",
     "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeBlackHole": "黑洞扩展"
+  },
+  "footer": {
+    "contact": "QQ: 961422707"
   }
 }

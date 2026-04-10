@@ -49,5 +49,8 @@
     "boardAriaLabel": "オラパスペースゲームボード",
     "cellAriaLabel": "{{row}}行{{col}}列",
     "includeBlackHole": "ブラックホールタイル"
+  },
+  "footer": {
+    "contact": "QQ: 961422707"
   }
 }

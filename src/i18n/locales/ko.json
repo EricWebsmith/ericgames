@@ -49,5 +49,8 @@
     "boardAriaLabel": "오라파 스페이스 게임 보드",
     "cellAriaLabel": "{{row}}행 {{col}}열",
     "includeBlackHole": "블랙홀 타일"
+  },
+  "footer": {
+    "contact": "QQ: 961422707"
   }
 }

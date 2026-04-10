@@ -78,6 +78,15 @@ function Nav() {
   )
 }
 
+function Footer() {
+  const { t } = useTranslation();
+  return (
+    <footer className="main-footer">
+      <p>{t('footer.contact')}</p>
+    </footer>
+  )
+}
+
 export default function App() {
   return (
     <HashRouter>
@@ -90,6 +99,7 @@ export default function App() {
           <Route path="/orapa-space" element={<OrapaSpace />} />
         </Routes>
       </main>
+      <Footer />
     </HashRouter>
   )
 }

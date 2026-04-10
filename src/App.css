@@ -274,3 +274,14 @@ body {
   background: #1a1a2e;
   color: #e0e0f0;
 }
+
+/* ==========================================
+   Footer
+   ========================================== */
+.main-footer {
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid #2a2a4a;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
