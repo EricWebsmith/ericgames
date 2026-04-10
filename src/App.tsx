@@ -13,7 +13,7 @@ function Home() {
       <h1>{t('home.title')}</h1>
       <p className="home-subtitle">{t('home.subtitle')}</p>
       <div className="game-grid">
-        <NavLink to="/ericgames/arclight" className="game-card arclight-card">
+        <NavLink to="/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             {/* Pointy-top hex tile, matching in-game tile style */}
             <polygon points="40,12 63,26 63,54 40,68 17,54 17,26" fill="#1a0a04" stroke="#8a5a30" strokeWidth={2} />
@@ -26,7 +26,7 @@ function Home() {
           <p>{t('home.arclight.description')}</p>
         </NavLink>
 
-        <NavLink to="/ericgames/orapa-mine" className="game-card mine-card">
+        <NavLink to="/orapa-mine" className="game-card mine-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#080818" rx={4} />
             <rect x={10} y={20} width={60} height={40} fill="none" stroke="#2a2a6a" strokeWidth={1} />
@@ -40,7 +40,7 @@ function Home() {
           <p>{t('home.orapaMine.description')}</p>
         </NavLink>
 
-        <NavLink to="/ericgames/orapa-space" className="game-card space-card">
+        <NavLink to="/orapa-space" className="game-card space-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#03030f" rx={4} />
             <circle cx={20} cy={15} r={1} fill="white" opacity={0.8} />
@@ -67,11 +67,11 @@ function Nav() {
   const { t } = useTranslation();
   return (
     <nav className="main-nav">
-      <NavLink to="/ericgames" end className="nav-brand">{t('nav.brand')}</NavLink>
+      <NavLink to="/" end className="nav-brand">{t('nav.brand')}</NavLink>
       <ul className="nav-links">
-        <li><NavLink to="/ericgames/arclight">{t('home.arclight.title')}</NavLink></li>
-        <li><NavLink to="/ericgames/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
-        <li><NavLink to="/ericgames/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
+        <li><NavLink to="/arclight">{t('home.arclight.title')}</NavLink></li>
+        <li><NavLink to="/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
+        <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -84,10 +84,10 @@ export default function App() {
       <Nav />
       <main className="main-content">
         <Routes>
-          <Route path="/ericgames" element={<Home />} />
-          <Route path="/ericgames/arclight" element={<Arclight />} />
-          <Route path="/ericgames/orapa-mine" element={<OrapaMine />} />
-          <Route path="/ericgames/orapa-space" element={<OrapaSpace />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/arclight" element={<Arclight />} />
+          <Route path="/orapa-mine" element={<OrapaMine />} />
+          <Route path="/orapa-space" element={<OrapaSpace />} />
         </Routes>
       </main>
     </HashRouter>
