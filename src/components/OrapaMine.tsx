@@ -383,7 +383,7 @@ export default function OrapaMine() {
                   fontWeight="bold"
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
-                  {exitLbl ? `→${exitLbl}` : '✕'}
+                  {exitLbl ? exitLbl : '⊘'}
                 </text>
               )}
             </g>

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/orapa/gameManager';
 import { getBoard, } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
-import { getTiles, defaultTileOptions, type TileOptions } from '../engine/orapa/spaceData';
+import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/spaceData';
 import BlackHole from './BlackHole';
 import BorderCircle from './BorderCircle';
 
@@ -427,7 +427,7 @@ export default function OrapaSpace() {
                                     fontWeight="bold"
                                     style={{ pointerEvents: 'none', userSelect: 'none' }}
                                 >
-                                    {exitLbl ? `→${exitLbl}` : '✕'}
+                                    {exitLbl ? exitLbl : '⊘'}
                                 </text>
                             )}
                         </g>

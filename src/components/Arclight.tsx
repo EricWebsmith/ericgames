@@ -459,7 +459,7 @@ export default function Arclight() {
                   fontWeight="bold"
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
-                  {exitLbl ? `→${exitLbl}` : '✕'}
+                  {exitLbl ? exitLbl : '⊘'}
                 </text>
               )}
             </g>
