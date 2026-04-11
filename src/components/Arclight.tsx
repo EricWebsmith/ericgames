@@ -226,19 +226,19 @@ export default function Arclight() {
           y: by - 20,
         };
       } else if (["H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"].includes(b.label)) {
-         map[b.label] = {
+        map[b.label] = {
           x: bx + 25,
           y: by,
         };
       } else if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"].includes(b.label)) {
-         map[b.label] = {
+        map[b.label] = {
           x: bx - 25,
           y: by,
         };
-      } else  {
-         map[b.label] = {
+      } else {
+        map[b.label] = {
           x: bx,
-          y: by+ 22,
+          y: by + 22,
         };
       }
     }

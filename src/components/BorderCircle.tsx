@@ -2,14 +2,14 @@ import type { Color } from '../engine/arclight/models';
 import { GEM_FILL } from './colors';
 
 const DEFAULT_GEM_COLOR = '#999999';
-const ARC_STROKE_WIDTH  = 3.5;
+const ARC_STROKE_WIDTH = 3.5;
 
 // SVG path for a clockwise arc from startDeg to endDeg on a circle of radius r at (cx, cy)
 function arcSegmentPath(
   cx: number, cy: number, r: number, startDeg: number, endDeg: number,
 ): string {
   const startRad = (startDeg * Math.PI) / 180;
-  const endRad   = (endDeg   * Math.PI) / 180;
+  const endRad = (endDeg * Math.PI) / 180;
   const startX = cx + r * Math.cos(startRad);
   const startY = cy + r * Math.sin(startRad);
   const endX = cx + r * Math.cos(endRad);
@@ -33,9 +33,9 @@ interface BorderCircleProps {
 export default function BorderCircle({
   cx, cy, r, colors, isEntry, isExit, label, onClick, glowFilter,
 }: BorderCircleProps) {
-  const circleFill   = isEntry ? '#1e1e5a' : isExit ? '#1a3a1a' : '#111130';
+  const circleFill = isEntry ? '#1e1e5a' : isExit ? '#1a3a1a' : '#111130';
   const circleStroke = isEntry ? '#7777ee' : isExit ? '#44cc44' : '#3a3a7a';
-  const textFill     = isEntry ? '#ccccff' : isExit ? '#88ff88' : '#8888aa';
+  const textFill = isEntry ? '#ccccff' : isExit ? '#88ff88' : '#8888aa';
 
   // Deduplicate colors while preserving order so that e.g. ['red','red','blue']
   // renders as 2 arcs (red + blue), not 3.
@@ -49,9 +49,9 @@ export default function BorderCircle({
   // 4 colors → four 90° quarters
   const arcs: [number, number][] =
     count === 2 ? [[-90, 90], [90, 270]]
-    : count === 3 ? [[-90, 30], [30, 150], [150, 270]]
-    : count === 4 ? [[-90, 0], [0, 90], [90, 180], [180, 270]]
-    : [];
+      : count === 3 ? [[-90, 30], [30, 150], [150, 270]]
+        : count === 4 ? [[-90, 0], [0, 90], [90, 180], [180, 270]]
+          : [];
 
   return (
     <g

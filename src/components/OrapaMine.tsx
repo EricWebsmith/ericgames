@@ -30,10 +30,10 @@ function cellTL(col: number, row: number) {
 
 // ─── Gem colors ────────────────────────────────────────────────────
 const GEM_FILL: Record<string, string> = {
-  red:    '#ff5555',
-  blue:   '#5577ff',
+  red: '#ff5555',
+  blue: '#5577ff',
   yellow: '#ccaa00',
-  white:  '#e0e0e0',
+  white: '#e0e0e0',
 };
 
 const DEFAULT_GEM_COLOR = '#aaaaaa';
@@ -67,21 +67,21 @@ const ALL_BORDERS: BorderInfo[] = [
 ];
 
 // ─── Pixel helpers ─────────────────────────────────────────────────
-function borderPx(b: BorderInfo): { x: number; y: number } {
+function borderPx(b: BorderInfo): { x: number; y: number; } {
   switch (b.side) {
-    case 'top':    return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF };
-    case 'left':   return { x: GX - BD_OFF,                  y: GY + b.idx * CELL + CELL / 2 };
+    case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF };
+    case 'left': return { x: GX - BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
     case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF };
-    case 'right':  return { x: GX + COLS * CELL + BD_OFF,    y: GY + b.idx * CELL + CELL / 2 };
+    case 'right': return { x: GX + COLS * CELL + BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
   }
 }
 
-function notePx(b: BorderInfo): { x: number; y: number } {
+function notePx(b: BorderInfo): { x: number; y: number; } {
   switch (b.side) {
-    case 'top':    return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
-    case 'left':   return { x: GX - BD_OFF - BD_R - 8,       y: GY + b.idx * CELL + CELL / 2 };
+    case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
+    case 'left': return { x: GX - BD_OFF - BD_R - 8, y: GY + b.idx * CELL + CELL / 2 };
     case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF + BD_R + 8 };
-    case 'right':  return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + b.idx * CELL + CELL / 2 };
+    case 'right': return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + b.idx * CELL + CELL / 2 };
   }
 }
 
@@ -98,7 +98,7 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
   const [a, b] = arc;
   const key = [Math.min(a, b), Math.max(a, b)].join(',');
 
-  const x0 = cellX + 1,      y0 = cellY + 1;        // NW inset
+  const x0 = cellX + 1, y0 = cellY + 1;        // NW inset
   const x1 = cellX + CELL - 1, y1 = cellY + CELL - 1; // SE inset
 
   const NW = `${x0},${y0}`;
@@ -113,7 +113,7 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
     // '\' diagonal (NW←→SE): excludes the corner not on the "\" line
     case '1,2': return `${NW} ${SW} ${SE}`; // open corner = NE, solid: left+bottom+\ hyp
     case '0,3': return `${NW} ${NE} ${SE}`; // open corner = SW, solid: top+right+\ hyp
-    default:    return null;
+    default: return null;
   }
 }
 
@@ -122,8 +122,8 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 const LCG_MULTIPLIER = 1664525;
 const LCG_INCREMENT = 1013904223;
 
-function seededPebbles(count: number): { x: number; y: number; rx: number; ry: number }[] {
-  const pebbles: { x: number; y: number; rx: number; ry: number }[] = [];
+function seededPebbles(count: number): { x: number; y: number; rx: number; ry: number; }[] {
+  const pebbles: { x: number; y: number; rx: number; ry: number; }[] = [];
   let seed = 3571;
   for (let i = 0; i < count; i++) {
     seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;

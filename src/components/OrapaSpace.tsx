@@ -93,7 +93,7 @@ function notePx(b: BorderInfo): { x: number; y: number; } {
 // The +1 / -2 insets match the background <rect> geometry (x+1, y+1, CELL-2 × CELL-2).
 const BAR_THICKNESS = 4;
 const CELL_INSET = 1; // 1px inset on each side to align with background rect
-function getBarRect(cellX: number, cellY: number, border: number): { x: number; y: number; width: number; height: number } | null {
+function getBarRect(cellX: number, cellY: number, border: number): { x: number; y: number; width: number; height: number; } | null {
     const innerSize = CELL - 2 * CELL_INSET; // inner dimension matches background rect
     switch (border) {
         case 0: return { x: cellX + CELL_INSET, y: cellY + CELL_INSET, width: BAR_THICKNESS, height: innerSize };
@@ -141,8 +141,8 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 const LCG_MULTIPLIER = 1664525;
 const LCG_INCREMENT = 1013904223;
 
-function seededStars(count: number): { x: number; y: number; r: number }[] {
-    const stars: { x: number; y: number; r: number }[] = [];
+function seededStars(count: number): { x: number; y: number; r: number; }[] {
+    const stars: { x: number; y: number; r: number; }[] = [];
     let seed = 7919;
     for (let i = 0; i < count; i++) {
         seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
