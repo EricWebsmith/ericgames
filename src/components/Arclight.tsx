@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../engine/arclight/gameManager';
 import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
+import { setup } from '../engine/arclight/gameManager';
 import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './BorderCircle';
 import { GEM_FILL } from './colors';
@@ -12,19 +12,19 @@ import { GEM_FILL } from './colors';
 // BD_DIST=54 places border circles ~20px beyond each tile edge (tile inradius≈33px, 54-33=21px gap).
 // BD_R=13 is large enough to fit two-digit labels (10–21) while keeping adjacent circles non-overlapping.
 const HEX_SIZE = 42;
-const HEX_R    = 38;
-const BD_DIST  = 40;
-const BD_R     = 13;
-const SVG_W    = 700;
-const SVG_H    = 600;
-const OX       = 350;  // SVG origin X (center of hex grid)
-const OY       = 300;  // SVG origin Y
+const HEX_R = 38;
+const BD_DIST = 40;
+const BD_R = 13;
+const SVG_W = 700;
+const SVG_H = 600;
+const OX = 350;  // SVG origin X (center of hex grid)
+const OY = 300;  // SVG origin Y
 
 // Arc radii derived from hex geometry:
 // ARC_SMALL_R = R/2  (tight 120° corner arc, center at a hex vertex)
 // ARC_MED_R   = dist from neighbour-centre to edge-midpoint (60° arc through adjacent hex centre)
 const ARC_SMALL_R = HEX_R / 2;
-const ARC_MED_R   = Math.sqrt(
+const ARC_MED_R = Math.sqrt(
   (3 / 4) * HEX_R * HEX_R - (3 / 2) * HEX_R * HEX_SIZE + 3 * HEX_SIZE * HEX_SIZE,
 );
 
@@ -34,7 +34,7 @@ const ARC_MED_R   = Math.sqrt(
 const LETTERS = ['A', 'C', 'E', 'G', 'I', 'K', 'M'] as const;
 const NUMBERS = ['2', '4', '6', '8', '10', '12', '14'] as const;
 
-type TileInfo = { label: string; q: number; r: number };
+type TileInfo = { label: string; q: number; r: number; };
 
 // All 37 core hex tiles
 const ALL_TILES: TileInfo[] = (() => {
@@ -69,8 +69,8 @@ const DIR_DEG: Record<number, number> = {
 // Midpoint of the hex edge that faces direction d.
 // In a pointy-top hex the inradius = R*cos(30°) = R*√3/2; the edge midpoint
 // sits exactly at that distance from the centre, in the direction DIR_DEG[d].
-const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number } => {
-  const angle   = (Math.PI / 180) * DIR_DEG[d];
+const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[d];
   const inradius = HEX_R * Math.sqrt(3) / 2;
   return { x: cx + inradius * Math.cos(angle), y: cy + inradius * Math.sin(angle) };
 };
@@ -87,17 +87,17 @@ const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): str
 
   if (distance === 1 || distance === 5) {
     const dir = distance === 1 ? inDir : outDir;
-    const s   = edgeMidForDir(cx, cy, dir);
-    const e   = edgeMidForDir(cx, cy, (dir + 1) % 6);
-    const r   = ARC_SMALL_R;
+    const s = edgeMidForDir(cx, cy, dir);
+    const e = edgeMidForDir(cx, cy, (dir + 1) % 6);
+    const r = ARC_SMALL_R;
     return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r},${r} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
   }
 
   if (distance === 2 || distance === 4) {
     const dir = distance === 2 ? inDir : outDir;
-    const s   = edgeMidForDir(cx, cy, dir);
-    const e   = edgeMidForDir(cx, cy, (dir + 2) % 6);
-    const r   = ARC_MED_R;
+    const s = edgeMidForDir(cx, cy, dir);
+    const e = edgeMidForDir(cx, cy, (dir + 2) % 6);
+    const r = ARC_MED_R;
     return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
   }
 
@@ -119,41 +119,41 @@ const hexPoints = (cx: number, cy: number, R: number): string =>
 
 // ─── Border node data ──────────────────────────────────────────────
 // `dir` is the direction FROM the tile TO the border (i.e. tile.edges[dir] = borderLabel)
-type BorderInfo = { label: string; tileLabel: string; dir: number };
+type BorderInfo = { label: string; tileLabel: string; dir: number; };
 
 const ALL_BORDERS: BorderInfo[] = [
   // Letter borders A–U  (derived from addBorderEdge(label, borderDir, tile) → tileDir=(borderDir+3)%6)
-  { label: 'A',  tileLabel: 'A2',  dir: 2 },
-  { label: 'B',  tileLabel: 'C2',  dir: 1 },
-  { label: 'C',  tileLabel: 'C2',  dir: 2 },
-  { label: 'D',  tileLabel: 'E2',  dir: 1 },
-  { label: 'E',  tileLabel: 'E2',  dir: 2 },
-  { label: 'F',  tileLabel: 'G2',  dir: 1 },
-  { label: 'G',  tileLabel: 'G2',  dir: 2 },
-  { label: 'H',  tileLabel: 'G2',  dir: 3 },
-  { label: 'I',  tileLabel: 'I4',  dir: 2 },
-  { label: 'J',  tileLabel: 'I4',  dir: 3 },
-  { label: 'K',  tileLabel: 'K6',  dir: 2 },
-  { label: 'L',  tileLabel: 'K6',  dir: 3 },
-  { label: 'M',  tileLabel: 'M8',  dir: 2 },
-  { label: 'N',  tileLabel: 'M8',  dir: 3 },
-  { label: 'O',  tileLabel: 'M8',  dir: 4 },
-  { label: 'P',  tileLabel: 'M10', dir: 3 },
-  { label: 'Q',  tileLabel: 'M10', dir: 4 },
-  { label: 'R',  tileLabel: 'M12', dir: 3 },
-  { label: 'S',  tileLabel: 'M12', dir: 4 },
-  { label: 'T',  tileLabel: 'M14', dir: 3 },
-  { label: 'U',  tileLabel: 'M14', dir: 4 },
+  { label: 'A', tileLabel: 'A2', dir: 2 },
+  { label: 'B', tileLabel: 'C2', dir: 1 },
+  { label: 'C', tileLabel: 'C2', dir: 2 },
+  { label: 'D', tileLabel: 'E2', dir: 1 },
+  { label: 'E', tileLabel: 'E2', dir: 2 },
+  { label: 'F', tileLabel: 'G2', dir: 1 },
+  { label: 'G', tileLabel: 'G2', dir: 2 },
+  { label: 'H', tileLabel: 'G2', dir: 3 },
+  { label: 'I', tileLabel: 'I4', dir: 2 },
+  { label: 'J', tileLabel: 'I4', dir: 3 },
+  { label: 'K', tileLabel: 'K6', dir: 2 },
+  { label: 'L', tileLabel: 'K6', dir: 3 },
+  { label: 'M', tileLabel: 'M8', dir: 2 },
+  { label: 'N', tileLabel: 'M8', dir: 3 },
+  { label: 'O', tileLabel: 'M8', dir: 4 },
+  { label: 'P', tileLabel: 'M10', dir: 3 },
+  { label: 'Q', tileLabel: 'M10', dir: 4 },
+  { label: 'R', tileLabel: 'M12', dir: 3 },
+  { label: 'S', tileLabel: 'M12', dir: 4 },
+  { label: 'T', tileLabel: 'M14', dir: 3 },
+  { label: 'U', tileLabel: 'M14', dir: 4 },
   // Number borders 1–21
-  { label: '1',  tileLabel: 'A2',  dir: 1 },
-  { label: '2',  tileLabel: 'A2',  dir: 0 },
-  { label: '3',  tileLabel: 'A4',  dir: 1 },
-  { label: '4',  tileLabel: 'A4',  dir: 0 },
-  { label: '5',  tileLabel: 'A6',  dir: 1 },
-  { label: '6',  tileLabel: 'A6',  dir: 0 },
-  { label: '7',  tileLabel: 'A8',  dir: 1 },
-  { label: '8',  tileLabel: 'A8',  dir: 0 },
-  { label: '9',  tileLabel: 'A8',  dir: 5 },
+  { label: '1', tileLabel: 'A2', dir: 1 },
+  { label: '2', tileLabel: 'A2', dir: 0 },
+  { label: '3', tileLabel: 'A4', dir: 1 },
+  { label: '4', tileLabel: 'A4', dir: 0 },
+  { label: '5', tileLabel: 'A6', dir: 1 },
+  { label: '6', tileLabel: 'A6', dir: 0 },
+  { label: '7', tileLabel: 'A8', dir: 1 },
+  { label: '8', tileLabel: 'A8', dir: 0 },
+  { label: '9', tileLabel: 'A8', dir: 5 },
   { label: '10', tileLabel: 'C10', dir: 0 },
   { label: '11', tileLabel: 'C10', dir: 5 },
   { label: '12', tileLabel: 'E12', dir: 0 },
@@ -175,19 +175,19 @@ const getGemColor = (colors: string[]): string => {
   if (colors.length === 0) return '';
   if (colors.length === 1) return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
   const s = new Set(colors);
-  if (s.has('blue')   && s.has('yellow')) return '#33cc66';  // green
-  if (s.has('red')    && s.has('blue'))   return '#cc55cc';  // purple
-  if (s.has('red')    && s.has('yellow')) return '#ff8833';  // orange
+  if (s.has('blue') && s.has('yellow')) return '#33cc66';  // green
+  if (s.has('red') && s.has('blue')) return '#cc55cc';  // purple
+  if (s.has('red') && s.has('yellow')) return '#ff8833';  // orange
   return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 };
 
 // ─── Component ────────────────────────────────────────────────────
 export default function Arclight() {
   const { t } = useTranslation();
-  const [tileOptions,    setTileOptions]    = useState<TileOptions>(defaultTileOptions);
-  const [puzzle,         setPuzzle]         = useState<Puzzle>(() => setup(defaultTileOptions));
-  const [revealedTiles,  setRevealedTiles]  = useState<Set<string>>(new Set());
-  const [showAll,        setShowAll]        = useState(false);
+  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(defaultTileOptions));
+  const [revealedTiles, setRevealedTiles] = useState<Set<string>>(new Set());
+  const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
 
   // Tile label → pixel center
@@ -198,7 +198,7 @@ export default function Arclight() {
 
   // Border label → pixel center (offset from its adjacent tile by BD_DIST in dir angle)
   const borderPx = useMemo(() => {
-    const map: Record<string, { x: number; y: number }> = {};
+    const map: Record<string, { x: number; y: number; }> = {};
     for (const b of ALL_BORDERS) {
       const tp = tilePx[b.tileLabel];
       if (!tp) continue;
@@ -213,13 +213,34 @@ export default function Arclight() {
 
   // Note position: beyond the border circle, away from the grid
   const notePx = useMemo(() => {
-    const map: Record<string, { x: number; y: number }> = {};
+    const map: Record<string, { x: number; y: number; }> = {};
     for (const b of ALL_BORDERS) {
       const tp = tilePx[b.tileLabel];
       if (!tp) continue;
-      const rad = (Math.PI / 180) * DIR_DEG[b.dir];
-      const d = BD_DIST + BD_R + 10;
-      map[b.label] = { x: tp.x + d * Math.cos(rad), y: tp.y + d * Math.sin(rad) };
+      const bx = borderPx[b.label]?.x;
+      const by = borderPx[b.label]?.y;
+
+      if (["1", "A", "B", "C", "D", "E", "F", "G"].includes(b.label)) {
+        map[b.label] = {
+          x: bx,
+          y: by - 20,
+        };
+      } else if (["H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"].includes(b.label)) {
+         map[b.label] = {
+          x: bx + 25,
+          y: by,
+        };
+      } else if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14"].includes(b.label)) {
+         map[b.label] = {
+          x: bx - 25,
+          y: by,
+        };
+      } else  {
+         map[b.label] = {
+          x: bx,
+          y: by+ 22,
+        };
+      }
     }
     return map;
   }, [tilePx]);
@@ -314,9 +335,9 @@ export default function Arclight() {
         {/* ── Hex tiles ── */}
         {ALL_TILES.map(({ label }) => {
           const { x, y } = tilePx[label];
-          const colors   = sightResults[label] ?? [];
+          const colors = sightResults[label] ?? [];
           const revealed = showAll || revealedTiles.has(label);
-          const hasGem   = colors.length > 0;
+          const hasGem = colors.length > 0;
           const gemColor = hasGem ? getGemColor(colors) : '';
           const tileData = tileByCoord[label];
 
@@ -340,7 +361,7 @@ export default function Arclight() {
               key={label}
               onClick={() => handleTileClick(label)}
               style={{ cursor: 'pointer' }}
-                aria-label={t('arclight.tileAriaLabel', { label })}
+              aria-label={t('arclight.tileAriaLabel', { label })}
             >
               <polygon
                 points={hexPoints(x, y, HEX_R)}
@@ -362,7 +383,7 @@ export default function Arclight() {
               {/* Arc / line paths drawn on top of the polygon when revealed */}
               {showAll && tileData && Object.entries(tileData.arc_dict).map(([inDirStr, outDir]) => {
                 const inDir = Number(inDirStr);
-                const path  = makeArcPath(inDir, outDir, x, y);
+                const path = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
                 return (
                   <path
@@ -399,10 +420,10 @@ export default function Arclight() {
           if (!bp) return null;
           const np = notePx[label];
 
-          const isEntry  = clickedBorders.has(label);
-          const isExit   = exitHighlights.has(label);
-          const result   = lightResults[label];
-          const exitLbl  = result?.end_label ?? '';
+          const isEntry = clickedBorders.has(label);
+          const isExit = exitHighlights.has(label);
+          const result = lightResults[label];
+          const exitLbl = result?.end_label ?? '';
 
           // Entry circles use their own light-result colors;
           // exit circles use the colors from the beam that exits there.
