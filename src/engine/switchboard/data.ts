@@ -102,6 +102,18 @@ export function getRhombixBoard(length: number): Board {
     return board;
 }
 
+export function getHexCoordinatesByTileNo(radius: number): Array<{ q: number; r: number; }> {
+    const coordinates: Array<{ q: number; r: number; }> = [];
+    for (let r = -radius; r <= radius; r++) {
+        const qMin = Math.max(-radius, -r - radius);
+        const qMax = Math.min(radius, -r + radius);
+        for (let q = qMin; q <= qMax; q++) {
+            coordinates.push({ q, r });
+        }
+    }
+    return coordinates;
+}
+
 /**
  * Flat-topped hexagonal board.
  * @param length Number of tiles in board (supported: 19, 37)
@@ -128,20 +140,14 @@ export function getHexBoard(length: number): Board {
     };
 
     const tileNoByCoordinate: Record<string, number> = {};
-    const coordinatesByTileNo: Array<{ q: number; r: number; }> = [];
+    const coordinatesByTileNo = getHexCoordinatesByTileNo(radius);
 
-    for (let r = -radius; r <= radius; r++) {
-        const qMin = Math.max(-radius, -r - radius);
-        const qMax = Math.min(radius, -r + radius);
-        for (let q = qMin; q <= qMax; q++) {
-            const tileNo = board.tiles.length;
-            const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
-            const rotate = Math.floor(Math.random() * 6);
+    for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
+        const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        const rotate = Math.floor(Math.random() * 6);
 
-            board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
-            tileNoByCoordinate[`${q},${r}`] = tileNo;
-            coordinatesByTileNo[tileNo] = { q, r };
-        }
+        board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
+        tileNoByCoordinate[`${q},${r}`] = tileNo;
     }
 
     const directionOffsets: Record<number, { dq: number; dr: number; }> = {

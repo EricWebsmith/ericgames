@@ -40,7 +40,6 @@ export function setup(boardType: BoardType = BoardType.Rhombic9): Puzzle {
     }
 
     const tileCount = TILE_COUNT_BY_BOARD_TYPE[boardType];
-    const length = Math.sqrt(tileCount);
 
     const board = boardType === BoardType.Hexagonal19 || boardType === BoardType.Hexagonal37
         ? getHexBoard(tileCount)
@@ -76,6 +75,7 @@ export function setup(boardType: BoardType = BoardType.Rhombic9): Puzzle {
         endTileIndex = borderEntries[endIndex].tileNo;
         endTileDirection = borderEntries[endIndex].direction;
     } else {
+        const length = Math.sqrt(tileCount);
         startTileIndex = Math.floor(Math.random() * length) * length; // Randomly select a tile on the left border as the start
         startTileDirection = Math.floor(Math.random() * 2); // Left border entry
 

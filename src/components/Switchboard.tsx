@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/switchboard/gameManager';
+import { getHexCoordinatesByTileNo } from '../engine/switchboard/data';
 import { BoardType, type Puzzle } from '../engine/switchboard/models';
 
 const SVG_W = 700;
@@ -81,18 +82,6 @@ const hexPoints = (cx: number, cy: number, R: number): string =>
     const a = (Math.PI / 180) * (-90 + 60 * k);
     return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`;
   }).join(' ');
-
-const getHexCoordinatesByTileNo = (radius: number): Array<{ q: number; r: number; }> => {
-  const coordinates: Array<{ q: number; r: number; }> = [];
-  for (let r = -radius; r <= radius; r++) {
-    const qMin = Math.max(-radius, -r - radius);
-    const qMax = Math.min(radius, -r + radius);
-    for (let q = qMin; q <= qMax; q++) {
-      coordinates.push({ q, r });
-    }
-  }
-  return coordinates;
-};
 
 export default function Switchboard() {
   const { t } = useTranslation();
