@@ -16,6 +16,10 @@
     "orapaSpace": {
       "title": "オラパスペース",
       "description": "宇宙4目並べ"
+    },
+    "switchboard": {
+      "title": "Switchboard",
+      "description": "Switchboard"
     }
   },
   "arclight": {
@@ -49,5 +53,17 @@
     "boardAriaLabel": "オラパスペースゲームボード",
     "cellAriaLabel": "{{row}}行{{col}}列",
     "includeBlackHole": "ブラックホールタイル"
+  },
+  "switchboard": {
+    "title": "Switchboard",
+    "instructions": "ボードサイズを選んで Switchboard パズルを生成します。回転機能はまだ未実装です。",
+    "newGame": "新しいゲーム",
+    "boardAriaLabel": "Switchboard パズルボード",
+    "boardSizeLabel": "ボードサイズ",
+    "rhombic9": "菱形 9",
+    "rhombic16": "菱形 16",
+    "rhombic25": "菱形 25",
+    "start": "始",
+    "end": "終"
   }
 }

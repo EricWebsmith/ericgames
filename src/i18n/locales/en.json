@@ -16,6 +16,10 @@
     "orapaSpace": {
       "title": "Orapa Space",
       "description": "Orapa Space"
+    },
+    "switchboard": {
+      "title": "Switchboard",
+      "description": "Switchboard"
     }
   },
   "arclight": {
@@ -49,5 +53,17 @@
     "boardAriaLabel": "Orapa Space puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeBlackHole": "Black Hole Expansion"
+  },
+  "switchboard": {
+    "title": "Switchboard",
+    "instructions": "Use the board size options to generate a Switchboard puzzle. Tile rotation is not enabled yet.",
+    "newGame": "New Game",
+    "boardAriaLabel": "Switchboard puzzle board",
+    "boardSizeLabel": "Board Size",
+    "rhombic9": "Rhombic 9",
+    "rhombic16": "Rhombic 16",
+    "rhombic25": "Rhombic 25",
+    "start": "S",
+    "end": "E"
   }
 }
