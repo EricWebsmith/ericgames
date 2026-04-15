@@ -80,7 +80,6 @@ export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(BoardType.Rhombic9));
-  console.log("Generated puzzle:", puzzle);
 
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     setPuzzle(setup(nextBoardType));
@@ -105,18 +104,67 @@ export default function Switchboard() {
   );
 
   const borderPoints = useMemo(() => {
+    const directionSums: Record<number, { x: number; y: number; count: number; }> = {
+      0: { x: 0, y: 0, count: 0 },
+      1: { x: 0, y: 0, count: 0 },
+      2: { x: 0, y: 0, count: 0 },
+      3: { x: 0, y: 0, count: 0 },
+      4: { x: 0, y: 0, count: 0 },
+      5: { x: 0, y: 0, count: 0 },
+    };
+
+    for (const tile of puzzle.board.tiles) {
+      const center = tilePx[tile.tileNo];
+      for (const [directionString, neighborTileNo] of Object.entries(tile.edges)) {
+        const direction = Number(directionString);
+        const neighborCenter = tilePx[neighborTileNo];
+        const sum = directionSums[direction];
+        sum.x += neighborCenter.x - center.x;
+        sum.y += neighborCenter.y - center.y;
+        sum.count += 1;
+      }
+    }
+
+    const directionVectors: Record<number, { x: number; y: number; }> = {
+      0: { x: 0, y: 0 },
+      1: { x: 0, y: 0 },
+      2: { x: 0, y: 0 },
+      3: { x: 0, y: 0 },
+      4: { x: 0, y: 0 },
+      5: { x: 0, y: 0 },
+    };
+
+    for (let direction = 0; direction < 6; direction++) {
+      const { x, y, count } = directionSums[direction];
+      if (count === 0) {
+        const fallbackRadians = (Math.PI / 180) * DIR_DEG[direction];
+        directionVectors[direction] = {
+          x: Math.cos(fallbackRadians),
+          y: Math.sin(fallbackRadians),
+        };
+        continue;
+      }
+      const meanX = x / count;
+      const meanY = y / count;
+      const length = Math.hypot(meanX, meanY) || 1;
+      directionVectors[direction] = {
+        x: meanX / length,
+        y: meanY / length,
+      };
+    }
+
     const points: Array<{ key: string; tileNo: number; direction: number; x: number; y: number; }> = [];
     for (const tile of puzzle.board.tiles) {
       const center = tilePx[tile.tileNo];
       for (let direction = 0; direction < 6; direction++) {
         if (tile.edges[direction] !== undefined) continue;
-        const angle = (Math.PI / 180) * DIR_DEG[direction];
+        const directionVector = directionVectors[direction];
         points.push({
           key: `${tile.tileNo}-${direction}`,
           tileNo: tile.tileNo,
           direction,
-          x: center.x + BORDER_DIST * Math.cos(angle),
-          y: center.y + BORDER_DIST * Math.sin(angle),
+          x: center.x + BORDER_DIST * directionVector.x,
+          y: center.y + BORDER_DIST * directionVector.y,
         });
       }
     }
