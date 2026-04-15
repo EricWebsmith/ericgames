@@ -52,10 +52,10 @@ export function setup(boardType: BoardType = BoardType.Rhombic9): Puzzle {
     }
 
     const startTileIndex = Math.floor(Math.random() * length) * length; // Randomly select a tile on the left border as the start
-    const startTileDirection = (5 + Math.floor(Math.random() * 2)) % 6; // Left border entry
+    const startTileDirection = Math.floor(Math.random() * 2); // Left border entry
 
     const endTileIndex = Math.floor(Math.random() * length) * length + (length - 1); // Randomly select a tile on the right border as the end
-    const endTileDirection = Math.floor(Math.random() * 2) + 2; // Opposite direction for the end
+    const endTileDirection = Math.floor(Math.random() * 2) + 3; // Opposite direction for the end
 
 
     return {

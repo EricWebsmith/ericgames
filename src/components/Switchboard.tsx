@@ -9,8 +9,6 @@ const OX = 350;
 const OY = 280;
 const HEX_SIZE = 46;
 const HEX_R = 40;
-const BORDER_DIST = 35;
-const BORDER_R = 10;
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -104,74 +102,6 @@ export default function Switchboard() {
     [boardLength, puzzle.board.tiles],
   );
 
-  const borderPoints = useMemo(() => {
-    const directionSums: Record<number, { x: number; y: number; count: number; }> = {
-      0: { x: 0, y: 0, count: 0 },
-      1: { x: 0, y: 0, count: 0 },
-      2: { x: 0, y: 0, count: 0 },
-      3: { x: 0, y: 0, count: 0 },
-      4: { x: 0, y: 0, count: 0 },
-      5: { x: 0, y: 0, count: 0 },
-    };
-
-    for (const tile of puzzle.board.tiles) {
-      const center = tilePx[tile.tileNo];
-      for (const [directionString, neighborTileNo] of Object.entries(tile.edges)) {
-        const direction = Number(directionString);
-        const neighborCenter = tilePx[neighborTileNo];
-        const sum = directionSums[direction];
-        sum.x += neighborCenter.x - center.x;
-        sum.y += neighborCenter.y - center.y;
-        sum.count += 1;
-      }
-    }
-
-    const directionVectors: Record<number, { x: number; y: number; }> = {
-      0: { x: 0, y: 0 },
-      1: { x: 0, y: 0 },
-      2: { x: 0, y: 0 },
-      3: { x: 0, y: 0 },
-      4: { x: 0, y: 0 },
-      5: { x: 0, y: 0 },
-    };
-
-    for (let direction = 0; direction < 6; direction++) {
-      const { x, y, count } = directionSums[direction];
-      if (count === 0) {
-        const fallbackRadians = (Math.PI / 180) * DIR_DEG[direction];
-        directionVectors[direction] = {
-          x: Math.cos(fallbackRadians),
-          y: Math.sin(fallbackRadians),
-        };
-        continue;
-      }
-      const meanX = x / count;
-      const meanY = y / count;
-      const length = Math.hypot(meanX, meanY) || 1;
-      directionVectors[direction] = {
-        x: meanX / length,
-        y: meanY / length,
-      };
-    }
-
-    const points: Array<{ key: string; tileNo: number; direction: number; x: number; y: number; }> = [];
-    for (const tile of puzzle.board.tiles) {
-      const center = tilePx[tile.tileNo];
-      for (let direction = 0; direction < 6; direction++) {
-        if (tile.edges[direction] !== undefined) continue;
-        const directionVector = directionVectors[direction];
-        points.push({
-          key: `${tile.tileNo}-${direction}`,
-          tileNo: tile.tileNo,
-          direction,
-          x: center.x + BORDER_DIST * directionVector.x,
-          y: center.y + BORDER_DIST * directionVector.y,
-        });
-      }
-    }
-    return points;
-  }, [puzzle.board.tiles, tilePx]);
-
   return (
     <div className="game-container">
       <h2 className="game-title">{t('switchboard.title')}</h2>
@@ -240,35 +170,6 @@ export default function Switchboard() {
                 fontSize={12}
               >
                 {tile.tileNo}
-              </text>
-            </g>
-          );
-        })}
-
-        {borderPoints.map((point) => {
-          const isStart = point.tileNo === puzzle.startTileIndex && point.direction === puzzle.startTileDirection;
-          const isEnd = point.tileNo === puzzle.endTileIndex && point.direction === puzzle.endTileDirection;
-          if (!isStart && !isEnd) return null;
-          return (
-            <g key={point.key}>
-              <circle
-                cx={point.x}
-                cy={point.y}
-                r={BORDER_R}
-                fill={isStart ? '#ffb14a' : '#54e8a4'}
-                stroke="#ffffff"
-                strokeWidth={1.5}
-              />
-              <text
-                x={point.x}
-                y={point.y + 0.5}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#101820"
-                fontWeight="bold"
-                fontSize={8}
-              >
-                {isStart && isEnd ? 'S/E' : isStart ? 'S' : 'E'}
               </text>
             </g>
           );
