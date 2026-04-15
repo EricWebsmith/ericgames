@@ -63,6 +63,8 @@
     "rhombic9": "마름모 9",
     "rhombic16": "마름모 16",
     "rhombic25": "마름모 25",
+    "hexagonal19": "육각 19",
+    "hexagonal37": "육각 37",
     "start": "시",
     "end": "끝"
   }
