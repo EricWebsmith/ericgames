@@ -1,7 +1,9 @@
 import { BoardType, type Board, type Puzzle } from './models';
 import { getRhombixBoard } from './data';
 
-export function tranverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
+let nextPuzzleId = 1;
+
+export function traverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
     let currentTileIndex = startTileIndex;
     let currentDirection = startDirection;
     let currentTile = board.tiles[currentTileIndex];
@@ -18,6 +20,10 @@ export function tranverse(board: Board, startTileIndex: number, startDirection: 
         currentDirection = (outDir + 3) % 6;
         currentTile = board.tiles[currentTileIndex];
     }
+}
+
+export function tranverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
+    return traverse(board, startTileIndex, startDirection);
 }
 
 const RHOMBIC_TILE_COUNT_BY_BOARD_TYPE: Record<BoardType, number> = {
@@ -62,10 +68,10 @@ export function setup(boardType: BoardType = BoardType.Rhombic9): Puzzle {
     }
 
     const start = candidates[Math.floor(Math.random() * candidates.length)];
-    const [endTileIndex, endTileDirection] = tranverse(board, start.tileIndex, start.direction);
+    const [endTileIndex, endTileDirection] = traverse(board, start.tileIndex, start.direction);
 
     return {
-        id: Date.now(),
+        id: nextPuzzleId++,
         startTileIndex: start.tileIndex,
         startTileDirection: start.direction,
         endTileIndex,
