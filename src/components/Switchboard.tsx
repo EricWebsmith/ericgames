@@ -80,6 +80,7 @@ export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(BoardType.Rhombic9));
+  console.log("Generated puzzle:", puzzle);
 
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     setPuzzle(setup(nextBoardType));

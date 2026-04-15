@@ -68,7 +68,8 @@ export function getRhombixBoard(length: number): Board {
     for (let r = 0; r < boardLength; r++) {  // R axis in axial coordinates
         for (let q = 0; q < boardLength; q++) { // Q axis in axial coordinates
 
-            const tileNo = q * boardLength + r;
+            const tileNo = r * boardLength + q;
+            // console.log("tileNo", tileNo)
             // Randomly select a tile type for this position
             let tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
             while ((q === 0 || q === boardLength - 1) && tilePrototypeIndex === 0) {
@@ -81,6 +82,7 @@ export function getRhombixBoard(length: number): Board {
 
             // Connect to the left tile
             if (q > 0) {
+                
                 board.tiles[tileNo].edges[0] = tileNo - 1; // Left edge of current tile connects to right edge of left tile
                 board.tiles[tileNo - 1].edges[3] = tileNo; // Right edge of left tile connects to left edge of current tile
             }
