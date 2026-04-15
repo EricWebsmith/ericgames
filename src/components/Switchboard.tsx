@@ -95,8 +95,8 @@ export default function Switchboard() {
   const tilePx = useMemo(
     () => Object.fromEntries(
       puzzle.board.tiles.map(tile => {
-        const q = Math.floor(tile.tileNo / boardLength);
-        const r = tile.tileNo % boardLength;
+        const q = tile.tileNo % boardLength;
+        const r = Math.floor(tile.tileNo / boardLength);
         return [tile.tileNo, toPx(q, r)];
       }),
     ),
