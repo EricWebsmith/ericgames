@@ -95,8 +95,9 @@ export default function Switchboard() {
   const tilePx = useMemo(
     () => Object.fromEntries(
       puzzle.board.tiles.map(tile => {
-        const q = tile.tileNo % boardLength;
+        const col = tile.tileNo % boardLength;
         const r = Math.floor(tile.tileNo / boardLength);
+        const q = (boardLength - 1) - col; // reverse so tile 0 is leftmost
         return [tile.tileNo, toPx(q, r)];
       }),
     ),
