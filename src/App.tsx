@@ -60,7 +60,7 @@ function Home() {
           <p>{t('home.orapaSpace.description')}</p>
         </NavLink>
 
-        <NavLink to="/switchboard" className="game-card arclight-card">
+        {/* <NavLink to="/switchboard" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#081826" rx={4} />
             <polygon points="40,14 61,26 61,50 40,62 19,50 19,26" fill="#0b2438" stroke="#3a78a1" strokeWidth={2} />
@@ -69,7 +69,7 @@ function Home() {
           </svg>
           <h2>{t('home.switchboard.title')}</h2>
           <p>{t('home.switchboard.description')}</p>
-        </NavLink>
+        </NavLink> */}
       </div>
     </div>
   )
@@ -84,7 +84,7 @@ function Nav() {
         <li><NavLink to="/arclight">{t('home.arclight.title')}</NavLink></li>
         <li><NavLink to="/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
         <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
-        <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li>
+        {/* <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li> */}
       </ul>
       <LanguageSwitcher />
     </nav>
