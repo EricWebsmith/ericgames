@@ -31,7 +31,7 @@ const BOARD_OPTIONS = [
 ] as const;
 
 const toPx = (q: number, r: number) => ({
-  x: OX + HEX_SIZE * Math.sqrt(3) * (q + r / 2) - 160,
+  x: OX - HEX_SIZE * Math.sqrt(3) * (q + r / 2) + 160,
   y: OY + HEX_SIZE * 1.5 * r - 130,
 });
 
@@ -208,7 +208,7 @@ export default function Switchboard() {
                 fontWeight="bold"
                 fontSize={8}
               >
-                {isStart && isEnd ? 'S/E' : isStart ? t('switchboard.start') : t('switchboard.end')}
+                {isStart && isEnd ? 'S/E' : isStart ? 'S' : 'E'}
               </text>
             </g>
           );
