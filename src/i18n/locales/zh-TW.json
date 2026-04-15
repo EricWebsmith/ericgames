@@ -16,6 +16,10 @@
     "orapaSpace": {
       "title": "奧拉帕宇宙",
       "description": "奧拉帕宇宙"
+    },
+    "switchboard": {
+      "title": "Switchboard",
+      "description": "Switchboard"
     }
   },
   "arclight": {
@@ -49,5 +53,17 @@
     "boardAriaLabel": "奧拉帕宇宙拼圖棋盤",
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
     "includeBlackHole": "黑洞擴展"
+  },
+  "switchboard": {
+    "title": "Switchboard",
+    "instructions": "選擇棋盤尺寸產生 Switchboard 謎題。旋轉功能暫未實作。",
+    "newGame": "新遊戲",
+    "boardAriaLabel": "Switchboard 拼圖棋盤",
+    "boardSizeLabel": "棋盤尺寸",
+    "rhombic9": "菱形 9",
+    "rhombic16": "菱形 16",
+    "rhombic25": "菱形 25",
+    "start": "起",
+    "end": "終"
   }
 }

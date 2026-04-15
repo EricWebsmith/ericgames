@@ -5,6 +5,7 @@ import Arclight from './components/Arclight';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
+import Switchboard from './components/Switchboard';
 
 function Home() {
   const { t } = useTranslation();
@@ -58,6 +59,17 @@ function Home() {
           <h2>{t('home.orapaSpace.title')}</h2>
           <p>{t('home.orapaSpace.description')}</p>
         </NavLink>
+
+        {/* <NavLink to="/switchboard" className="game-card arclight-card">
+          <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
+            <rect width={80} height={80} fill="#081826" rx={4} />
+            <polygon points="40,14 61,26 61,50 40,62 19,50 19,26" fill="#0b2438" stroke="#3a78a1" strokeWidth={2} />
+            <path d="M30,34 A10,10 0 0,0 50,34" fill="none" stroke="#9de7ff" strokeWidth={2.5} strokeLinecap="round" />
+            <path d="M29,45 L51,45" fill="none" stroke="#9de7ff" strokeWidth={2.5} strokeLinecap="round" />
+          </svg>
+          <h2>{t('home.switchboard.title')}</h2>
+          <p>{t('home.switchboard.description')}</p>
+        </NavLink> */}
       </div>
     </div>
   )
@@ -72,6 +84,7 @@ function Nav() {
         <li><NavLink to="/arclight">{t('home.arclight.title')}</NavLink></li>
         <li><NavLink to="/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
         <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
+        {/* <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li> */}
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -96,6 +109,7 @@ export default function App() {
           <Route path="/arclight" element={<Arclight />} />
           <Route path="/orapa-mine" element={<OrapaMine />} />
           <Route path="/orapa-space" element={<OrapaSpace />} />
+          <Route path="/switchboard" element={<Switchboard />} />
         </Routes>
       </main>
       <Footer />

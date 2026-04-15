@@ -16,6 +16,10 @@
     "orapaSpace": {
       "title": "오라파 스페이스",
       "description": "우주 4목 두기"
+    },
+    "switchboard": {
+      "title": "Switchboard",
+      "description": "Switchboard"
     }
   },
   "arclight": {
@@ -49,5 +53,17 @@
     "boardAriaLabel": "오라파 스페이스 게임 보드",
     "cellAriaLabel": "{{row}}행 {{col}}열",
     "includeBlackHole": "블랙홀 타일"
+  },
+  "switchboard": {
+    "title": "Switchboard",
+    "instructions": "보드 크기를 선택해 Switchboard 퍼즐을 생성하세요. 회전 기능은 아직 비활성화되어 있습니다.",
+    "newGame": "새 게임",
+    "boardAriaLabel": "Switchboard 퍼즐 보드",
+    "boardSizeLabel": "보드 크기",
+    "rhombic9": "마름모 9",
+    "rhombic16": "마름모 16",
+    "rhombic25": "마름모 25",
+    "start": "시",
+    "end": "끝"
   }
 }
