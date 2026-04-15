@@ -5,8 +5,6 @@ import { BoardType, type Puzzle } from '../engine/switchboard/models';
 
 const SVG_W = 700;
 const SVG_H = 560;
-const OX = 350;
-const OY = 280;
 const HEX_SIZE = 46;
 const HEX_R = 40;
 
@@ -28,9 +26,9 @@ const BOARD_OPTIONS = [
   BoardType.Rhombic25,
 ] as const;
 
-const toPx = (q: number, r: number) => ({
-  x: OX - HEX_SIZE * Math.sqrt(3) * (q + r / 2) + 160,
-  y: OY + HEX_SIZE * 1.5 * r - 130,
+const toRawPx = (q: number, r: number) => ({
+  x: -HEX_SIZE * Math.sqrt(3) * (q + r / 2),
+  y: HEX_SIZE * 1.5 * r,
 });
 
 const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number; } => {
@@ -90,17 +88,31 @@ export default function Switchboard() {
   }, [handleNewGame]);
 
   const boardLength = BOARD_LENGTH_BY_TYPE[puzzle.board.boardType];
-  const tilePx = useMemo(
-    () => Object.fromEntries(
-      puzzle.board.tiles.map(tile => {
-        const col = tile.tileNo % boardLength;
-        const r = Math.floor(tile.tileNo / boardLength);
-        const q = (boardLength - 1) - col; // reverse so tile 0 is leftmost
-        return [tile.tileNo, toPx(q, r)];
-      }),
-    ),
-    [boardLength, puzzle.board.tiles],
-  );
+  const tilePx = useMemo(() => {
+    const rawTiles = puzzle.board.tiles.map(tile => {
+      const col = tile.tileNo % boardLength;
+      const r = Math.floor(tile.tileNo / boardLength);
+      const q = (boardLength - 1) - col; // reverse so tile 0 is leftmost
+      return { tileNo: tile.tileNo, ...toRawPx(q, r) };
+    });
+
+    const minX = Math.min(...rawTiles.map(tile => tile.x));
+    const maxX = Math.max(...rawTiles.map(tile => tile.x));
+    const minY = Math.min(...rawTiles.map(tile => tile.y));
+    const maxY = Math.max(...rawTiles.map(tile => tile.y));
+
+    const boardCenterX = (minX + maxX) / 2;
+    const boardCenterY = (minY + maxY) / 2;
+    const offsetX = SVG_W / 2 - boardCenterX;
+    const offsetY = SVG_H / 2 - boardCenterY;
+
+    return Object.fromEntries(
+      rawTiles.map(tile => [
+        tile.tileNo,
+        { x: tile.x + offsetX, y: tile.y + offsetY },
+      ]),
+    );
+  }, [boardLength, puzzle.board.tiles]);
 
   return (
     <div className="game-container">
