@@ -229,6 +229,17 @@ export default function Switchboard() {
                   />
                 );
               })}
+              <text
+                x={x}
+                y={y + 0.5}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#ffffff"
+                fontWeight="bold"
+                fontSize={12}
+              >
+                {tile.tileNo}
+              </text>
             </g>
           );
         })}
