@@ -18,8 +18,6 @@ function Home() {
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             {/* Pointy-top hex tile, matching in-game tile style */}
             <polygon points="40,12 63,26 63,54 40,68 17,54 17,26" fill="#1a0a04" stroke="#8a5a30" strokeWidth={2} />
-            {/* Amber gem in the center (revealed tile) */}
-            {/* <circle cx={40} cy={40} r={9} fill="#ffaa00" opacity={0.9} /> */}
             {/* Light-beam arc: upper-right edge → right edge (tight 120° corner) */}
             <path d="M 51.5,21.5 A 13,13 0 0,0 63,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" />
           </svg>
@@ -60,7 +58,7 @@ function Home() {
           <p>{t('home.orapaSpace.description')}</p>
         </NavLink>
 
-        {/* <NavLink to="/switchboard" className="game-card arclight-card">
+        <NavLink to="/switchboard" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#081826" rx={4} />
             <polygon points="40,14 61,26 61,50 40,62 19,50 19,26" fill="#0b2438" stroke="#3a78a1" strokeWidth={2} />
@@ -69,7 +67,7 @@ function Home() {
           </svg>
           <h2>{t('home.switchboard.title')}</h2>
           <p>{t('home.switchboard.description')}</p>
-        </NavLink> */}
+        </NavLink>
       </div>
     </div>
   )
@@ -84,7 +82,7 @@ function Nav() {
         <li><NavLink to="/arclight">{t('home.arclight.title')}</NavLink></li>
         <li><NavLink to="/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
         <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
-        {/* <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li> */}
+        <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
