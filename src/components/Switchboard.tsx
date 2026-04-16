@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../engine/switchboard/gameManager';
 import { getHexCoordinatesByTileNo } from '../engine/switchboard/data';
+import { setup } from '../engine/switchboard/gameManager';
 import { BoardType, type Puzzle } from '../engine/switchboard/models';
 
 const SVG_W = 700;
@@ -112,8 +112,7 @@ export default function Switchboard() {
         const coordinatesByTileNo = getHexCoordinatesByTileNo(hexRadius);
         return puzzle.board.tiles.map(tile => {
           const coordinate = coordinatesByTileNo[tile.tileNo];
-          // Mirror hex layout in UI so tile labels increase left-to-right while engine indexing remains unchanged.
-          return { tileNo: tile.tileNo, ...toRawPx(-coordinate.q, coordinate.r) };
+          return { tileNo: tile.tileNo, ...toRawPx(coordinate.q, coordinate.r) };
         });
       })();
 
