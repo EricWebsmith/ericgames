@@ -331,7 +331,9 @@ export default function Switchboard() {
             <g key={tile.tileNo} aria-label={tileAriaLabel}>
               <g
                 style={{
-                  transition: `transform ${ROTATION_ANIMATION_DURATION_MS}ms ease`,
+                  transition: rotatingTile?.tileNo === tile.tileNo
+                    ? `transform ${ROTATION_ANIMATION_DURATION_MS}ms ease`
+                    : 'none',
                   transformBox: 'fill-box',
                   transformOrigin: 'center',
                   transform: rotatingTile?.tileNo === tile.tileNo
