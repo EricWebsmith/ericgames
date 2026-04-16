@@ -462,17 +462,29 @@ export default function Switchboard() {
                 ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
                 : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
             >
-              <circle cx="22" cy="22" r="16" fill="none" stroke="#9de7ff" strokeWidth="2.2" />
+              <defs>
+                <marker id={`step-arrowhead-${index}`} markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L6,3 L0,6 z" fill="#9de7ff" />
+                </marker>
+              </defs>
               {step.rotate === 1 ? (
-                <>
-                  <path d="M10 18 A14 14 0 1 1 22 36" fill="none" stroke="#9de7ff" strokeWidth="2.2" strokeLinecap="round" />
-                  <polygon points="24,34 19,35 21,30" fill="#9de7ff" />
-                </>
+                <path
+                  d="M22 6 A16 16 0 1 1 35.5 14"
+                  fill="none"
+                  stroke="#9de7ff"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  markerEnd={`url(#step-arrowhead-${index})`}
+                />
               ) : (
-                <>
-                  <path d="M34 18 A14 14 0 1 0 22 36" fill="none" stroke="#9de7ff" strokeWidth="2.2" strokeLinecap="round" />
-                  <polygon points="20,34 25,35 23,30" fill="#9de7ff" />
-                </>
+                <path
+                  d="M22 6 A16 16 0 1 0 8.5 14"
+                  fill="none"
+                  stroke="#9de7ff"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  markerEnd={`url(#step-arrowhead-${index})`}
+                />
               )}
               <text x="22" y="22" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontWeight="bold" fontSize={12}>
                 {step.tileNo}
