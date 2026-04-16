@@ -138,8 +138,6 @@ export function getRhombicBoard(length: number): Board {
         }
     }
 
-    console.log("Generated rhombic board:", board);
-
     return board;
 }
 
@@ -183,8 +181,6 @@ export function getHexBoard(length: number): Board {
         ...getBoundaryEndpoints(coordinatesByTileNo),
         tiles: [],
     };
-    console.log("coordinatesByTileNo", coordinatesByTileNo);
-
     for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
         const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
         const rotate = Math.floor(Math.random() * 6);
@@ -203,8 +199,6 @@ export function getHexBoard(length: number): Board {
             }
         }
     }
-
-    console.log("Generated hex board:", board);
 
     return board;
 }
