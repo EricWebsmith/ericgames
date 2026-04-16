@@ -70,3 +70,9 @@ export interface Board {
     endTileDirection: number;
     tiles: TileInBoard[];
 }
+
+export interface PathSegment {
+    tileIndex: number;
+    inDir: number;
+    outDir: number;
+}

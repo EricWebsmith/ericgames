@@ -87,8 +87,9 @@ describe('traverse', () => {
         [0, 0, 8, 5],
         
     ])('start %s %s → end %s %s', (startTileIndex, startTileBorder, expectedExistTileIndex, expectedExistTileBorder) => {
-        const [endTileIndex, endTileBorder] = tranverse(board, startTileIndex, startTileBorder);
-        expect(endTileIndex).toBe(expectedExistTileIndex);
-        expect(endTileBorder).toBe(expectedExistTileBorder);
+        const pathSegments = tranverse(board, startTileIndex, startTileBorder);
+        const endSegment = pathSegments[pathSegments.length - 1];
+        expect(endSegment.tileIndex).toBe(expectedExistTileIndex);
+        expect(endSegment.outDir).toBe(expectedExistTileBorder);
     });
 });

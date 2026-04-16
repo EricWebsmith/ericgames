@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
-import { setup } from '../engine/switchboard/gameManager';
-import { BoardType, type Board } from '../engine/switchboard/models';
+import { setup, tranverse } from '../engine/switchboard/gameManager';
+import { BoardType, type Board, type PathSegment } from '../engine/switchboard/models';
 
 const SVG_W = 700;
 const SVG_H = 560;
@@ -11,7 +11,8 @@ const HEX_R = 40;
 const BORDER_MARKER_DISTANCE = HEX_R + 12;
 const BORDER_MARKER_RADIUS = 14;
 const START_MARKER_COLOR = '#ffd36a';
-const END_MARKER_COLOR = '#9de7ff';
+const END_MARKER_COLOR = '#ff4d4f';
+const ARC_DEFAULT_COLOR = '#9de7ff';
 const BOARD_BACKGROUND_COLOR = '#081826';
 
 const DIR_DEG: Record<number, number> = {
@@ -93,6 +94,15 @@ const hexPoints = (cx: number, cy: number, R: number): string =>
     return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`;
   }).join(' ');
 
+const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): string => {
+  const a = Math.min(inDir, outDir);
+  const b = Math.max(inDir, outDir);
+  return `${tileIndex}-${a}-${b}`;
+};
+
+const pathSegmentToKey = (pathSegment: PathSegment): string =>
+  pathSegmentKey(pathSegment.tileIndex, pathSegment.inDir, pathSegment.outDir);
+
 export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
@@ -159,6 +169,22 @@ export default function Switchboard() {
     board.endTileDirection,
     BORDER_MARKER_DISTANCE,
   );
+  const startPathSegments = useMemo(
+    () => tranverse(board, board.startTileIndex, board.startTileDirection),
+    [board],
+  );
+  const endPathSegments = useMemo(
+    () => tranverse(board, board.endTileIndex, board.endTileDirection),
+    [board],
+  );
+  const startPathSegmentKeys = useMemo(
+    () => new Set(startPathSegments.map(pathSegmentToKey)),
+    [startPathSegments],
+  );
+  const endPathSegmentKeys = useMemo(
+    () => new Set(endPathSegments.map(pathSegmentToKey)),
+    [endPathSegments],
+  );
 
   return (
     <div className="game-container">
@@ -215,11 +241,17 @@ export default function Switchboard() {
                 const inDir = Number(inDirStr);
                 const path = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
+                const segmentKey = pathSegmentKey(tile.tileNo, inDir, outDir);
+                const stroke = endPathSegmentKeys.has(segmentKey)
+                  ? END_MARKER_COLOR
+                  : startPathSegmentKeys.has(segmentKey)
+                    ? START_MARKER_COLOR
+                    : ARC_DEFAULT_COLOR;
                 return (
                   <path
                     key={`${tile.tileNo}-${inDir}-${outDir}`}
                     d={path}
-                    stroke="#9de7ff"
+                    stroke={stroke}
                     strokeWidth={2.6}
                     fill="none"
                     strokeLinecap="round"

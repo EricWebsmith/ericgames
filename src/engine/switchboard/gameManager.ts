@@ -1,18 +1,24 @@
 import { getHexBoard, getRhombicBoard } from './data';
-import { BoardType, type Board } from './models';
+import { BoardType, type Board, type PathSegment } from './models';
 
 let nextBoardId = 1;
 
-export function tranverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
+export function tranverse(board: Board, startTileIndex: number, startDirection: number): PathSegment[] {
     let currentTileIndex = startTileIndex;
     let currentDirection = startDirection;
     let currentTile = board.tiles[currentTileIndex];
+    const path: PathSegment[] = [];
 
     while (true) {
         const outDir = currentTile.arcDict[currentDirection];
+        path.push({
+            tileIndex: currentTileIndex,
+            inDir: currentDirection,
+            outDir,
+        });
         const nextTileIndex = currentTile.edges[outDir];
         if (nextTileIndex === undefined) {
-            return [currentTileIndex, outDir];
+            return path;
         }
 
         // Next
