@@ -40,6 +40,31 @@ export function getBasicTiles(): Tile[] {
     ];
 }
 
+const directionOffsets: Record<number, { dq: number; dr: number; }> = {
+    0: { dq: -1, dr: 0 },
+    1: { dq: 1, dr: -1 },
+    2: { dq: 0, dr: -1 },
+    3: { dq: 1, dr: 0 },
+    4: { dq: -1, dr: 1 },
+    5: { dq: 0, dr: 1 },
+};
+
+export function getRhombicCoordinatesByTileNo(length: number): Array<{ q: number; r: number; }> {
+    const boardLength = Math.sqrt(length);
+    if (!Number.isInteger(boardLength)) {
+        throw new Error(`Invalid rhombic board size: ${length}`);
+    }
+
+    const coordinates: Array<{ q: number; r: number; }> = [];
+    for (let r = 0; r < boardLength; r++) {
+        for (let q = 0; q < boardLength; q++) {
+            coordinates.push({ q, r });
+        }
+    }
+
+    return coordinates;
+}
+
 
 /**
  * Flat-topped rhombic board with a positive slope
@@ -50,9 +75,8 @@ export function getBasicTiles(): Tile[] {
 export function getRhombicBoard(length: number): Board {
     const basicTiles = getBasicTiles();
     const boardLength = Math.sqrt(length);
-    if (!Number.isInteger(boardLength)) {
-        throw new Error(`Invalid rhombic board size: ${length}`);
-    }
+    const coordinatesByTileNo = getRhombicCoordinatesByTileNo(length);
+    const tileNoByCoordinate: Record<string, number> = {};
 
     let boardType: BoardType = BoardType.Rhombic9;
     if (length === 16) {
@@ -65,36 +89,23 @@ export function getRhombicBoard(length: number): Board {
         tiles: [],
     };
 
-    for (let r = 0; r < boardLength; r++) {  // R axis in axial coordinates
-        for (let q = 0; q < boardLength; q++) { // Q axis in axial coordinates
+    for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
+        let tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        while ((q === 0 || q === boardLength - 1) && tilePrototypeIndex === 0) {
+            tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        }
+        const rotate = Math.floor(Math.random() * 6);
+        board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
+        tileNoByCoordinate[`${q},${r}`] = tileNo;
+    }
 
-            const tileNo = r * boardLength + q;
-            // console.log("tileNo", tileNo)
-            // Randomly select a tile type for this position
-            let tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
-            while ((q === 0 || q === boardLength - 1) && tilePrototypeIndex === 0) {
-                tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
-            }
-            const rotate = Math.floor(Math.random() * 6); // Random rotation angle (0 to 5)
-            board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
-
-            // Connect adjacent tiles
-
-            // Connect to the left tile
-            if (q > 0) {
-                
-                board.tiles[tileNo].edges[0] = tileNo - 1; // Left edge of current tile connects to right edge of left tile
-                board.tiles[tileNo - 1].edges[3] = tileNo; // Right edge of left tile connects to left edge of current tile
-            }
-            // Connect to the top tile
-            if (r > 0) {
-                board.tiles[tileNo].edges[2] = tileNo - boardLength; // Top edge of current tile connects to bottom edge of top tile
-                board.tiles[tileNo - boardLength].edges[5] = tileNo; // Bottom edge of top tile connects to top edge of current tile
-            }
-            // Connect to the top-right tile
-            if (q < boardLength - 1 && r > 0) {
-                board.tiles[tileNo].edges[1] = tileNo - boardLength + 1; // Top-right edge of current tile connects to bottom-left edge of top-right tile
-                board.tiles[tileNo - boardLength + 1].edges[4] = tileNo; // Bottom-left edge of top-right tile connects to top-right edge of current tile
+    for (let tileNo = 0; tileNo < coordinatesByTileNo.length; tileNo++) {
+        const { q, r } = coordinatesByTileNo[tileNo];
+        for (let direction = 0; direction < 6; direction++) {
+            const { dq, dr } = directionOffsets[direction];
+            const neighborTileNo = tileNoByCoordinate[`${q + dq},${r + dr}`];
+            if (neighborTileNo !== undefined) {
+                board.tiles[tileNo].edges[direction] = neighborTileNo;
             }
         }
     }
@@ -150,15 +161,6 @@ export function getHexBoard(length: number): Board {
         board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
         tileNoByCoordinate[`${q},${r}`] = tileNo;
     }
-
-    const directionOffsets: Record<number, { dq: number; dr: number; }> = {
-        0: { dq: -1, dr: 0 },
-        1: { dq: 1, dr: -1 },
-        2: { dq: 0, dr: -1 },
-        3: { dq: 1, dr: 0 },
-        4: { dq: -1, dr: 1 },
-        5: { dq: 0, dr: 1 },
-    };
 
     for (let tileNo = 0; tileNo < coordinatesByTileNo.length; tileNo++) {
         const { q, r } = coordinatesByTileNo[tileNo];
