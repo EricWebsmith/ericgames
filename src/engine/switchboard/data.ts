@@ -101,3 +101,75 @@ export function getRhombixBoard(length: number): Board {
 
     return board;
 }
+
+export function getHexCoordinatesByTileNo(radius: number): Array<{ q: number; r: number; }> {
+    const coordinates: Array<{ q: number; r: number; }> = [];
+    for (let r = -radius; r <= radius; r++) {
+        const qMin = Math.max(-radius, -r - radius);
+        const qMax = Math.min(radius, -r + radius);
+        for (let q = qMin; q <= qMax; q++) {
+            coordinates.push({ q, r });
+        }
+    }
+    return coordinates;
+}
+
+/**
+ * Flat-topped hexagonal board.
+ * @param length Number of tiles in board (supported: 19, 37)
+ * @returns Board
+ */
+export function getHexBoard(length: number): Board {
+    const basicTiles = getBasicTiles();
+
+    let boardType: BoardType;
+    let radius: number;
+    if (length === 19) {
+        boardType = BoardType.Hexagonal19;
+        radius = 2;
+    } else if (length === 37) {
+        boardType = BoardType.Hexagonal37;
+        radius = 3;
+    } else {
+        throw new Error(`Invalid hexagonal board size: ${length}`);
+    }
+
+    const board: Board = {
+        boardType,
+        tiles: [],
+    };
+
+    const tileNoByCoordinate: Record<string, number> = {};
+    const coordinatesByTileNo = getHexCoordinatesByTileNo(radius);
+    console.log("coordinatesByTileNo", coordinatesByTileNo);
+
+    for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
+        const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        const rotate = Math.floor(Math.random() * 6);
+
+        board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
+        tileNoByCoordinate[`${q},${r}`] = tileNo;
+    }
+
+    const directionOffsets: Record<number, { dq: number; dr: number; }> = {
+        0: { dq: -1, dr: 0 },
+        1: { dq: 1, dr: -1 },
+        2: { dq: 0, dr: -1 },
+        3: { dq: 1, dr: 0 },
+        4: { dq: -1, dr: 1 },
+        5: { dq: 0, dr: 1 },
+    };
+
+    for (let tileNo = 0; tileNo < coordinatesByTileNo.length; tileNo++) {
+        const { q, r } = coordinatesByTileNo[tileNo];
+        for (let direction = 0; direction < 6; direction++) {
+            const { dq, dr } = directionOffsets[direction];
+            const neighborTileNo = tileNoByCoordinate[`${q + dq},${r + dr}`];
+            if (neighborTileNo !== undefined) {
+                board.tiles[tileNo].edges[direction] = neighborTileNo;
+            }
+        }
+    }
+
+    return board;
+}

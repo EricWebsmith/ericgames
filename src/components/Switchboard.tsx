@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getHexCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup } from '../engine/switchboard/gameManager';
 import { BoardType, type Puzzle } from '../engine/switchboard/models';
 
@@ -16,18 +17,28 @@ const BOARD_LENGTH_BY_TYPE: Record<BoardType, number> = {
   [BoardType.Rhombic9]: 3,
   [BoardType.Rhombic16]: 4,
   [BoardType.Rhombic25]: 5,
-  [BoardType.Hexagonal19]: 0,
-  [BoardType.Hexagonal37]: 0,
+  [BoardType.Hexagonal19]: -1,
+  [BoardType.Hexagonal37]: -1,
+};
+
+const HEX_RADIUS_BY_TYPE: Record<BoardType, number> = {
+  [BoardType.Rhombic9]: -1,
+  [BoardType.Rhombic16]: -1,
+  [BoardType.Rhombic25]: -1,
+  [BoardType.Hexagonal19]: 2,
+  [BoardType.Hexagonal37]: 3,
 };
 
 const BOARD_OPTIONS = [
   BoardType.Rhombic9,
   BoardType.Rhombic16,
   BoardType.Rhombic25,
+  BoardType.Hexagonal19,
+  BoardType.Hexagonal37,
 ] as const;
 
 const toRawPx = (q: number, r: number) => ({
-  x: -HEX_SIZE * Math.sqrt(3) * (q + r / 2),
+  x: HEX_SIZE * Math.sqrt(3) * (q + r / 2),
   y: HEX_SIZE * 1.5 * r,
 });
 
@@ -88,13 +99,22 @@ export default function Switchboard() {
   }, [handleNewGame]);
 
   const boardLength = BOARD_LENGTH_BY_TYPE[puzzle.board.boardType];
+  const hexRadius = HEX_RADIUS_BY_TYPE[puzzle.board.boardType];
   const tilePx = useMemo(() => {
-    const rawTiles = puzzle.board.tiles.map(tile => {
-      const col = tile.tileNo % boardLength;
-      const r = Math.floor(tile.tileNo / boardLength);
-      const q = (boardLength - 1) - col; // reverse so tile 0 is leftmost
-      return { tileNo: tile.tileNo, ...toRawPx(q, r) };
-    });
+    const rawTiles = boardLength > 0
+      ? puzzle.board.tiles.map(tile => {
+        const col = tile.tileNo % boardLength;
+        const r = Math.floor(tile.tileNo / boardLength);
+        const q = col;
+        return { tileNo: tile.tileNo, ...toRawPx(q, r) };
+      })
+      : (() => {
+        const coordinatesByTileNo = getHexCoordinatesByTileNo(hexRadius);
+        return puzzle.board.tiles.map(tile => {
+          const coordinate = coordinatesByTileNo[tile.tileNo];
+          return { tileNo: tile.tileNo, ...toRawPx(coordinate.q, coordinate.r) };
+        });
+      })();
 
     const minX = Math.min(...rawTiles.map(tile => tile.x));
     const maxX = Math.max(...rawTiles.map(tile => tile.x));
@@ -112,7 +132,7 @@ export default function Switchboard() {
         { x: tile.x + offsetX, y: tile.y + offsetY },
       ]),
     );
-  }, [boardLength, puzzle.board.tiles]);
+  }, [boardLength, hexRadius, puzzle.board.tiles]);
 
   return (
     <div className="game-container">
