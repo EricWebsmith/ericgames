@@ -56,7 +56,7 @@
   },
   "switchboard": {
     "title": "Switchboard",
-    "instructions": "Use the board size options to generate a Switchboard puzzle.",
+    "instructions": "Click a tile to rotate it and change the paths. Click the right half to rotate clockwise, left half to rotate counter-clockwise. Your goal is to connect the start and end points.",
     "newGame": "New Game",
     "reset": "Reset",
     "stepsSpent_one": "You have spent {{count}} step.",
