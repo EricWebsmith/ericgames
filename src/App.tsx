@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Arclight from './components/Arclight';
-import LanguageSwitcher from './components/LanguageSwitcher';
+import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
 import Switchboard from './components/Switchboard';

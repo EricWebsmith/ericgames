@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { setup } from '../engine/orapa/gameManager';
 import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
-import BorderCircle from './BorderCircle';
+import BorderCircle from './shared/BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;

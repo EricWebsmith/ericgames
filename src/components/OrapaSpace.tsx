@@ -5,7 +5,7 @@ import { getBoard, } from '../engine/orapa/mineData';
 import type { Color, Puzzle } from '../engine/orapa/models';
 import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/spaceData';
 import BlackHole from './BlackHole';
-import BorderCircle from './BorderCircle';
+import BorderCircle from './shared/BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;

@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
 import { setup } from '../engine/arclight/gameManager';
 import type { Color, Puzzle } from '../engine/arclight/models';
-import BorderCircle from './BorderCircle';
-import { GEM_FILL } from './colors';
+import BorderCircle from './shared/BorderCircle';
+import { GEM_FILL } from './shared/colors';
 
 // ─── Layout constants ──────────────────────────────────────────────
 // HEX_SIZE=42 gives center-to-center distance of 42*√3≈72.7px (pointy-top hex).
