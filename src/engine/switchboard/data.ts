@@ -107,7 +107,7 @@ export function getHexCoordinatesByTileNo(radius: number): Array<{ q: number; r:
     for (let r = -radius; r <= radius; r++) {
         const qMin = Math.max(-radius, -r - radius);
         const qMax = Math.min(radius, -r + radius);
-        for (let q = qMax; q >= qMin; q--) {
+        for (let q = qMin; q <= qMax; q++) {
             coordinates.push({ q, r });
         }
     }
@@ -141,6 +141,7 @@ export function getHexBoard(length: number): Board {
 
     const tileNoByCoordinate: Record<string, number> = {};
     const coordinatesByTileNo = getHexCoordinatesByTileNo(radius);
+    console.log("coordinatesByTileNo", coordinatesByTileNo);
 
     for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
         const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
