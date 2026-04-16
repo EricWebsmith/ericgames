@@ -3,7 +3,7 @@ import { BoardType, type Board, type Puzzle } from './models';
 
 let nextPuzzleId = 1;
 
-export function traverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
+export function tranverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
     let currentTileIndex = startTileIndex;
     let currentDirection = startDirection;
     let currentTile = board.tiles[currentTileIndex];
@@ -20,10 +20,6 @@ export function traverse(board: Board, startTileIndex: number, startDirection: n
         currentDirection = (outDir + 3) % 6;
         currentTile = board.tiles[currentTileIndex];
     }
-}
-
-export function tranverse(board: Board, startTileIndex: number, startDirection: number): [number, number] {
-    return traverse(board, startTileIndex, startDirection);
 }
 
 const TILE_COUNT_BY_BOARD_TYPE: Record<BoardType, number> = {
