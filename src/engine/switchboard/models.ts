@@ -16,6 +16,11 @@ export interface ITileInBoard {
     edges: Record<number, number>;
 }
 
+export interface Step {
+    rotate: 1 | -1;
+    tileNo: ITileInBoard['tileNo'];
+}
+
 export class TileInBoard implements ITileInBoard {
     tile: Tile;
     tileNo: number;
