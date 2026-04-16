@@ -38,7 +38,7 @@ const BOARD_OPTIONS = [
 ] as const;
 
 const toRawPx = (q: number, r: number) => ({
-  x: -HEX_SIZE * Math.sqrt(3) * (q + r / 2),
+  x: HEX_SIZE * Math.sqrt(3) * (q + r / 2),
   y: HEX_SIZE * 1.5 * r,
 });
 
@@ -105,7 +105,7 @@ export default function Switchboard() {
       ? puzzle.board.tiles.map(tile => {
         const col = tile.tileNo % boardLength;
         const r = Math.floor(tile.tileNo / boardLength);
-        const q = (boardLength - 1) - col; // reverse so tile 0 is leftmost
+        const q = col;
         return { tileNo: tile.tileNo, ...toRawPx(q, r) };
       })
       : (() => {
