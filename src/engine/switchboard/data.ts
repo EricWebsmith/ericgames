@@ -107,7 +107,7 @@ export function getHexCoordinatesByTileNo(radius: number): Array<{ q: number; r:
     for (let r = -radius; r <= radius; r++) {
         const qMin = Math.max(-radius, -r - radius);
         const qMax = Math.min(radius, -r + radius);
-        for (let q = qMin; q <= qMax; q++) {
+        for (let q = qMax; q >= qMin; q--) {
             coordinates.push({ q, r });
         }
     }
