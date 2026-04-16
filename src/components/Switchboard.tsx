@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
@@ -172,6 +172,8 @@ const applyStep = (board: Board, step: Step): Board => {
 
 export default function Switchboard() {
   const { t } = useTranslation();
+  // Normalize useId output so marker URL references remain simple and CSS-selector friendly.
+  const stepArrowMarkerIdPrefix = useId().replace(/:/g, '-');
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
   const [showTips, setShowTips] = useState(true);
@@ -463,7 +465,7 @@ export default function Switchboard() {
                 : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
             >
               <defs>
-                <marker id={`step-arrowhead-${index}`} markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth">
+                <marker id={`${stepArrowMarkerIdPrefix}-step-arrowhead-${index}`} markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth">
                   <path d="M0,0 L6,3 L0,6 z" fill="#9de7ff" />
                 </marker>
               </defs>
@@ -474,7 +476,7 @@ export default function Switchboard() {
                   stroke="#9de7ff"
                   strokeWidth="2.2"
                   strokeLinecap="round"
-                  markerEnd={`url(#step-arrowhead-${index})`}
+                  markerEnd={`url(#${stepArrowMarkerIdPrefix}-step-arrowhead-${index})`}
                 />
               ) : (
                 <path
@@ -483,7 +485,7 @@ export default function Switchboard() {
                   stroke="#9de7ff"
                   strokeWidth="2.2"
                   strokeLinecap="round"
-                  markerEnd={`url(#step-arrowhead-${index})`}
+                  markerEnd={`url(#${stepArrowMarkerIdPrefix}-step-arrowhead-${index})`}
                 />
               )}
               <text x="22" y="22" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontWeight="bold" fontSize={12}>
