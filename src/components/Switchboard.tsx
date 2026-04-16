@@ -8,8 +8,7 @@ const SVG_W = 700;
 const SVG_H = 560;
 const HEX_SIZE = 46;
 const HEX_R = 40;
-const BORDER_MARKER_DISTANCE = HEX_R + 22;
-const TILE_MARKER_RADIUS = 16;
+const BORDER_MARKER_DISTANCE = HEX_R + 12;
 const BORDER_MARKER_RADIUS = 14;
 const START_MARKER_COLOR = '#ffd36a';
 const END_MARKER_COLOR = '#9de7ff';
@@ -227,16 +226,6 @@ export default function Switchboard() {
                   />
                 );
               })}
-              {markerLabel && (
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={TILE_MARKER_RADIUS}
-                  fill="none"
-                  stroke={markerLabel === 'S' ? START_MARKER_COLOR : END_MARKER_COLOR}
-                  strokeWidth={2.8}
-                />
-              )}
               <text
                 x={x}
                 y={y + 0.5}
