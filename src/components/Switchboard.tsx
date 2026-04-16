@@ -13,6 +13,7 @@ const TILE_MARKER_RADIUS = 16;
 const BORDER_MARKER_RADIUS = 14;
 const START_MARKER_COLOR = '#ffd36a';
 const END_MARKER_COLOR = '#9de7ff';
+const BOARD_BACKGROUND_COLOR = '#081826';
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -191,7 +192,7 @@ export default function Switchboard() {
         className="game-svg"
         aria-label={t('switchboard.boardAriaLabel')}
       >
-        <rect width={SVG_W} height={SVG_H} fill="#081826" rx={10} />
+        <rect width={SVG_W} height={SVG_H} fill={BOARD_BACKGROUND_COLOR} rx={10} />
 
         {board.tiles.map((tile) => {
           const { x, y } = tilePx[tile.tileNo];
@@ -199,7 +200,7 @@ export default function Switchboard() {
           const isEndTile = tile.tileNo === board.endTileIndex;
           const markerLabel = isStartTile ? 'S' : isEndTile ? 'E' : null;
           return (
-            <g key={tile.tileNo}>
+            <g key={tile.tileNo} aria-label={`Tile ${tile.tileNo}${markerLabel ? ` ${markerLabel}` : ''}`}>
               <polygon
                 points={hexPoints(x, y, HEX_R)}
                 fill="#0b2438"
@@ -255,7 +256,7 @@ export default function Switchboard() {
               cx={x}
               cy={y}
               r={BORDER_MARKER_RADIUS}
-              fill="#081826"
+              fill={BOARD_BACKGROUND_COLOR}
               stroke={stroke}
               strokeWidth={2.8}
             />
