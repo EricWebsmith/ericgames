@@ -145,6 +145,9 @@ const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): strin
 const pathSegmentToKey = (pathSegment: PathSegment): string =>
   pathSegmentKey(pathSegment.tileIndex, pathSegment.inDir, pathSegment.outDir);
 
+const inverseRotate = (rotate: Step['rotate']): Step['rotate'] =>
+  rotate === 1 ? -1 : 1;
+
 const applyStep = (board: Board, step: Step): Board => {
   const tileIndex = board.tiles.findIndex(tile => tile.tileNo === step.tileNo);
   if (tileIndex < 0) return board;
@@ -213,7 +216,7 @@ export default function Switchboard() {
     if (steps.length === 0 || rotatingTile) return;
     clearPendingRotation();
     setBoard(prevBoard => [...steps].reverse().reduce(
-      (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: (step.rotate * -1) as Step['rotate'] }),
+      (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: inverseRotate(step.rotate) }),
       prevBoard,
     ));
     setSteps([]);
@@ -450,12 +453,14 @@ export default function Switchboard() {
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
           {steps.map((step, index) => (
             <svg
-              key={`${step.tileNo}-${step.rotate}-${index}`}
+              key={index}
               width={44}
               height={44}
               viewBox="0 0 44 44"
               role="img"
-              aria-label={`${step.rotate === 1 ? 'Clockwise' : 'Counter-clockwise'} step on tile ${step.tileNo}`}
+              aria-label={step.rotate === 1
+                ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
+                : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
             >
               <circle cx="22" cy="22" r="16" fill="none" stroke="#9de7ff" strokeWidth="2.2" />
               {step.rotate === 1 ? (
