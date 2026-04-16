@@ -199,8 +199,13 @@ export default function Switchboard() {
           const isStartTile = tile.tileNo === board.startTileIndex;
           const isEndTile = tile.tileNo === board.endTileIndex;
           const markerLabel = isStartTile ? 'S' : isEndTile ? 'E' : null;
+          const tileAriaLabel = isStartTile
+            ? `Start tile ${tile.tileNo}`
+            : isEndTile
+              ? `End tile ${tile.tileNo}`
+              : `Tile ${tile.tileNo}`;
           return (
-            <g key={tile.tileNo} aria-label={`Tile ${tile.tileNo}${markerLabel ? ` ${markerLabel}` : ''}`}>
+            <g key={tile.tileNo} aria-label={tileAriaLabel}>
               <polygon
                 points={hexPoints(x, y, HEX_R)}
                 fill="#0b2438"
