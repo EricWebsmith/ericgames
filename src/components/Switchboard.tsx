@@ -107,6 +107,7 @@ export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
+  const [showTips, setShowTips] = useState(true);
 
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     setBoard(setup(nextBoardType));
@@ -208,6 +209,15 @@ export default function Switchboard() {
         <button className="btn-reset" onClick={() => handleNewGame()}>
           {t('switchboard.newGame')}
         </button>
+        <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            id="switchboard-show-tips"
+            type="checkbox"
+            checked={showTips}
+            onChange={(e) => setShowTips(e.target.checked)}
+          />
+          show tips
+        </label>
       </div>
 
       <svg
@@ -242,11 +252,13 @@ export default function Switchboard() {
                 const path = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
                 const segmentKey = pathSegmentKey(tile.tileNo, inDir, outDir);
-                const stroke = endPathSegmentKeys.has(segmentKey)
-                  ? END_MARKER_COLOR
-                  : startPathSegmentKeys.has(segmentKey)
-                    ? START_MARKER_COLOR
-                    : ARC_UNHIGHLIGHTED_COLOR;
+                const stroke = !showTips
+                  ? ARC_UNHIGHLIGHTED_COLOR
+                  : endPathSegmentKeys.has(segmentKey)
+                    ? END_MARKER_COLOR
+                    : startPathSegmentKeys.has(segmentKey)
+                      ? START_MARKER_COLOR
+                      : ARC_UNHIGHLIGHTED_COLOR;
                 return (
                   <path
                     key={`${tile.tileNo}-${inDir}-${outDir}`}
