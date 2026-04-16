@@ -119,7 +119,7 @@ export function getRhombicBoard(length: number): Board {
 
     for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
         let tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
-        while ((q === 0 || q === boardLength - 1) && tilePrototypeIndex === 0) {
+        while ((r === 0 || r === boardLength - 1) && tilePrototypeIndex === 0) {
             tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
         }
         const rotate = Math.floor(Math.random() * 6);
@@ -182,7 +182,10 @@ export function getHexBoard(length: number): Board {
         tiles: [],
     };
     for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
-        const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        let tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        while ((r === -radius || r === radius) && tilePrototypeIndex === 0) {
+            tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
+        }
         const rotate = Math.floor(Math.random() * 6);
 
         board.tiles.push(new TileInBoard({ tile: basicTiles[tilePrototypeIndex], tileNo, rotate }));
