@@ -233,7 +233,6 @@ export default function Switchboard() {
           const { x, y } = tilePx[tile.tileNo];
           const isStartTile = tile.tileNo === board.startTileIndex;
           const isEndTile = tile.tileNo === board.endTileIndex;
-          const markerLabel = isStartTile ? 'S' : isEndTile ? 'E' : null;
           const tileAriaLabel = isStartTile
             ? `Start tile ${tile.tileNo}`
             : isEndTile
@@ -279,7 +278,7 @@ export default function Switchboard() {
                 fontWeight="bold"
                 fontSize={12}
               >
-                {markerLabel ?? tile.tileNo}
+                {tile.tileNo}
               </text>
             </g>
           );
