@@ -3,10 +3,14 @@ import { getRhombicBoard, getRhombicCoordinatesByTileNo } from '../../../engine/
 
 describe('getRhombicCoordinatesByTileNo', () => {
     it('returns tile coordinates in row-major order for valid sizes', () => {
-        expect(getRhombicCoordinatesByTileNo(9)).toEqual([
+        const normalizedCoordinates = getRhombicCoordinatesByTileNo(9).map(({ q, r }) => ({
+            q: Object.is(q, -0) ? 0 : q,
+            r,
+        }));
+        expect(normalizedCoordinates).toEqual([
             { q: 0, r: 0 }, { q: 1, r: 0 }, { q: 2, r: 0 },
-            { q: 0, r: 1 }, { q: 1, r: 1 }, { q: 2, r: 1 },
-            { q: 0, r: 2 }, { q: 1, r: 2 }, { q: 2, r: 2 },
+            { q: -1, r: 1 }, { q: 0, r: 1 }, { q: 1, r: 1 },
+            { q: -2, r: 2 }, { q: -1, r: 2 }, { q: 0, r: 2 },
         ]);
     });
 

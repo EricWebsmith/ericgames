@@ -65,6 +65,32 @@ export function getRhombicCoordinatesByTileNo(length: number): Array<{ q: number
     return coordinates;
 }
 
+function getBoundaryEndpoints(coordinatesByTileNo: Array<{ q: number; r: number; }>): {
+    startTileIndex: number;
+    startTileDirection: number;
+    endTileIndex: number;
+    endTileDirection: number;
+} {
+    const rValues = coordinatesByTileNo.map(({ r }) => r);
+    const rMin = Math.min(...rValues);
+    const rMax = Math.max(...rValues);
+
+    const topTileIndices = coordinatesByTileNo
+        .map((coordinate, tileNo) => coordinate.r === rMin ? tileNo : -1)
+        .filter((tileNo) => tileNo >= 0);
+
+    const bottomTileIndices = coordinatesByTileNo
+        .map((coordinate, tileNo) => coordinate.r === rMax ? tileNo : -1)
+        .filter((tileNo) => tileNo >= 0);
+
+    const startTileIndex = topTileIndices[Math.floor(Math.random() * topTileIndices.length)];
+    const endTileIndex = bottomTileIndices[Math.floor(Math.random() * bottomTileIndices.length)];
+    const startTileDirection = Math.floor(Math.random() * 2) + 1; // 1 or 2
+    const endTileDirection = Math.floor(Math.random() * 2) + 4; // 4 or 5
+
+    return { startTileIndex, startTileDirection, endTileIndex, endTileDirection };
+}
+
 
 /**
  * Flat-topped rhombic board with a positive slope
@@ -85,7 +111,9 @@ export function getRhombicBoard(length: number): Board {
         boardType = BoardType.Rhombic25;
     }
     const board: Board = {
+        boardId: 0,
         boardType,
+        ...getBoundaryEndpoints(coordinatesByTileNo),
         tiles: [],
     };
 
@@ -109,8 +137,6 @@ export function getRhombicBoard(length: number): Board {
             }
         }
     }
-
-    console.log("Generated rhombic board:", board);
 
     return board;
 }
@@ -147,15 +173,14 @@ export function getHexBoard(length: number): Board {
         throw new Error(`Invalid hexagonal board size: ${length}`);
     }
 
-    const board: Board = {
-        boardType,
-        tiles: [],
-    };
-
     const tileNoByCoordinate: Record<string, number> = {};
     const coordinatesByTileNo = getHexCoordinatesByTileNo(radius);
-    console.log("coordinatesByTileNo", coordinatesByTileNo);
-
+    const board: Board = {
+        boardId: 0,
+        boardType,
+        ...getBoundaryEndpoints(coordinatesByTileNo),
+        tiles: [],
+    };
     for (const [tileNo, { q, r }] of coordinatesByTileNo.entries()) {
         const tilePrototypeIndex = Math.floor(Math.random() * basicTiles.length);
         const rotate = Math.floor(Math.random() * 6);
@@ -174,8 +199,6 @@ export function getHexBoard(length: number): Board {
             }
         }
     }
-
-    console.log("Generated hex board:", board);
 
     return board;
 }

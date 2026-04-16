@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup } from '../engine/switchboard/gameManager';
-import { BoardType, type Puzzle } from '../engine/switchboard/models';
+import { BoardType, type Board } from '../engine/switchboard/models';
 
 const SVG_W = 700;
 const SVG_H = 560;
@@ -86,10 +86,10 @@ const hexPoints = (cx: number, cy: number, R: number): string =>
 export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(BoardType.Rhombic9));
+  const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
 
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
-    setPuzzle(setup(nextBoardType));
+    setBoard(setup(nextBoardType));
   }, [boardType]);
 
   const handleBoardTypeChange = useCallback((value: string) => {
@@ -98,20 +98,20 @@ export default function Switchboard() {
     handleNewGame(nextBoardType);
   }, [handleNewGame]);
 
-  const boardLength = BOARD_LENGTH_BY_TYPE[puzzle.board.boardType];
-  const hexRadius = HEX_RADIUS_BY_TYPE[puzzle.board.boardType];
+  const boardLength = BOARD_LENGTH_BY_TYPE[board.boardType];
+  const hexRadius = HEX_RADIUS_BY_TYPE[board.boardType];
   const tilePx = useMemo(() => {
     const rawTiles = boardLength > 0
       ? (() => {
-        const coordinatesByTileNo = getRhombicCoordinatesByTileNo(puzzle.board.tiles.length);
-        return puzzle.board.tiles.map(tile => {
+        const coordinatesByTileNo = getRhombicCoordinatesByTileNo(board.tiles.length);
+        return board.tiles.map(tile => {
           const coordinate = coordinatesByTileNo[tile.tileNo];
           return { tileNo: tile.tileNo, ...toRawPx(coordinate.q, coordinate.r) };
         });
       })()
       : (() => {
         const coordinatesByTileNo = getHexCoordinatesByTileNo(hexRadius);
-        return puzzle.board.tiles.map(tile => {
+        return board.tiles.map(tile => {
           const coordinate = coordinatesByTileNo[tile.tileNo];
           return { tileNo: tile.tileNo, ...toRawPx(coordinate.q, coordinate.r) };
         });
@@ -133,7 +133,7 @@ export default function Switchboard() {
         { x: tile.x + offsetX, y: tile.y + offsetY },
       ]),
     );
-  }, [boardLength, hexRadius, puzzle.board.tiles]);
+  }, [boardLength, hexRadius, board.tiles]);
 
   return (
     <div className="game-container">
@@ -168,7 +168,7 @@ export default function Switchboard() {
       >
         <rect width={SVG_W} height={SVG_H} fill="#081826" rx={10} />
 
-        {puzzle.board.tiles.map((tile) => {
+        {board.tiles.map((tile) => {
           const { x, y } = tilePx[tile.tileNo];
           return (
             <g key={tile.tileNo}>
