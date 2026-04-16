@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
-import { BoardType, TileInBoard, type Board, type PathSegment } from '../engine/switchboard/models';
+import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
 
 const SVG_W = 700;
 const SVG_H = 560;
@@ -145,11 +145,34 @@ const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): strin
 const pathSegmentToKey = (pathSegment: PathSegment): string =>
   pathSegmentKey(pathSegment.tileIndex, pathSegment.inDir, pathSegment.outDir);
 
+const applyStep = (board: Board, step: Step): Board => {
+  const tileIndex = board.tiles.findIndex(tile => tile.tileNo === step.tileNo);
+  if (tileIndex < 0) return board;
+
+  const tile = board.tiles[tileIndex];
+  const nextRotate = normalizeRotation(tile.rotate + step.rotate);
+  const nextTile = new TileInBoard({
+    tile: tile.tile,
+    tileNo: tile.tileNo,
+    rotate: nextRotate,
+    edges: { ...tile.edges },
+  }).resolve_rotate();
+
+  const nextTiles = [...board.tiles];
+  nextTiles[tileIndex] = nextTile;
+
+  return {
+    ...board,
+    tiles: nextTiles,
+  };
+};
+
 export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
   const [showTips, setShowTips] = useState(true);
+  const [steps, setSteps] = useState<Step[]>([]);
   const [rotatingTile, setRotatingTile] = useState<{ tileNo: number; delta: number; } | null>(null);
   const rotationTimeoutRef = useRef<number | null>(null);
 
@@ -164,6 +187,7 @@ export default function Switchboard() {
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     clearPendingRotation();
     setBoard(setup(nextBoardType));
+    setSteps([]);
   }, [boardType, clearPendingRotation]);
 
   const handleBoardTypeChange = useCallback((value: string) => {
@@ -172,37 +196,28 @@ export default function Switchboard() {
     handleNewGame(nextBoardType);
   }, [handleNewGame]);
 
-  const handleRotateTile = useCallback((tileNo: number, delta: number) => {
+  const handleRotateTile = useCallback((tileNo: number, delta: Step['rotate']) => {
     if (rotatingTile) return;
     setRotatingTile({ tileNo, delta });
+    setSteps(prev => [...prev, { tileNo, rotate: delta }]);
 
     rotationTimeoutRef.current = window.setTimeout(() => {
-      setBoard(prevBoard => {
-        const tileIndex = prevBoard.tiles.findIndex(tile => tile.tileNo === tileNo);
-        if (tileIndex < 0) return prevBoard;
-
-        const tile = prevBoard.tiles[tileIndex];
-        const nextRotate = normalizeRotation(tile.rotate + delta);
-        const nextTile = new TileInBoard({
-          tile: tile.tile,
-          tileNo: tile.tileNo,
-          rotate: nextRotate,
-          edges: { ...tile.edges },
-        }).resolve_rotate();
-
-        const nextTiles = [...prevBoard.tiles];
-        nextTiles[tileIndex] = nextTile;
-
-        return {
-          ...prevBoard,
-          tiles: nextTiles,
-        };
-      });
+      setBoard(prevBoard => applyStep(prevBoard, { tileNo, rotate: delta }));
 
       setRotatingTile(null);
       rotationTimeoutRef.current = null;
     }, ROTATION_ANIMATION_DURATION_MS);
   }, [rotatingTile]);
+
+  const handleResetSteps = useCallback(() => {
+    if (steps.length === 0 || rotatingTile) return;
+    clearPendingRotation();
+    setBoard(prevBoard => [...steps].reverse().reduce(
+      (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: (step.rotate * -1) as Step['rotate'] }),
+      prevBoard,
+    ));
+    setSteps([]);
+  }, [clearPendingRotation, rotatingTile, steps]);
 
   useEffect(() => () => {
     clearPendingRotation();
@@ -297,6 +312,9 @@ export default function Switchboard() {
         </select>
         <button className="btn-reset" onClick={() => handleNewGame()}>
           {t('switchboard.newGame')}
+        </button>
+        <button className="btn-reset" onClick={handleResetSteps} disabled={steps.length === 0 || Boolean(rotatingTile)}>
+          {t('switchboard.reset')}
         </button>
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
@@ -427,6 +445,40 @@ export default function Switchboard() {
           </g>
         ))}
       </svg>
+
+      <div style={{ width: '100%', maxWidth: SVG_W }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
+          {steps.map((step, index) => (
+            <svg
+              key={`${step.tileNo}-${step.rotate}-${index}`}
+              width={44}
+              height={44}
+              viewBox="0 0 44 44"
+              role="img"
+              aria-label={`${step.rotate === 1 ? 'Clockwise' : 'Counter-clockwise'} step on tile ${step.tileNo}`}
+            >
+              <circle cx="22" cy="22" r="16" fill="none" stroke="#9de7ff" strokeWidth="2.2" />
+              {step.rotate === 1 ? (
+                <>
+                  <path d="M10 18 A14 14 0 1 1 22 36" fill="none" stroke="#9de7ff" strokeWidth="2.2" strokeLinecap="round" />
+                  <polygon points="24,34 19,35 21,30" fill="#9de7ff" />
+                </>
+              ) : (
+                <>
+                  <path d="M34 18 A14 14 0 1 0 22 36" fill="none" stroke="#9de7ff" strokeWidth="2.2" strokeLinecap="round" />
+                  <polygon points="20,34 25,35 23,30" fill="#9de7ff" />
+                </>
+              )}
+              <text x="22" y="22" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontWeight="bold" fontSize={12}>
+                {step.tileNo}
+              </text>
+            </svg>
+          ))}
+        </div>
+        <p className="status-message" style={{ textAlign: 'center', marginTop: 8 }}>
+          {t('switchboard.stepsSpent', { count: steps.length })}
+        </p>
+      </div>
     </div>
   );
 }

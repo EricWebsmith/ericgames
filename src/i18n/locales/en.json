@@ -56,8 +56,10 @@
   },
   "switchboard": {
     "title": "Switchboard",
-    "instructions": "Use the board size options to generate a Switchboard puzzle. Tile rotation is not enabled yet.",
+    "instructions": "Use the board size options to generate a Switchboard puzzle.",
     "newGame": "New Game",
+    "reset": "Reset",
+    "stepsSpent": "You have spent {{count}} steps.",
     "boardAriaLabel": "Switchboard puzzle board",
     "boardSizeLabel": "Board Size",
     "rhombic9": "Rhombic 9",
