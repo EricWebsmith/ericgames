@@ -8,6 +8,9 @@ const SVG_W = 700;
 const SVG_H = 560;
 const HEX_SIZE = 46;
 const HEX_R = 40;
+const BORDER_MARKER_DISTANCE = HEX_R + 22;
+const TILE_MARKER_RADIUS = 16;
+const BORDER_MARKER_RADIUS = 14;
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -42,14 +45,14 @@ const toRawPx = (q: number, r: number) => ({
   y: HEX_SIZE * 1.5 * r,
 });
 
-const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number; } => {
-  const angle = (Math.PI / 180) * DIR_DEG[d];
+const edgeMidForDir = (cx: number, cy: number, direction: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[direction];
   const inradius = HEX_R * Math.sqrt(3) / 2;
   return { x: cx + inradius * Math.cos(angle), y: cy + inradius * Math.sin(angle) };
 };
 
-const pointAlongDir = (cx: number, cy: number, d: number, distance: number): { x: number; y: number; } => {
-  const angle = (Math.PI / 180) * DIR_DEG[d];
+const pointAlongDir = (cx: number, cy: number, direction: number, distance: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[direction];
   return { x: cx + distance * Math.cos(angle), y: cy + distance * Math.sin(angle) };
 };
 
@@ -142,18 +145,17 @@ export default function Switchboard() {
 
   const startTilePosition = tilePx[board.startTileIndex];
   const endTilePosition = tilePx[board.endTileIndex];
-  const borderMarkerDistance = HEX_R + 22;
   const startBorderPosition = pointAlongDir(
     startTilePosition.x,
     startTilePosition.y,
     board.startTileDirection,
-    borderMarkerDistance,
+    BORDER_MARKER_DISTANCE,
   );
   const endBorderPosition = pointAlongDir(
     endTilePosition.x,
     endTilePosition.y,
     board.endTileDirection,
-    borderMarkerDistance,
+    BORDER_MARKER_DISTANCE,
   );
 
   return (
@@ -221,7 +223,7 @@ export default function Switchboard() {
                 <circle
                   cx={x}
                   cy={y}
-                  r={16}
+                  r={TILE_MARKER_RADIUS}
                   fill="none"
                   stroke={markerLabel === 'S' ? '#ffd36a' : '#9de7ff'}
                   strokeWidth={2.8}
@@ -250,7 +252,7 @@ export default function Switchboard() {
             <circle
               cx={x}
               cy={y}
-              r={14}
+              r={BORDER_MARKER_RADIUS}
               fill="#081826"
               stroke={stroke}
               strokeWidth={2.8}
