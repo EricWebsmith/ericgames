@@ -14,6 +14,15 @@ const START_MARKER_COLOR = '#ffd36a';
 const END_MARKER_COLOR = '#ff4d4f';
 const ARC_UNHIGHLIGHTED_COLOR = '#9de7ff';
 const BOARD_BACKGROUND_COLOR = '#081826';
+const ROTATION_ANIMATION_DURATION_MS = 500;
+const HEX_DIRECTION_COUNT = 6;
+const DEGREES_PER_HEX_ROTATION = 60;
+const HEX_VERTEX_TOP = 0;
+const HEX_VERTEX_UPPER_RIGHT = 1;
+const HEX_VERTEX_LOWER_RIGHT = 2;
+const HEX_VERTEX_BOTTOM = 3;
+const HEX_VERTEX_LOWER_LEFT = 4;
+const HEX_VERTEX_UPPER_LEFT = 5;
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -89,13 +98,13 @@ const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): str
 };
 
 const hexPoints = (cx: number, cy: number, R: number): string =>
-  Array.from({ length: 6 }, (_, k) => {
+  Array.from({ length: HEX_DIRECTION_COUNT }, (_, k) => {
     const a = (Math.PI / 180) * (-90 + 60 * k);
     return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`;
   }).join(' ');
 
 const hexVertices = (cx: number, cy: number, R: number): Array<{ x: number; y: number; }> =>
-  Array.from({ length: 6 }, (_, k) => {
+  Array.from({ length: HEX_DIRECTION_COUNT }, (_, k) => {
     const a = (Math.PI / 180) * (-90 + 60 * k);
     return { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) };
   });
@@ -105,11 +114,27 @@ const pointsToString = (points: Array<{ x: number; y: number; }>): string =>
 
 const halfHexPoints = (cx: number, cy: number, R: number, side: 'left' | 'right'): string => {
   const vertices = hexVertices(cx, cy, R);
+  // Vertex order from hexVertices(): top, upper-right, lower-right, bottom, lower-left, upper-left.
   if (side === 'left') {
-    return pointsToString([vertices[0], vertices[5], vertices[4], vertices[3], { x: cx, y: cy }]);
+    return pointsToString([
+      vertices[HEX_VERTEX_TOP],
+      vertices[HEX_VERTEX_UPPER_LEFT],
+      vertices[HEX_VERTEX_LOWER_LEFT],
+      vertices[HEX_VERTEX_BOTTOM],
+      { x: cx, y: cy },
+    ]);
   }
-  return pointsToString([vertices[0], { x: cx, y: cy }, vertices[3], vertices[2], vertices[1]]);
+  return pointsToString([
+    vertices[HEX_VERTEX_TOP],
+    { x: cx, y: cy },
+    vertices[HEX_VERTEX_BOTTOM],
+    vertices[HEX_VERTEX_LOWER_RIGHT],
+    vertices[HEX_VERTEX_UPPER_RIGHT],
+  ]);
 };
+
+const normalizeRotation = (value: number): number =>
+  ((value % HEX_DIRECTION_COUNT) + HEX_DIRECTION_COUNT) % HEX_DIRECTION_COUNT;
 
 const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): string => {
   const a = Math.min(inDir, outDir);
@@ -128,9 +153,18 @@ export default function Switchboard() {
   const [rotatingTile, setRotatingTile] = useState<{ tileNo: number; delta: number; } | null>(null);
   const rotationTimeoutRef = useRef<number | null>(null);
 
+  const clearPendingRotation = useCallback(() => {
+    if (rotationTimeoutRef.current !== null) {
+      window.clearTimeout(rotationTimeoutRef.current);
+      rotationTimeoutRef.current = null;
+    }
+    setRotatingTile(null);
+  }, []);
+
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
+    clearPendingRotation();
     setBoard(setup(nextBoardType));
-  }, [boardType]);
+  }, [boardType, clearPendingRotation]);
 
   const handleBoardTypeChange = useCallback((value: string) => {
     const nextBoardType = value as BoardType;
@@ -148,7 +182,7 @@ export default function Switchboard() {
         if (tileIndex < 0) return prevBoard;
 
         const tile = prevBoard.tiles[tileIndex];
-        const nextRotate = ((tile.rotate + delta) % 6 + 6) % 6;
+        const nextRotate = normalizeRotation(tile.rotate + delta);
         const nextTile = new TileInBoard({
           tile: tile.tile,
           tileNo: tile.tileNo,
@@ -167,14 +201,12 @@ export default function Switchboard() {
 
       setRotatingTile(null);
       rotationTimeoutRef.current = null;
-    }, 500);
+    }, ROTATION_ANIMATION_DURATION_MS);
   }, [rotatingTile]);
 
   useEffect(() => () => {
-    if (rotationTimeoutRef.current !== null) {
-      window.clearTimeout(rotationTimeoutRef.current);
-    }
-  }, []);
+    clearPendingRotation();
+  }, [clearPendingRotation]);
 
   const boardLength = BOARD_LENGTH_BY_TYPE[board.boardType];
   const hexRadius = HEX_RADIUS_BY_TYPE[board.boardType];
@@ -299,10 +331,12 @@ export default function Switchboard() {
             <g key={tile.tileNo} aria-label={tileAriaLabel}>
               <g
                 style={{
-                  transition: 'transform 0.5s ease',
+                  transition: `transform ${ROTATION_ANIMATION_DURATION_MS}ms ease`,
                   transformBox: 'fill-box',
                   transformOrigin: 'center',
-                  transform: rotatingTile?.tileNo === tile.tileNo ? `rotate(${rotatingTile.delta * 60}deg)` : 'rotate(0deg)',
+                  transform: rotatingTile?.tileNo === tile.tileNo
+                    ? `rotate(${rotatingTile.delta * DEGREES_PER_HEX_ROTATION}deg)`
+                    : 'rotate(0deg)',
                 }}
               >
                 <polygon
