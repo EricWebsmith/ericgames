@@ -4,7 +4,7 @@ import { getRhombicBoard, getRhombicCoordinatesByTileNo } from '../../../engine/
 describe('getRhombicCoordinatesByTileNo', () => {
     it('returns tile coordinates in row-major order for valid sizes', () => {
         const normalizedCoordinates = getRhombicCoordinatesByTileNo(9).map(({ q, r }) => ({
-            q: q === 0 ? 0 : q,
+            q: Object.is(q, -0) ? 0 : q,
             r,
         }));
         expect(normalizedCoordinates).toEqual([
