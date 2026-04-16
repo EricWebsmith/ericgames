@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { getBasicTiles } from '../../../engine/switchboard/data';
-import { tranverse } from '../../../engine/switchboard/gameManager';
+import { traverse } from '../../../engine/switchboard/gameManager';
 import { type Board, TileInBoard } from '../../../engine/switchboard/models';
 
 describe('traverse', () => {
@@ -56,7 +56,7 @@ describe('traverse', () => {
                     tile: basicTiles[3],
                     tileNo: 6,
                     rotate: 0,
-                    edges: { 2: 3, 3:7 },
+                    edges: { 2: 3, 3: 7 },
                 }),
                 new TileInBoard({  // 7
                     tile: basicTiles[0],
@@ -87,8 +87,9 @@ describe('traverse', () => {
         [0, 0, 8, 5],
         
     ])('start %s %s → end %s %s', (startTileIndex, startTileBorder, expectedExistTileIndex, expectedExistTileBorder) => {
-        const [endTileIndex, endTileBorder] = tranverse(board, startTileIndex, startTileBorder);
-        expect(endTileIndex).toBe(expectedExistTileIndex);
-        expect(endTileBorder).toBe(expectedExistTileBorder);
+        const pathSegments = traverse(board, startTileIndex, startTileBorder);
+        const endSegment = pathSegments[pathSegments.length - 1];
+        expect(endSegment.tileIndex).toBe(expectedExistTileIndex);
+        expect(endSegment.outDir).toBe(expectedExistTileBorder);
     });
 });

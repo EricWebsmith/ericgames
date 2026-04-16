@@ -1,13 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
-import { setup } from '../engine/switchboard/gameManager';
-import { BoardType, type Board } from '../engine/switchboard/models';
+import { setup, traverse } from '../engine/switchboard/gameManager';
+import { BoardType, type Board, type PathSegment } from '../engine/switchboard/models';
 
 const SVG_W = 700;
 const SVG_H = 560;
 const HEX_SIZE = 46;
 const HEX_R = 40;
+const BORDER_MARKER_DISTANCE = HEX_R + 12;
+const BORDER_MARKER_RADIUS = 14;
+const START_MARKER_COLOR = '#ffd36a';
+const END_MARKER_COLOR = '#ff4d4f';
+const ARC_UNHIGHLIGHTED_COLOR = '#9de7ff';
+const BOARD_BACKGROUND_COLOR = '#081826';
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -42,10 +48,15 @@ const toRawPx = (q: number, r: number) => ({
   y: HEX_SIZE * 1.5 * r,
 });
 
-const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: number; } => {
-  const angle = (Math.PI / 180) * DIR_DEG[d];
+const edgeMidForDir = (cx: number, cy: number, direction: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[direction];
   const inradius = HEX_R * Math.sqrt(3) / 2;
   return { x: cx + inradius * Math.cos(angle), y: cy + inradius * Math.sin(angle) };
+};
+
+const pointAlongDir = (cx: number, cy: number, direction: number, distance: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[direction];
+  return { x: cx + distance * Math.cos(angle), y: cy + distance * Math.sin(angle) };
 };
 
 const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): string | null => {
@@ -83,10 +94,20 @@ const hexPoints = (cx: number, cy: number, R: number): string =>
     return `${(cx + R * Math.cos(a)).toFixed(1)},${(cy + R * Math.sin(a)).toFixed(1)}`;
   }).join(' ');
 
+const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): string => {
+  const a = Math.min(inDir, outDir);
+  const b = Math.max(inDir, outDir);
+  return `${tileIndex}-${a}-${b}`;
+};
+
+const pathSegmentToKey = (pathSegment: PathSegment): string =>
+  pathSegmentKey(pathSegment.tileIndex, pathSegment.inDir, pathSegment.outDir);
+
 export default function Switchboard() {
   const { t } = useTranslation();
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
+  const [showTips, setShowTips] = useState(true);
 
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     setBoard(setup(nextBoardType));
@@ -135,6 +156,37 @@ export default function Switchboard() {
     );
   }, [boardLength, hexRadius, board.tiles]);
 
+  const startTilePosition = tilePx[board.startTileIndex];
+  const endTilePosition = tilePx[board.endTileIndex];
+  const startBorderPosition = pointAlongDir(
+    startTilePosition.x,
+    startTilePosition.y,
+    board.startTileDirection,
+    BORDER_MARKER_DISTANCE,
+  );
+  const endBorderPosition = pointAlongDir(
+    endTilePosition.x,
+    endTilePosition.y,
+    board.endTileDirection,
+    BORDER_MARKER_DISTANCE,
+  );
+  const startPathSegments = useMemo(
+    () => traverse(board, board.startTileIndex, board.startTileDirection),
+    [board],
+  );
+  const endPathSegments = useMemo(
+    () => traverse(board, board.endTileIndex, board.endTileDirection),
+    [board],
+  );
+  const startPathSegmentKeys = useMemo(
+    () => new Set(startPathSegments.map(pathSegmentToKey)),
+    [startPathSegments],
+  );
+  const endPathSegmentKeys = useMemo(
+    () => new Set(endPathSegments.map(pathSegmentToKey)),
+    [endPathSegments],
+  );
+
   return (
     <div className="game-container">
       <h2 className="game-title">{t('switchboard.title')}</h2>
@@ -157,6 +209,15 @@ export default function Switchboard() {
         <button className="btn-reset" onClick={() => handleNewGame()}>
           {t('switchboard.newGame')}
         </button>
+        <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            id="switchboard-show-tips"
+            type="checkbox"
+            checked={showTips}
+            onChange={(e) => setShowTips(e.target.checked)}
+          />
+          show tips
+        </label>
       </div>
 
       <svg
@@ -166,12 +227,20 @@ export default function Switchboard() {
         className="game-svg"
         aria-label={t('switchboard.boardAriaLabel')}
       >
-        <rect width={SVG_W} height={SVG_H} fill="#081826" rx={10} />
+        <rect width={SVG_W} height={SVG_H} fill={BOARD_BACKGROUND_COLOR} rx={10} />
 
         {board.tiles.map((tile) => {
           const { x, y } = tilePx[tile.tileNo];
+          const isStartTile = tile.tileNo === board.startTileIndex;
+          const isEndTile = tile.tileNo === board.endTileIndex;
+          const markerLabel = isStartTile ? 'S' : isEndTile ? 'E' : null;
+          const tileAriaLabel = isStartTile
+            ? `Start tile ${tile.tileNo}`
+            : isEndTile
+              ? `End tile ${tile.tileNo}`
+              : `Tile ${tile.tileNo}`;
           return (
-            <g key={tile.tileNo}>
+            <g key={tile.tileNo} aria-label={tileAriaLabel}>
               <polygon
                 points={hexPoints(x, y, HEX_R)}
                 fill="#0b2438"
@@ -182,11 +251,19 @@ export default function Switchboard() {
                 const inDir = Number(inDirStr);
                 const path = makeArcPath(inDir, outDir, x, y);
                 if (!path) return null;
+                const segmentKey = pathSegmentKey(tile.tileNo, inDir, outDir);
+                const stroke = !showTips
+                  ? ARC_UNHIGHLIGHTED_COLOR
+                  : endPathSegmentKeys.has(segmentKey)
+                    ? END_MARKER_COLOR
+                    : startPathSegmentKeys.has(segmentKey)
+                      ? START_MARKER_COLOR
+                      : ARC_UNHIGHLIGHTED_COLOR;
                 return (
                   <path
                     key={`${tile.tileNo}-${inDir}-${outDir}`}
                     d={path}
-                    stroke="#9de7ff"
+                    stroke={stroke}
                     strokeWidth={2.6}
                     fill="none"
                     strokeLinecap="round"
@@ -202,11 +279,38 @@ export default function Switchboard() {
                 fontWeight="bold"
                 fontSize={12}
               >
-                {tile.tileNo}
+                {markerLabel ?? tile.tileNo}
               </text>
             </g>
           );
         })}
+
+        {[
+          { ...startBorderPosition, label: 'S', stroke: START_MARKER_COLOR },
+          { ...endBorderPosition, label: 'E', stroke: END_MARKER_COLOR },
+        ].map(({ x, y, label, stroke }) => (
+          <g key={`border-${label}`}>
+            <circle
+              cx={x}
+              cy={y}
+              r={BORDER_MARKER_RADIUS}
+              fill={BOARD_BACKGROUND_COLOR}
+              stroke={stroke}
+              strokeWidth={2.8}
+            />
+            <text
+              x={x}
+              y={y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={stroke}
+              fontWeight="bold"
+              fontSize={12}
+            >
+              {label}
+            </text>
+          </g>
+        ))}
       </svg>
     </div>
   );
