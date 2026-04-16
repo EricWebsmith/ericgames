@@ -55,21 +55,19 @@
     "includeBlackHole": "黑洞擴展"
   },
   "switchboard": {
-    "title": "Switchboard",
-    "instructions": "選擇棋盤尺寸產生 Switchboard 謎題。",
+    "title": "接線總機",
+    "instructions": "選擇棋盤尺寸產生接線總機謎題。",
     "newGame": "新遊戲",
     "reset": "重置",
     "stepsSpent_other": "你已經用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 號格順時針步驟",
     "stepCounterClockwiseAria": "第 {{tileNo}} 號格逆時針步驟",
-    "boardAriaLabel": "Switchboard 拼圖棋盤",
+    "boardAriaLabel": "接線總機拼圖棋盤",
     "boardSizeLabel": "棋盤尺寸",
     "rhombic9": "菱形 9",
     "rhombic16": "菱形 16",
     "rhombic25": "菱形 25",
     "hexagonal19": "六邊形 19",
-    "hexagonal37": "六邊形 37",
-    "start": "起",
-    "end": "終"
+    "hexagonal37": "六邊形 37"
   }
 }
