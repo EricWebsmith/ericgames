@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getHexCoordinatesByTileNo } from '../engine/switchboard/data';
+import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup } from '../engine/switchboard/gameManager';
 import { BoardType, type Puzzle } from '../engine/switchboard/models';
 
@@ -102,12 +102,13 @@ export default function Switchboard() {
   const hexRadius = HEX_RADIUS_BY_TYPE[puzzle.board.boardType];
   const tilePx = useMemo(() => {
     const rawTiles = boardLength > 0
-      ? puzzle.board.tiles.map(tile => {
-        const col = tile.tileNo % boardLength;
-        const r = Math.floor(tile.tileNo / boardLength);
-        const q = col;
-        return { tileNo: tile.tileNo, ...toRawPx(q, r) };
-      })
+      ? (() => {
+        const coordinatesByTileNo = getRhombicCoordinatesByTileNo(puzzle.board.tiles.length);
+        return puzzle.board.tiles.map(tile => {
+          const coordinate = coordinatesByTileNo[tile.tileNo];
+          return { tileNo: tile.tileNo, ...toRawPx(coordinate.q, coordinate.r) };
+        });
+      })()
       : (() => {
         const coordinatesByTileNo = getHexCoordinatesByTileNo(hexRadius);
         return puzzle.board.tiles.map(tile => {
