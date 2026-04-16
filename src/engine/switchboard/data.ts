@@ -42,11 +42,11 @@ export function getBasicTiles(): Tile[] {
 
 const directionOffsets: Record<number, { dq: number; dr: number; }> = {
     0: { dq: -1, dr: 0 },
-    1: { dq: 1, dr: -1 },
-    2: { dq: 0, dr: -1 },
+    1: { dq: 0, dr: -1 },
+    2: { dq: 1, dr: -1 },
     3: { dq: 1, dr: 0 },
-    4: { dq: -1, dr: 1 },
-    5: { dq: 0, dr: 1 },
+    4: { dq: 0, dr: 1 },
+    5: { dq: -1, dr: 1 },
 };
 
 export function getRhombicCoordinatesByTileNo(length: number): Array<{ q: number; r: number; }> {
@@ -57,7 +57,7 @@ export function getRhombicCoordinatesByTileNo(length: number): Array<{ q: number
 
     const coordinates: Array<{ q: number; r: number; }> = [];
     for (let r = 0; r < boardLength; r++) {
-        for (let q = 0; q < boardLength; q++) {
+        for (let q = -r; q < boardLength-r; q++) {
             coordinates.push({ q, r });
         }
     }
@@ -109,6 +109,8 @@ export function getRhombicBoard(length: number): Board {
             }
         }
     }
+
+    console.log("Generated rhombic board:", board);
 
     return board;
 }
@@ -172,6 +174,8 @@ export function getHexBoard(length: number): Board {
             }
         }
     }
+
+    console.log("Generated hex board:", board);
 
     return board;
 }
