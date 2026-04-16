@@ -48,6 +48,11 @@ const edgeMidForDir = (cx: number, cy: number, d: number): { x: number; y: numbe
   return { x: cx + inradius * Math.cos(angle), y: cy + inradius * Math.sin(angle) };
 };
 
+const pointAlongDir = (cx: number, cy: number, d: number, distance: number): { x: number; y: number; } => {
+  const angle = (Math.PI / 180) * DIR_DEG[d];
+  return { x: cx + distance * Math.cos(angle), y: cy + distance * Math.sin(angle) };
+};
+
 const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): string | null => {
   if (inDir > outDir) return null;
   const distance = (outDir - inDir) % 6;
@@ -135,6 +140,22 @@ export default function Switchboard() {
     );
   }, [boardLength, hexRadius, board.tiles]);
 
+  const startTilePosition = tilePx[board.startTileIndex];
+  const endTilePosition = tilePx[board.endTileIndex];
+  const borderMarkerDistance = HEX_R + 22;
+  const startBorderPosition = pointAlongDir(
+    startTilePosition.x,
+    startTilePosition.y,
+    board.startTileDirection,
+    borderMarkerDistance,
+  );
+  const endBorderPosition = pointAlongDir(
+    endTilePosition.x,
+    endTilePosition.y,
+    board.endTileDirection,
+    borderMarkerDistance,
+  );
+
   return (
     <div className="game-container">
       <h2 className="game-title">{t('switchboard.title')}</h2>
@@ -170,6 +191,9 @@ export default function Switchboard() {
 
         {board.tiles.map((tile) => {
           const { x, y } = tilePx[tile.tileNo];
+          const isStartTile = tile.tileNo === board.startTileIndex;
+          const isEndTile = tile.tileNo === board.endTileIndex;
+          const markerLabel = isStartTile ? 'S' : isEndTile ? 'E' : null;
           return (
             <g key={tile.tileNo}>
               <polygon
@@ -193,6 +217,16 @@ export default function Switchboard() {
                   />
                 );
               })}
+              {markerLabel && (
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={16}
+                  fill="none"
+                  stroke={markerLabel === 'S' ? '#ffd36a' : '#9de7ff'}
+                  strokeWidth={2.8}
+                />
+              )}
               <text
                 x={x}
                 y={y + 0.5}
@@ -202,11 +236,38 @@ export default function Switchboard() {
                 fontWeight="bold"
                 fontSize={12}
               >
-                {tile.tileNo}
+                {markerLabel ?? tile.tileNo}
               </text>
             </g>
           );
         })}
+
+        {[
+          { ...startBorderPosition, label: 'S', stroke: '#ffd36a' },
+          { ...endBorderPosition, label: 'E', stroke: '#9de7ff' },
+        ].map(({ x, y, label, stroke }) => (
+          <g key={`border-${label}`}>
+            <circle
+              cx={x}
+              cy={y}
+              r={14}
+              fill="#081826"
+              stroke={stroke}
+              strokeWidth={2.8}
+            />
+            <text
+              x={x}
+              y={y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={stroke}
+              fontWeight="bold"
+              fontSize={12}
+            >
+              {label}
+            </text>
+          </g>
+        ))}
       </svg>
     </div>
   );
