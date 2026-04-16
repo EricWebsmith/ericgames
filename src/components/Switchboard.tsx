@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
-import { setup, tranverse } from '../engine/switchboard/gameManager';
+import { setup, traverse } from '../engine/switchboard/gameManager';
 import { BoardType, type Board, type PathSegment } from '../engine/switchboard/models';
 
 const SVG_W = 700;
@@ -12,7 +12,7 @@ const BORDER_MARKER_DISTANCE = HEX_R + 12;
 const BORDER_MARKER_RADIUS = 14;
 const START_MARKER_COLOR = '#ffd36a';
 const END_MARKER_COLOR = '#ff4d4f';
-const ARC_DEFAULT_COLOR = '#9de7ff';
+const ARC_UNHIGHLIGHTED_COLOR = '#9de7ff';
 const BOARD_BACKGROUND_COLOR = '#081826';
 
 const DIR_DEG: Record<number, number> = {
@@ -170,11 +170,11 @@ export default function Switchboard() {
     BORDER_MARKER_DISTANCE,
   );
   const startPathSegments = useMemo(
-    () => tranverse(board, board.startTileIndex, board.startTileDirection),
+    () => traverse(board, board.startTileIndex, board.startTileDirection),
     [board],
   );
   const endPathSegments = useMemo(
-    () => tranverse(board, board.endTileIndex, board.endTileDirection),
+    () => traverse(board, board.endTileIndex, board.endTileDirection),
     [board],
   );
   const startPathSegmentKeys = useMemo(
@@ -246,7 +246,7 @@ export default function Switchboard() {
                   ? END_MARKER_COLOR
                   : startPathSegmentKeys.has(segmentKey)
                     ? START_MARKER_COLOR
-                    : ARC_DEFAULT_COLOR;
+                    : ARC_UNHIGHLIGHTED_COLOR;
                 return (
                   <path
                     key={`${tile.tileNo}-${inDir}-${outDir}`}

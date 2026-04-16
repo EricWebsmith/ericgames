@@ -3,7 +3,7 @@ import { BoardType, type Board, type PathSegment } from './models';
 
 let nextBoardId = 1;
 
-export function tranverse(board: Board, startTileIndex: number, startDirection: number): PathSegment[] {
+export function traverse(board: Board, startTileIndex: number, startDirection: number): PathSegment[] {
     let currentTileIndex = startTileIndex;
     let currentDirection = startDirection;
     let currentTile = board.tiles[currentTileIndex];
