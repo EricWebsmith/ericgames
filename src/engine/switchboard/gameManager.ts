@@ -1,4 +1,4 @@
-import { getHexBoard, getRhombixBoard } from './data';
+import { getHexBoard, getRhombicBoard } from './data';
 import { BoardType, type Board, type Puzzle } from './models';
 
 let nextPuzzleId = 1;
@@ -39,7 +39,7 @@ export function setup(boardType: BoardType = BoardType.Rhombic9): Puzzle {
 
     const board = boardType === BoardType.Hexagonal19 || boardType === BoardType.Hexagonal37
         ? getHexBoard(tileCount)
-        : getRhombixBoard(tileCount);
+        : getRhombicBoard(tileCount);
 
     for (const tile of board.tiles) {
         tile.resolve_rotate();

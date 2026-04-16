@@ -47,7 +47,7 @@ export function getBasicTiles(): Tile[] {
  * @param length 
  * @returns 
  */
-export function getRhombixBoard(length: number): Board {
+export function getRhombicBoard(length: number): Board {
     const basicTiles = getBasicTiles();
     const boardLength = Math.sqrt(length);
     if (!Number.isInteger(boardLength)) {
