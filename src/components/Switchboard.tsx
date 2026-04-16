@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useId } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
 import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
+import StepSvg from './shared/StepSvg';
 
 const SVG_W = 700;
 const SVG_H = 560;
@@ -172,8 +173,6 @@ const applyStep = (board: Board, step: Step): Board => {
 
 export default function Switchboard() {
   const { t } = useTranslation();
-  // Normalize useId output so marker URL references remain simple and CSS-selector friendly.
-  const stepArrowMarkerIdPrefix = useId().replace(/:/g, '-');
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
   const [showTips, setShowTips] = useState(true);
@@ -454,44 +453,14 @@ export default function Switchboard() {
       <div style={{ width: '100%', maxWidth: SVG_W }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
           {steps.map((step, index) => (
-            <svg
+            <StepSvg
               key={index}
-              width={44}
-              height={44}
-              viewBox="0 0 44 44"
-              role="img"
-              aria-label={step.rotate === 1
+              tileNo={step.tileNo}
+              rotate={step.rotate}
+              ariaLabel={step.rotate === 1
                 ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
                 : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
-            >
-              <defs>
-                <marker id={`${stepArrowMarkerIdPrefix}-step-arrowhead-${index}`} markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth">
-                  <path d="M0,0 L6,3 L0,6 z" fill="#9de7ff" />
-                </marker>
-              </defs>
-              {step.rotate === 1 ? (
-                <path
-                  d="M22 6 A16 16 0 1 1 35.5 14"
-                  fill="none"
-                  stroke="#9de7ff"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  markerEnd={`url(#${stepArrowMarkerIdPrefix}-step-arrowhead-${index})`}
-                />
-              ) : (
-                <path
-                  d="M22 6 A16 16 0 1 0 8.5 14"
-                  fill="none"
-                  stroke="#9de7ff"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  markerEnd={`url(#${stepArrowMarkerIdPrefix}-step-arrowhead-${index})`}
-                />
-              )}
-              <text x="22" y="22" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontWeight="bold" fontSize={12}>
-                {step.tileNo}
-              </text>
-            </svg>
+            />
           ))}
         </div>
         <p className="status-message" style={{ textAlign: 'center', marginTop: 8 }}>
