@@ -176,7 +176,8 @@ export default function Switchboard() {
   const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
   const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
   const [showTips, setShowTips] = useState(true);
-  const [steps, setSteps] = useState<Step[]>([]);
+  const [history, setHistory] = useState<Step[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(0);
   const [rotatingTile, setRotatingTile] = useState<{ tileNo: number; delta: number; } | null>(null);
   const rotationTimeoutRef = useRef<number | null>(null);
 
@@ -191,7 +192,8 @@ export default function Switchboard() {
   const handleNewGame = useCallback((nextBoardType: BoardType = boardType) => {
     clearPendingRotation();
     setBoard(setup(nextBoardType));
-    setSteps([]);
+    setHistory([]);
+    setHistoryIndex(0);
   }, [boardType, clearPendingRotation]);
 
   const handleBoardTypeChange = useCallback((value: string) => {
@@ -203,25 +205,57 @@ export default function Switchboard() {
   const handleRotateTile = useCallback((tileNo: number, delta: Step['rotate']) => {
     if (rotatingTile) return;
     setRotatingTile({ tileNo, delta });
-    setSteps(prev => [...prev, { tileNo, rotate: delta }]);
+    const step = { tileNo, rotate: delta } as Step;
+    setHistory(prev => [...prev.slice(0, historyIndex), step]);
+    setHistoryIndex(prev => prev + 1);
 
     rotationTimeoutRef.current = window.setTimeout(() => {
-      setBoard(prevBoard => applyStep(prevBoard, { tileNo, rotate: delta }));
+      setBoard(prevBoard => applyStep(prevBoard, step));
 
       setRotatingTile(null);
       rotationTimeoutRef.current = null;
     }, ROTATION_ANIMATION_DURATION_MS);
-  }, [rotatingTile]);
+  }, [historyIndex, rotatingTile]);
+
+  const handleUndo = useCallback(() => {
+    if (historyIndex === 0 || rotatingTile) return;
+    const step = history[historyIndex - 1];
+    const undoRotate = inverseRotate(step.rotate);
+    setRotatingTile({ tileNo: step.tileNo, delta: undoRotate });
+    setHistoryIndex(prev => prev - 1);
+
+    rotationTimeoutRef.current = window.setTimeout(() => {
+      setBoard(prevBoard => applyStep(prevBoard, { tileNo: step.tileNo, rotate: undoRotate }));
+
+      setRotatingTile(null);
+      rotationTimeoutRef.current = null;
+    }, ROTATION_ANIMATION_DURATION_MS);
+  }, [history, historyIndex, rotatingTile]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndex >= history.length || rotatingTile) return;
+    const step = history[historyIndex];
+    setRotatingTile({ tileNo: step.tileNo, delta: step.rotate });
+    setHistoryIndex(prev => prev + 1);
+
+    rotationTimeoutRef.current = window.setTimeout(() => {
+      setBoard(prevBoard => applyStep(prevBoard, step));
+
+      setRotatingTile(null);
+      rotationTimeoutRef.current = null;
+    }, ROTATION_ANIMATION_DURATION_MS);
+  }, [history, historyIndex, rotatingTile]);
 
   const handleResetSteps = useCallback(() => {
-    if (steps.length === 0 || rotatingTile) return;
+    if (historyIndex === 0 || rotatingTile) return;
     clearPendingRotation();
-    setBoard(prevBoard => [...steps].reverse().reduce(
+    setBoard(prevBoard => [...history.slice(0, historyIndex)].reverse().reduce(
       (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: inverseRotate(step.rotate) }),
       prevBoard,
     ));
-    setSteps([]);
-  }, [clearPendingRotation, rotatingTile, steps]);
+    setHistory([]);
+    setHistoryIndex(0);
+  }, [clearPendingRotation, history, historyIndex, rotatingTile]);
 
   useEffect(() => () => {
     clearPendingRotation();
@@ -294,6 +328,10 @@ export default function Switchboard() {
     () => new Set(endPathSegments.map(pathSegmentToKey)),
     [endPathSegments],
   );
+  const steps = useMemo(
+    () => history.slice(0, historyIndex),
+    [history, historyIndex],
+  );
 
   return (
     <div className="game-container">
@@ -319,6 +357,12 @@ export default function Switchboard() {
         </button>
         <button className="btn-reset" onClick={handleResetSteps} disabled={steps.length === 0 || Boolean(rotatingTile)}>
           {t('switchboard.reset')}
+        </button>
+        <button className="btn-reset" onClick={handleUndo} disabled={historyIndex === 0 || Boolean(rotatingTile)}>
+          {t('switchboard.undo')}
+        </button>
+        <button className="btn-reset" onClick={handleRedo} disabled={historyIndex >= history.length || Boolean(rotatingTile)}>
+          {t('switchboard.redo')}
         </button>
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input

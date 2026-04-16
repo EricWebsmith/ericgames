@@ -59,6 +59,8 @@
     "instructions": "Click a tile to rotate it and change the paths. Click the right half to rotate clockwise, left half to rotate counter-clockwise. Your goal is to connect the start and end points.",
     "newGame": "New Game",
     "reset": "Reset",
+    "undo": "Undo",
+    "redo": "Redo",
     "stepsSpent_one": "You have spent {{count}} step.",
     "stepsSpent_other": "You have spent {{count}} steps.",
     "stepClockwiseAria": "Clockwise step on tile {{tileNo}}",
