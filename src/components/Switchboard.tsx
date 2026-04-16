@@ -11,6 +11,8 @@ const HEX_R = 40;
 const BORDER_MARKER_DISTANCE = HEX_R + 22;
 const TILE_MARKER_RADIUS = 16;
 const BORDER_MARKER_RADIUS = 14;
+const START_MARKER_COLOR = '#ffd36a';
+const END_MARKER_COLOR = '#9de7ff';
 
 const DIR_DEG: Record<number, number> = {
   0: 180, 1: 240, 2: 300, 3: 0, 4: 60, 5: 120,
@@ -225,7 +227,7 @@ export default function Switchboard() {
                   cy={y}
                   r={TILE_MARKER_RADIUS}
                   fill="none"
-                  stroke={markerLabel === 'S' ? '#ffd36a' : '#9de7ff'}
+                  stroke={markerLabel === 'S' ? START_MARKER_COLOR : END_MARKER_COLOR}
                   strokeWidth={2.8}
                 />
               )}
@@ -245,8 +247,8 @@ export default function Switchboard() {
         })}
 
         {[
-          { ...startBorderPosition, label: 'S', stroke: '#ffd36a' },
-          { ...endBorderPosition, label: 'E', stroke: '#9de7ff' },
+          { ...startBorderPosition, label: 'S', stroke: START_MARKER_COLOR },
+          { ...endBorderPosition, label: 'E', stroke: END_MARKER_COLOR },
         ].map(({ x, y, label, stroke }) => (
           <g key={`border-${label}`}>
             <circle
