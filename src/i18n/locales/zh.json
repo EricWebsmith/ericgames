@@ -59,6 +59,8 @@
     "instructions": "点击六边形格子旋转它来改变路径。点击右半边顺时针旋转，左半边逆时针旋转。你的目标是连接起点和终点。",
     "newGame": "新游戏",
     "reset": "重置",
+    "undo": "撤销",
+    "redo": "重做",
     "stepsSpent_other": "你已经用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 号格顺时针步骤",
     "stepCounterClockwiseAria": "第 {{tileNo}} 号格逆时针步骤",
