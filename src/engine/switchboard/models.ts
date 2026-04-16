@@ -62,15 +62,11 @@ export const BoardType = {
 export type BoardType = typeof BoardType[keyof typeof BoardType];
 
 export interface Board {
+    boardId: number;
     boardType: BoardType;
-    tiles: TileInBoard[];
-}
-
-export interface Puzzle {
-    id: number;
     startTileIndex: number;
     startTileDirection: number;
     endTileIndex: number;
     endTileDirection: number;
-    board: Board;
+    tiles: TileInBoard[];
 }

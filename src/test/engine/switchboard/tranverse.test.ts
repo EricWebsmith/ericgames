@@ -9,7 +9,12 @@ describe('traverse', () => {
     beforeEach(() => {
         const basicTiles = getBasicTiles();
         board = {
+            boardId: 1,
             boardType: "rhombic9",
+            startTileIndex: 0,
+            startTileDirection: 1,
+            endTileIndex: 8,
+            endTileDirection: 4,
             tiles: [
                 new TileInBoard({ // 0
                     tile: basicTiles[2],
