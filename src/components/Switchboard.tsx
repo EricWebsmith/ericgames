@@ -112,6 +112,7 @@ export default function Switchboard() {
         const coordinatesByTileNo = getHexCoordinatesByTileNo(hexRadius);
         return puzzle.board.tiles.map(tile => {
           const coordinate = coordinatesByTileNo[tile.tileNo];
+          // Mirror hex layout in UI so tile labels increase left-to-right while engine indexing remains unchanged.
           return { tileNo: tile.tileNo, ...toRawPx(-coordinate.q, coordinate.r) };
         });
       })();
