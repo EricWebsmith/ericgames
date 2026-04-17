@@ -61,6 +61,7 @@
     "reset": "Reset",
     "undo": "Undo",
     "redo": "Redo",
+    "showTips": "Show tips",
     "stepsSpent_one": "You have spent {{count}} step.",
     "stepsSpent_other": "You have spent {{count}} steps.",
     "stepClockwiseAria": "Clockwise step on tile {{tileNo}}",
