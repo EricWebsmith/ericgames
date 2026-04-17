@@ -58,13 +58,6 @@ const QUERY_PARAM_TILE_TYPES = 't';
 const QUERY_PARAM_ROTATES = 'r';
 const QUERY_PARAM_START = 's';
 const QUERY_PARAM_END = 'e';
-const LEGACY_QUERY_PARAM_BOARD_TYPE = 'board-type';
-const LEGACY_QUERY_PARAM_TILE_TYPES = 'tile-types';
-const LEGACY_QUERY_PARAM_ROTATES = 'rotates';
-const LEGACY_QUERY_PARAM_START_TILE = 'start-tile';
-const LEGACY_QUERY_PARAM_START_BORDER = 'start-border';
-const LEGACY_QUERY_PARAM_END_TILE = 'end-tile';
-const LEGACY_QUERY_PARAM_END_BORDER = 'end-border';
 const NON_NEGATIVE_INTEGER_PATTERN = '(0|[1-9]\\d*)';
 const TILE_BORDER_PATTERN = new RegExp(`^${NON_NEGATIVE_INTEGER_PATTERN}\\.${NON_NEGATIVE_INTEGER_PATTERN}$`);
 
@@ -227,18 +220,14 @@ const applyBoundaryEncoding = (
   board: Board,
   startValue: string | null,
   endValue: string | null,
-  legacyStartTileValue: string | null,
-  legacyStartBorderValue: string | null,
-  legacyEndTileValue: string | null,
-  legacyEndBorderValue: string | null,
 ): Board => {
   const tileCount = board.tiles.length;
   const startPair = parseTileAndBorder(startValue);
   const endPair = parseTileAndBorder(endValue);
-  const startTileIndex = startPair?.tileIndex ?? parseInteger(legacyStartTileValue);
-  const startTileDirection = startPair?.border ?? parseInteger(legacyStartBorderValue);
-  const endTileIndex = endPair?.tileIndex ?? parseInteger(legacyEndTileValue);
-  const endTileDirection = endPair?.border ?? parseInteger(legacyEndBorderValue);
+  const startTileIndex = startPair?.tileIndex ?? null;
+  const startTileDirection = startPair?.border ?? null;
+  const endTileIndex = endPair?.tileIndex ?? null;
+  const endTileDirection = endPair?.border ?? null;
 
   const isValidTileIndex = (value: number | null): value is number =>
     value !== null && value >= 0 && value < tileCount;
@@ -265,21 +254,17 @@ const applyBoundaryEncoding = (
 
 const getInitialStateFromQuery = (): { boardType: BoardType; board: Board; } => {
   const params = getSearchParams();
-  const boardType = parseBoardType(params.get(QUERY_PARAM_BOARD_TYPE) ?? params.get(LEGACY_QUERY_PARAM_BOARD_TYPE)) ?? BoardType.Rhombic9;
+  const boardType = parseBoardType(params.get(QUERY_PARAM_BOARD_TYPE)) ?? BoardType.Rhombic9;
   let board = setup(boardType);
   board = applyBoardEncoding(
     board,
-    params.get(QUERY_PARAM_TILE_TYPES) ?? params.get(LEGACY_QUERY_PARAM_TILE_TYPES),
-    params.get(QUERY_PARAM_ROTATES) ?? params.get(LEGACY_QUERY_PARAM_ROTATES),
+    params.get(QUERY_PARAM_TILE_TYPES),
+    params.get(QUERY_PARAM_ROTATES),
   );
   board = applyBoundaryEncoding(
     board,
     params.get(QUERY_PARAM_START),
     params.get(QUERY_PARAM_END),
-    params.get(LEGACY_QUERY_PARAM_START_TILE),
-    params.get(LEGACY_QUERY_PARAM_START_BORDER),
-    params.get(LEGACY_QUERY_PARAM_END_TILE),
-    params.get(LEGACY_QUERY_PARAM_END_BORDER),
   );
   return { boardType, board };
 };
@@ -412,13 +397,6 @@ export default function Switchboard() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = getSearchParams();
-    params.delete(LEGACY_QUERY_PARAM_BOARD_TYPE);
-    params.delete(LEGACY_QUERY_PARAM_TILE_TYPES);
-    params.delete(LEGACY_QUERY_PARAM_ROTATES);
-    params.delete(LEGACY_QUERY_PARAM_START_TILE);
-    params.delete(LEGACY_QUERY_PARAM_START_BORDER);
-    params.delete(LEGACY_QUERY_PARAM_END_TILE);
-    params.delete(LEGACY_QUERY_PARAM_END_BORDER);
     params.set(QUERY_PARAM_BOARD_TYPE, board.boardType);
     params.set(QUERY_PARAM_TILE_TYPES, board.tiles.map(tile => String(tile.tile.id)).join(''));
     params.set(QUERY_PARAM_ROTATES, board.tiles.map(tile => String(normalizeRotation(tile.rotate))).join(''));
