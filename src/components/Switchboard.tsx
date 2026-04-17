@@ -65,6 +65,8 @@ const LEGACY_QUERY_PARAM_START_TILE = 'start-tile';
 const LEGACY_QUERY_PARAM_START_BORDER = 'start-border';
 const LEGACY_QUERY_PARAM_END_TILE = 'end-tile';
 const LEGACY_QUERY_PARAM_END_BORDER = 'end-border';
+const NON_NEGATIVE_INTEGER_PATTERN = '(0|[1-9]\\d*)';
+const TILE_BORDER_PATTERN = new RegExp(`^${NON_NEGATIVE_INTEGER_PATTERN}\\.${NON_NEGATIVE_INTEGER_PATTERN}$`);
 
 const toRawPx = (q: number, r: number) => ({
   x: HEX_SIZE * Math.sqrt(3) * (q + r / 2),
@@ -177,11 +179,14 @@ const parseInteger = (value: string | null): number | null => {
 
 const parseTileAndBorder = (value: string | null): { tileIndex: number; border: number; } | null => {
   if (value === null) return null;
-  const match = /^(\d+)\.(\d+)$/.exec(value);
+  const match = TILE_BORDER_PATTERN.exec(value);
   if (!match) return null;
+  const tileIndex = parseInteger(match[1]);
+  const border = parseInteger(match[2]);
+  if (tileIndex === null || border === null) return null;
   return {
-    tileIndex: Number(match[1]),
-    border: Number(match[2]),
+    tileIndex,
+    border,
   };
 };
 
@@ -421,10 +426,12 @@ export default function Switchboard() {
     params.set(QUERY_PARAM_END, `${board.endTileIndex}.${board.endTileDirection}`);
 
     const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
     const hashPath = window.location.hash.split('?')[0];
-    const nextUrl = hashPath.startsWith('#/')
-      ? `${window.location.pathname}${hashPath}${search ? `?${search}` : ''}`
-      : `${window.location.pathname}${search ? `?${search}` : ''}${hashPath}`;
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (currentUrl === nextUrl) return;
     window.history.replaceState(null, '', nextUrl);
