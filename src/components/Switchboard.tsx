@@ -371,7 +371,7 @@ export default function Switchboard() {
             checked={showTips}
             onChange={(e) => setShowTips(e.target.checked)}
           />
-          show tips
+          {t('switchboard.showTips')}
         </label>
       </div>
 

@@ -61,6 +61,7 @@
     "reset": "重置",
     "undo": "撤销",
     "redo": "重做",
+    "showTips": "显示提示",
     "stepsSpent_other": "你已经用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 号格顺时针步骤",
     "stepCounterClockwiseAria": "第 {{tileNo}} 号格逆时针步骤",
