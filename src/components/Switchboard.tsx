@@ -224,15 +224,15 @@ const applyBoundaryEncoding = (
   const tileCount = board.tiles.length;
   const startPair = parseTileAndBorder(startValue);
   const endPair = parseTileAndBorder(endValue);
-  const startTileIndex = startPair?.tileIndex ?? null;
-  const startTileDirection = startPair?.border ?? null;
-  const endTileIndex = endPair?.tileIndex ?? null;
-  const endTileDirection = endPair?.border ?? null;
+  const startTileIndex = startPair?.tileIndex;
+  const startTileDirection = startPair?.border;
+  const endTileIndex = endPair?.tileIndex;
+  const endTileDirection = endPair?.border;
 
-  const isValidTileIndex = (value: number | null): value is number =>
-    value !== null && value >= 0 && value < tileCount;
-  const isValidDirection = (value: number | null): value is number =>
-    value !== null && value >= 0 && value < HEX_DIRECTION_COUNT;
+  const isValidTileIndex = (value: number | null | undefined): value is number =>
+    value !== null && value !== undefined && value >= 0 && value < tileCount;
+  const isValidDirection = (value: number | null | undefined): value is number =>
+    value !== null && value !== undefined && value >= 0 && value < HEX_DIRECTION_COUNT;
 
   if (
     !isValidTileIndex(startTileIndex)
