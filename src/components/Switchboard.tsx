@@ -393,6 +393,8 @@ export default function Switchboard() {
     const search = params.toString();
     const hashPath = window.location.hash.split('?')[0];
     const nextUrl = `${window.location.pathname}${search ? `?${search}` : ''}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
     window.history.replaceState(null, '', nextUrl);
   }, [board]);
 
