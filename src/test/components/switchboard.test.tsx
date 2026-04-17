@@ -121,7 +121,7 @@ describe('Switchboard', () => {
     window.history.replaceState(
       null,
       '',
-      '/?board-type=rhombic16&tile-types=0123012301230123&rotates=0123450123450123&start-tile=0&start-border=1&end-tile=15&end-border=5#/switchboard',
+      '/#/switchboard?b=rhombic16&t=0123012301230123&r=0123450123450123&s=0.1&e=15.5',
     );
 
     const { container } = render(<Switchboard />);
@@ -146,19 +146,19 @@ describe('Switchboard', () => {
         vi.runAllTimers();
       });
 
-      const params = new URLSearchParams(window.location.search);
-      const rotates = params.get('rotates');
-      const tileTypes = params.get('tile-types');
+      const hashQuery = window.location.hash.split('?')[1] ?? '';
+      const params = new URLSearchParams(hashQuery);
+      const rotates = params.get('r');
+      const tileTypes = params.get('t');
 
-      expect(params.get('board-type')).toBe('rhombic9');
-      expect(params.get('start-tile')).toMatch(/^\d+$/);
-      expect(params.get('start-border')).toMatch(/^\d+$/);
-      expect(params.get('end-tile')).toMatch(/^\d+$/);
-      expect(params.get('end-border')).toMatch(/^\d+$/);
+      expect(params.get('b')).toBe('rhombic9');
+      expect(params.get('s')).toMatch(/^\d+\.\d+$/);
+      expect(params.get('e')).toMatch(/^\d+\.\d+$/);
       expect(rotates).not.toBeNull();
       expect(tileTypes).not.toBeNull();
       expect(rotates).toHaveLength(9);
       expect(tileTypes).toHaveLength(9);
+      expect(window.location.search).toBe('');
     } finally {
       vi.useRealTimers();
     }
