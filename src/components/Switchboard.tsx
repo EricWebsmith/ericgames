@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
+import { getBasicTiles, getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
 import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
 import StepSvg from './shared/StepSvg';
@@ -52,6 +52,14 @@ const BOARD_OPTIONS = [
   BoardType.Hexagonal19,
   BoardType.Hexagonal37,
 ] as const;
+const BASIC_TILES = getBasicTiles();
+const QUERY_PARAM_BOARD_TYPE = 'b';
+const QUERY_PARAM_TILE_TYPES = 't';
+const QUERY_PARAM_ROTATES = 'r';
+const QUERY_PARAM_START = 's';
+const QUERY_PARAM_END = 'e';
+const NON_NEGATIVE_INTEGER_PATTERN = '(0|[1-9]\\d*)';
+const TILE_BORDER_PATTERN = new RegExp(`^${NON_NEGATIVE_INTEGER_PATTERN}\\.${NON_NEGATIVE_INTEGER_PATTERN}$`);
 
 const toRawPx = (q: number, r: number) => ({
   x: HEX_SIZE * Math.sqrt(3) * (q + r / 2),
@@ -137,6 +145,130 @@ const halfHexPoints = (cx: number, cy: number, R: number, side: 'left' | 'right'
 const normalizeRotation = (value: number): number =>
   ((value % HEX_DIRECTION_COUNT) + HEX_DIRECTION_COUNT) % HEX_DIRECTION_COUNT;
 
+const getSearchParams = (): URLSearchParams => {
+  if (typeof window === 'undefined') {
+    return new URLSearchParams();
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const hashQuery = window.location.hash.split('?')[1];
+  if (hashQuery) {
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) {
+        params.set(key, value);
+      }
+    });
+  }
+  return params;
+};
+
+const parseInteger = (value: string | null): number | null => {
+  if (value === null) return null;
+  if (!/^\d+$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) ? parsed : null;
+};
+
+const parseTileAndBorder = (value: string | null): { tileIndex: number; border: number; } | null => {
+  if (value === null) return null;
+  const match = TILE_BORDER_PATTERN.exec(value);
+  if (!match) return null;
+  const tileIndex = parseInteger(match[1]);
+  const border = parseInteger(match[2]);
+  if (tileIndex === null || border === null) return null;
+  return {
+    tileIndex,
+    border,
+  };
+};
+
+const parseBoardType = (value: string | null): BoardType | null =>
+  value !== null && BOARD_OPTIONS.includes(value as BoardType) ? value as BoardType : null;
+
+const isValidDigitSequence = (value: string | null, expectedLength: number, maxDigit: number): value is string => {
+  if (value === null || value.length !== expectedLength) return false;
+  return [...value].every(char => /^[0-9]$/.test(char) && Number(char) <= maxDigit);
+};
+
+const applyBoardEncoding = (board: Board, tileTypes: string | null, rotates: string | null): Board => {
+  const tileCount = board.tiles.length;
+  const hasTileTypes = isValidDigitSequence(tileTypes, tileCount, BASIC_TILES.length - 1);
+  const hasRotates = isValidDigitSequence(rotates, tileCount, HEX_DIRECTION_COUNT - 1);
+  if (!hasTileTypes && !hasRotates) return board;
+
+  return {
+    ...board,
+    tiles: board.tiles.map((tile, index) => {
+      const nextTile = hasTileTypes
+        ? BASIC_TILES[Number(tileTypes[index])]
+        : tile.tile;
+      const nextRotate = hasRotates
+        ? Number(rotates[index])
+        : tile.rotate;
+      return new TileInBoard({
+        tile: nextTile,
+        tileNo: tile.tileNo,
+        rotate: nextRotate,
+        edges: { ...tile.edges },
+      }).resolve_rotate();
+    }),
+  };
+};
+
+const applyBoundaryEncoding = (
+  board: Board,
+  startValue: string | null,
+  endValue: string | null,
+): Board => {
+  const tileCount = board.tiles.length;
+  const startPair = parseTileAndBorder(startValue);
+  const endPair = parseTileAndBorder(endValue);
+  const startTileIndex = startPair?.tileIndex;
+  const startTileDirection = startPair?.border;
+  const endTileIndex = endPair?.tileIndex;
+  const endTileDirection = endPair?.border;
+
+  const isValidTileIndex = (value: number | null | undefined): value is number =>
+    value !== null && value !== undefined && value >= 0 && value < tileCount;
+  const isValidDirection = (value: number | null | undefined): value is number =>
+    value !== null && value !== undefined && value >= 0 && value < HEX_DIRECTION_COUNT;
+
+  if (
+    !isValidTileIndex(startTileIndex)
+    || !isValidDirection(startTileDirection)
+    || !isValidTileIndex(endTileIndex)
+    || !isValidDirection(endTileDirection)
+  ) {
+    return board;
+  }
+
+  return {
+    ...board,
+    startTileIndex,
+    startTileDirection,
+    endTileIndex,
+    endTileDirection,
+  };
+};
+
+const getInitialStateFromQuery = (): { boardType: BoardType; board: Board; } => {
+  const params = getSearchParams();
+  const boardType = parseBoardType(params.get(QUERY_PARAM_BOARD_TYPE)) ?? BoardType.Rhombic9;
+  let board = setup(boardType);
+  board = applyBoardEncoding(
+    board,
+    params.get(QUERY_PARAM_TILE_TYPES),
+    params.get(QUERY_PARAM_ROTATES),
+  );
+  board = applyBoundaryEncoding(
+    board,
+    params.get(QUERY_PARAM_START),
+    params.get(QUERY_PARAM_END),
+  );
+  return { boardType, board };
+};
+
 const pathSegmentKey = (tileIndex: number, inDir: number, outDir: number): string => {
   const a = Math.min(inDir, outDir);
   const b = Math.max(inDir, outDir);
@@ -173,8 +305,9 @@ const applyStep = (board: Board, step: Step): Board => {
 
 export default function Switchboard() {
   const { t } = useTranslation();
-  const [boardType, setBoardType] = useState<BoardType>(BoardType.Rhombic9);
-  const [board, setBoard] = useState<Board>(() => setup(BoardType.Rhombic9));
+  const [initialState] = useState(() => getInitialStateFromQuery());
+  const [boardType, setBoardType] = useState<BoardType>(initialState.boardType);
+  const [board, setBoard] = useState<Board>(initialState.board);
   const [showTips, setShowTips] = useState(true);
   const [history, setHistory] = useState<Step[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -260,6 +393,27 @@ export default function Switchboard() {
   useEffect(() => () => {
     clearPendingRotation();
   }, [clearPendingRotation]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = getSearchParams();
+    params.set(QUERY_PARAM_BOARD_TYPE, board.boardType);
+    params.set(QUERY_PARAM_TILE_TYPES, board.tiles.map(tile => String(tile.tile.id)).join(''));
+    params.set(QUERY_PARAM_ROTATES, board.tiles.map(tile => String(normalizeRotation(tile.rotate))).join(''));
+    params.set(QUERY_PARAM_START, `${board.startTileIndex}.${board.startTileDirection}`);
+    params.set(QUERY_PARAM_END, `${board.endTileIndex}.${board.endTileDirection}`);
+
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
+    const hashPath = window.location.hash.split('?')[0];
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
+    window.history.replaceState(null, '', nextUrl);
+  }, [board]);
 
   const boardLength = BOARD_LENGTH_BY_TYPE[board.boardType];
   const hexRadius = HEX_RADIUS_BY_TYPE[board.boardType];
