@@ -70,7 +70,7 @@ function Home() {
         </NavLink>
       </div>
     </div>
-  )
+  );
 }
 
 function Nav() {
@@ -86,15 +86,16 @@ function Nav() {
       </ul>
       <LanguageSwitcher />
     </nav>
-  )
+  );
 }
 
 function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="main-footer">
-      <p>QQ: 961422707</p>
+      <p>{t('home.contact')}</p>
     </footer>
-  )
+  );
 }
 
 export default function App() {
@@ -112,5 +113,5 @@ export default function App() {
       </main>
       <Footer />
     </HashRouter>
-  )
+  );
 }
