@@ -43,7 +43,8 @@
     "boardAriaLabel": "奧拉帕礦山拼圖棋盤",
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
     "includeTransparent": "透明擴展",
-    "includeBlack": "黑寶石擴展"
+    "includeBlack": "黑寶石擴展",
+    "includeLightBlue": "淺藍寶石擴展"
   },
   "orapaSpace": {
     "title": "奧拉帕宇宙",

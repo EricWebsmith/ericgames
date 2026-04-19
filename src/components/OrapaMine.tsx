@@ -422,6 +422,15 @@ export default function OrapaMine() {
           />
           {t('orapaMine.includeBlack')}
         </label>
+        <label htmlFor="option-light-blue" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input
+            id="option-light-blue"
+            type="checkbox"
+            checked={tileOptions.includeLightBlue}
+            onChange={e => setTileOptions(prev => ({ ...prev, includeLightBlue: e.target.checked }))}
+          />
+          {t('orapaMine.includeLightBlue')}
+        </label>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 
-import { getBoard } from '../../../engine/orapa/mineData';
+import { getBoard, getTiles } from '../../../engine/orapa/mineData';
 import type { Board } from '../../../engine/orapa/models';
 
 describe('getBoard', () => {
@@ -20,5 +20,12 @@ describe('getBoard', () => {
                 expect(Object.keys(node.edges).length).toBe(4);
             }
         }
+    });
+});
+
+describe('getTiles', () => {
+    it('excludes Light Blue when includeLightBlue is false', () => {
+        const tiles = getTiles({ includeTransparent: true, includeBlack: true, includeLightBlue: false });
+        expect(tiles.map(tile => tile.name)).not.toContain('Light Blue');
     });
 });
