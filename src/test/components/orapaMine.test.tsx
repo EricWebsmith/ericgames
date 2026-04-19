@@ -20,4 +20,9 @@ describe('OrapaMine', () => {
     expect(screen.getByRole('button', { name: /see answer/i })).toBeInTheDocument()
   })
 
+  it('renders a "Light Blue Gem Expansion" checkbox', () => {
+    render(<OrapaMine />)
+    expect(screen.getByRole('checkbox', { name: /light blue gem expansion/i })).toBeInTheDocument()
+  })
+
 })

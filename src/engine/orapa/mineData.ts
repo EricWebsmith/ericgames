@@ -2,6 +2,7 @@ import { type Board, type Node, type ParentTile, Color, Tile } from './models';
 
 const TRANSPARENT_TILE_NAME = 'Transparent';
 const BLACK_TILE_NAME = 'Black';
+const LIGHT_BLUE_TILE_NAME = 'Light Blue';
 
 
 // There are four directions for the square grid:
@@ -39,11 +40,13 @@ export function getAlternativeRedTile(): ParentTile {
 export interface TileOptions {
     includeTransparent: boolean;
     includeBlack: boolean;
+    includeLightBlue: boolean;
 }
 
 export const defaultTileOptions: TileOptions = {
     includeTransparent: true,
     includeBlack: true,
+    includeLightBlue: true,
 };
 
 export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[] {
@@ -109,13 +112,14 @@ export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[
         },
         // Light Blue tile – single cell
         {
-            name: 'Light Blue', optional: false, subTiles: [
-                new Tile({ colors: [Color.Blue, Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [], parentName: 'Light Blue' }),
+            name: LIGHT_BLUE_TILE_NAME, optional: true, subTiles: [
+                new Tile({ colors: [Color.Blue, Color.White], coordinate: { 0: 0, 1: 0 }, reflect: [], parentName: LIGHT_BLUE_TILE_NAME }),
             ]
         },
     ].filter(tile => {
         if (tile.name === TRANSPARENT_TILE_NAME) return options.includeTransparent;
         if (tile.name === BLACK_TILE_NAME) return options.includeBlack;
+        if (tile.name === LIGHT_BLUE_TILE_NAME) return options.includeLightBlue;
         return true;
     });
 }

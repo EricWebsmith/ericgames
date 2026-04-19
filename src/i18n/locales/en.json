@@ -43,7 +43,8 @@
     "boardAriaLabel": "Orapa Mine puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeTransparent": "Transparent Gem Expansion",
-    "includeBlack": "Black Gem Expansion"
+    "includeBlack": "Black Gem Expansion",
+    "includeLightBlue": "Light Blue Gem Expansion"
   },
   "orapaSpace": {
     "title": "Orapa Space",
