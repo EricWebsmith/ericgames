@@ -40,6 +40,7 @@ export default function BorderCircle({
   // Deduplicate colors while preserving order so that e.g. ['red','red','blue']
   // renders as 2 arcs (red + blue), not 3.
   const uniqueColors = [...new Set(colors)];
+  uniqueColors.sort();
   const count = uniqueColors.length;
 
   // Arc segments: [startDeg, endDeg] pairs, clockwise from top (-90°)
