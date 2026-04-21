@@ -327,7 +327,6 @@ export default function OrapaMine() {
           const bp = borderPx(b);
           const np = notePx(b);
           const isEntry = clickedBorders.has(b.label);
-          const isExit = false;
           const result = lightResults[b.label];
           const exitLbl = result?.end_label ?? '';
 
@@ -345,7 +344,7 @@ export default function OrapaMine() {
                 r={BD_R}
                 colors={circleColors}
                 isEntry={isEntry}
-                isExit={isExit}
+                isExit={false}
                 label={b.label}
                 onClick={() => handleBorderClick(b.label)}
                 glowFilter="url(#mine-glow)"

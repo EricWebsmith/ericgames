@@ -398,7 +398,6 @@ export default function Arclight() {
           const np = notePx[label];
 
           const isEntry = clickedBorders.has(label);
-          const isExit = false;
           const result = lightResults[label];
           const exitLbl = result?.end_label ?? '';
 
@@ -414,7 +413,7 @@ export default function Arclight() {
                 r={BD_R}
                 colors={circleColors}
                 isEntry={isEntry}
-                isExit={isExit}
+                isExit={false}
                 label={label}
                 onClick={() => handleBorderClick(label)}
                 glowFilter="url(#al-glow)"
