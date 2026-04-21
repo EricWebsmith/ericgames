@@ -282,6 +282,15 @@ export default function Arclight() {
     [puzzle.tiles],
   );
 
+  const exitHighlights = useMemo(() => {
+    const set = new Set<string>();
+    for (const bl of clickedBorders) {
+      const exit = lightResults[bl]?.end_label;
+      if (exit) set.add(exit);
+    }
+    return set;
+  }, [clickedBorders, lightResults]);
+
   return (
     <div className="game-container">
       <h2 className="game-title">{t('arclight.title')}</h2>
@@ -398,6 +407,7 @@ export default function Arclight() {
           const np = notePx[label];
 
           const isEntry = clickedBorders.has(label);
+          const isExit = exitHighlights.has(label);
           const result = lightResults[label];
           const exitLbl = result?.end_label ?? '';
 
@@ -413,7 +423,7 @@ export default function Arclight() {
                 r={BD_R}
                 colors={circleColors}
                 isEntry={isEntry}
-                isExit={false}
+                isExit={isExit}
                 label={label}
                 onClick={() => handleBorderClick(label)}
                 glowFilter="url(#al-glow)"
