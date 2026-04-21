@@ -282,7 +282,6 @@ export default function Arclight() {
     [puzzle.tiles],
   );
 
-  // Collect exit labels that are currently highlighted as light-beam targets
   const exitHighlights = useMemo(() => {
     const set = new Set<string>();
     for (const bl of clickedBorders) {
@@ -290,19 +289,6 @@ export default function Arclight() {
       if (exit) set.add(exit);
     }
     return set;
-  }, [clickedBorders, lightResults]);
-
-  // Map each exit border label → the colors from the beam that exits there,
-  // so we can colour both ends of a light path identically.
-  const exitColors = useMemo(() => {
-    const map: Record<string, Color[]> = {};
-    for (const bl of clickedBorders) {
-      const result = lightResults[bl];
-      if (result?.end_label) {
-        map[result.end_label] = result.colors;
-      }
-    }
-    return map;
   }, [clickedBorders, lightResults]);
 
   return (
@@ -425,11 +411,7 @@ export default function Arclight() {
           const result = lightResults[label];
           const exitLbl = result?.end_label ?? '';
 
-          // Entry circles use their own light-result colors;
-          // exit circles use the colors from the beam that exits there.
-          const circleColors: Color[] = isEntry
-            ? (result?.colors ?? [])
-            : (exitColors[label] ?? []);
+          const circleColors: Color[] = isEntry ? (result?.colors ?? []) : [];
 
           const noteColor = circleColors.length > 0 ? getGemColor(circleColors) : '#aaaacc';
 

@@ -163,15 +163,6 @@ export default function OrapaMine() {
     return set;
   }, [clickedBorders, lightResults]);
 
-  const exitColors = useMemo(() => {
-    const map: Record<string, Color[]> = {};
-    for (const bl of clickedBorders) {
-      const result = lightResults[bl];
-      if (result?.end_label) map[result.end_label] = result.colors;
-    }
-    return map;
-  }, [clickedBorders, lightResults]);
-
   const handleCellClick = useCallback((label: string) => {
     setRevealedCells(prev => {
       if (prev.has(label)) return prev;
@@ -349,10 +340,7 @@ export default function OrapaMine() {
           const result = lightResults[b.label];
           const exitLbl = result?.end_label ?? '';
 
-          // Entry circles show the result colours; exit circles mirror them.
-          const circleColors: Color[] = isEntry
-            ? (result?.colors ?? [])
-            : (exitColors[b.label] ?? []);
+          const circleColors: Color[] = isEntry ? (result?.colors ?? []) : [];
 
           const noteColor = circleColors.length > 0
             ? getGemColor(circleColors as string[])
