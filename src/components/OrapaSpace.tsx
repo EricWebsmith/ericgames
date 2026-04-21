@@ -171,24 +171,6 @@ export default function OrapaSpace() {
         [puzzle.tiles],
     );
 
-    const exitHighlights = useMemo(() => {
-        const set = new Set<string>();
-        for (const bl of clickedBorders) {
-            const exit = lightResults[bl]?.end_label;
-            if (exit) set.add(exit);
-        }
-        return set;
-    }, [clickedBorders, lightResults]);
-
-    const exitColors = useMemo(() => {
-        const map: Record<string, Color[]> = {};
-        for (const bl of clickedBorders) {
-            const result = lightResults[bl];
-            if (result?.end_label) map[result.end_label] = result.colors;
-        }
-        return map;
-    }, [clickedBorders, lightResults]);
-
     const handleCellClick = useCallback((label: string) => {
         setRevealedCells(prev => {
             if (prev.has(label)) return prev;
@@ -389,14 +371,11 @@ export default function OrapaSpace() {
                     const bp = borderPx(b);
                     const np = notePx(b);
                     const isEntry = clickedBorders.has(b.label);
-                    const isExit = exitHighlights.has(b.label);
+                    const isExit = false;
                     const result = lightResults[b.label];
                     const exitLbl = result?.end_label ?? '';
 
-                    // Entry circles show the result colours; exit circles mirror them.
-                    const circleColors: Color[] = isEntry
-                        ? (result?.colors ?? [])
-                        : (exitColors[b.label] ?? []);
+                    const circleColors: Color[] = isEntry ? (result?.colors ?? []) : [];
 
                     const noteColor = circleColors.length > 0
                         ? getGemColor(circleColors as string[])
