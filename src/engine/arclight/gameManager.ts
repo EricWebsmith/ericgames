@@ -51,7 +51,19 @@ function coordinateToDirection(coordinate: Record<number, number>): number {
     return dir;
 }
 
-function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
+/**
+ * Simple 32-bit LCG seeded random number generator.
+ * Returns a function that produces values in [0, 1).
+ */
+function seededRandom(seed: number): () => number {
+    let s = seed >>> 0;
+    return () => {
+        s = (Math.imul(1664525, s) + 1013904223) >>> 0;
+        return s / 4294967296;
+    };
+}
+
+function putTiles(board: Board, tiles: Tile[], rng: () => number): Record<string, TileInBoard> {
     const coordinates: string[] = [];
     const unavailableCoordinates = new Set<string>();
 
@@ -76,7 +88,7 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
         }
     };
 
-    const randomChoice = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+    const randomChoice = (arr: string[]): string => arr[Math.floor(rng() * arr.length)];
 
     for (const tile of tiles) {
         if (unavailableTileIds.has(tile.id)) continue;
@@ -89,7 +101,7 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
             : [];
 
         let randomCoordinate = '';
-        const rotation = Math.floor(Math.random() * 6);
+        const rotation = Math.floor(rng() * 6);
 
         while (randomCoordinate === '' || unavailableCoordinates.has(randomCoordinate)) {
             randomCoordinate = randomChoice(coordinates);
@@ -141,17 +153,17 @@ export function setupWithPlacement(tilesInBoard: Record<string, TileInBoard>): P
     };
 }
 
-export function setup(options: TileOptions = defaultTileOptions): Puzzle {
+/** Create a puzzle with a specific seed so the same puzzle can be reproduced from a URL. */
+export function setupWithSeed(options: TileOptions, seed: number): Puzzle {
     const board = getBoard();
-    const tilesInBoard = putTiles(board, getBasicTiles(options));
+    const rng = seededRandom(seed);
+    const tilesInBoard = putTiles(board, getBasicTiles(options), rng);
 
-    // Resolve Light Actions
     const lightResults: Record<string, LightResult> = {};
     for (const coord of borderNodeCoordinates) {
         lightResults[coord] = traverse(board, tilesInBoard, coord);
     }
 
-    // Resolve Sight Actions
     const sightResults: Record<string, Color[]> = {};
     for (const node of Object.values(board.spaces)) {
         if (node.is_border) continue;
@@ -165,4 +177,9 @@ export function setup(options: TileOptions = defaultTileOptions): Puzzle {
         light_results: lightResults,
         sight_results: sightResults,
     };
+}
+
+export function setup(options: TileOptions = defaultTileOptions): Puzzle {
+    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+    return setupWithSeed(options, seed);
 }
