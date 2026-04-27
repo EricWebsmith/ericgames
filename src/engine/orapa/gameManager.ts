@@ -332,6 +332,18 @@ function checkBorderConnection(board: Board, tiles: TileInBoard[]): boolean {
 }
 
 /**
+ * Simple 32-bit LCG seeded random number generator.
+ * Returns a function that produces values in [0, 1).
+ */
+function seededRandom(seed: number): () => number {
+    let s = seed >>> 0;
+    return () => {
+        s = (Math.imul(1664525, s) + 1013904223) >>> 0;
+        return s / 4294967296;
+    };
+}
+
+/**
  * Place a set of gem pieces on the board.
  *
  * Each ParentTile carries its subTiles with (col, row) offsets relative to the
@@ -343,7 +355,7 @@ function checkBorderConnection(board: Board, tiles: TileInBoard[]): boolean {
  *   - Piece edges (orthogonal neighbours) may not touch another piece's cells
  *     (corner-to-corner contact is fine).
  */
-function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard> {
+function putTiles(board: Board, tiles: ParentTile[], rng: () => number): Record<string, TileInBoard> {
     const tilesInBoard: Record<string, TileInBoard> = {};
     const occupiedSpaces = new Set<string>();
 
@@ -353,7 +365,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
     }
 
     const internalCoords = Object.keys(board.spaces).filter(k => !board.spaces[k].is_border);
-    const randomChoice = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)];
+    const randomChoice = (arr: string[]): string => arr[Math.floor(rng() * arr.length)];
     const rowLetters = 'ABCDEFGH';
 
     for (const parentTile of tiles) {
@@ -368,7 +380,7 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
             const anchorRow = rowLetters.indexOf(m[1]);
             const anchorCol = parseInt(m[2], 10);
 
-            const rotateAngle = Math.floor(Math.random() * 4);
+            const rotateAngle = Math.floor(rng() * 4);
 
             // Verify all subtile positions (after rotation) are in-bounds and free.
             let valid = true;
@@ -427,17 +439,16 @@ export function setupWithPlacement(board: Board, tilesInBoard: Record<string, Ti
     };
 }
 
-/** Create a random Orapa Mine puzzle and pre-compute all wave results. */
-export function setup(board: Board, tiles: ParentTile[]): Puzzle {
-    const tilesInBoard = putTiles(board, tiles);
+/** Create a random Orapa puzzle with a specific seed and pre-compute all wave results. */
+export function setupWithSeed(board: Board, tiles: ParentTile[], seed: number): Puzzle {
+    const rng = seededRandom(seed);
+    const tilesInBoard = putTiles(board, tiles, rng);
 
-    // Compute wave results for every border position.
     const lightResults: Record<string, LightResult> = {};
     for (const coord of borderLabels) {
         lightResults[coord] = tranverse(board, tilesInBoard, coord);
     }
 
-    // Compute sight results (which gem, if any, occupies each internal cell).
     const sightResults: Record<string, Color[]> = {};
     for (const node of Object.values(board.spaces)) {
         if (node.is_border) continue;
@@ -451,4 +462,10 @@ export function setup(board: Board, tiles: ParentTile[]): Puzzle {
         light_results: lightResults,
         sight_results: sightResults,
     };
+}
+
+/** Create a random Orapa Mine puzzle and pre-compute all wave results. */
+export function setup(board: Board, tiles: ParentTile[]): Puzzle {
+    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+    return setupWithSeed(board, tiles, seed);
 }
