@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../engine/orapa/gameManager';
+import { setupWithSeed } from '../engine/orapa/gameManager';
 import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
-import type { Color, Puzzle } from '../engine/orapa/models';
+import { type Color, type Puzzle } from '../engine/orapa/models';
 import BorderCircle from './shared/BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -138,11 +138,54 @@ function seededPebbles(count: number): { x: number; y: number; rx: number; ry: n
 }
 const PEBBLES = seededPebbles(50);
 
+// ─── URL sharing ──────────────────────────────────────────────────
+const QUERY_PARAM_OPTIONS_MINE = 'o';
+const QUERY_PARAM_SEED_MINE = 's';
+
+const getSearchParamsMine = (): URLSearchParams => {
+  if (typeof window === 'undefined') return new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  const hashQuery = window.location.hash.split('?')[1];
+  if (hashQuery) {
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) params.set(key, value);
+    });
+  }
+  return params;
+};
+
+const getInitialMineStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; seed: number; } => {
+  const params = getSearchParamsMine();
+  const optStr = params.get(QUERY_PARAM_OPTIONS_MINE) ?? '';
+  const tileOptions: TileOptions = {
+    includeTransparent: optStr[0] === '1',
+    includeBlack: optStr[1] === '1',
+    includeLightBlue: optStr[2] === '1',
+  };
+  if (!/^[01]{3}$/.test(optStr)) {
+    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+    return { puzzle: setupWithSeed(getBoard(), getTiles(defaultTileOptions), seed), tileOptions: defaultTileOptions, seed };
+  }
+
+  const seedStr = params.get(QUERY_PARAM_SEED_MINE);
+  const parsedSeed = seedStr !== null && /^\d+$/.test(seedStr) ? parseInt(seedStr, 10) : null;
+
+  if (parsedSeed !== null && Number.isInteger(parsedSeed) && parsedSeed >= 0) {
+    return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), parsedSeed), tileOptions, seed: parsedSeed };
+  }
+
+  const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+  return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), seed), tileOptions, seed };
+};
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
-  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
+  const [initialState] = useState(() => getInitialMineStateFromQuery());
+  const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
+  const [seed, setSeed] = useState<number>(initialState.seed);
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -162,6 +205,25 @@ export default function OrapaMine() {
     }
     return set;
   }, [clickedBorders, lightResults]);
+
+  // ─── URL update ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = getSearchParamsMine();
+    const optStr = `${tileOptions.includeTransparent ? '1' : '0'}${tileOptions.includeBlack ? '1' : '0'}${tileOptions.includeLightBlue ? '1' : '0'}`;
+    params.set(QUERY_PARAM_OPTIONS_MINE, optStr);
+    params.set(QUERY_PARAM_SEED_MINE, String(seed));
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
+    const hashPath = window.location.hash.split('?')[0];
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
+    window.history.replaceState(null, '', nextUrl);
+  }, [seed, tileOptions]);
 
   const handleCellClick = useCallback((label: string) => {
     setRevealedCells(prev => {
@@ -186,7 +248,9 @@ export default function OrapaMine() {
   }, []);
 
   const handleNewGame = useCallback(() => {
-    setPuzzle(setup(getBoard(), getTiles(tileOptions)));
+    const nextSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+    setSeed(nextSeed);
+    setPuzzle(setupWithSeed(getBoard(), getTiles(tileOptions), nextSeed));
     setRevealedCells(new Set());
     setClickedBorders(new Set());
     setShowAll(false);

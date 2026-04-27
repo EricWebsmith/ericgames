@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
-import { setup } from '../engine/arclight/gameManager';
+import { setupWithSeed } from '../engine/arclight/gameManager';
 import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './shared/BorderCircle';
 import { GEM_FILL } from './shared/colors';
@@ -181,14 +181,71 @@ const getGemColor = (colors: string[]): string => {
   return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 };
 
+// ─── URL sharing ──────────────────────────────────────────────────
+const QUERY_PARAM_SEED = 's';
+const QUERY_PARAM_OPTIONS = 'o';
+
+const getSearchParams = (): URLSearchParams => {
+  if (typeof window === 'undefined') return new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  const hashQuery = window.location.hash.split('?')[1];
+  if (hashQuery) {
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) params.set(key, value);
+    });
+  }
+  return params;
+};
+
+const parseTileOptions = (value: string | null): TileOptions | null => {
+  if (value === null || value.length !== 2 || !/^[01]{2}$/.test(value)) return null;
+  return { includeTransparent: value[0] === '1', includeBlackHole: value[1] === '1' };
+};
+
+const getInitialStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; seed: number; } => {
+  const params = getSearchParams();
+  const tileOptions = parseTileOptions(params.get(QUERY_PARAM_OPTIONS)) ?? defaultTileOptions;
+  const seedStr = params.get(QUERY_PARAM_SEED);
+  const parsedSeed = seedStr !== null && /^\d+$/.test(seedStr) ? parseInt(seedStr, 10) : null;
+
+  if (parsedSeed !== null && Number.isInteger(parsedSeed) && parsedSeed >= 0) {
+    return { puzzle: setupWithSeed(tileOptions, parsedSeed), tileOptions, seed: parsedSeed };
+  }
+
+  const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+  return { puzzle: setupWithSeed(tileOptions, seed), tileOptions, seed };
+};
+
 // ─── Component ────────────────────────────────────────────────────
 export default function Arclight() {
   const { t } = useTranslation();
-  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(defaultTileOptions));
+  const [initialState] = useState(() => getInitialStateFromQuery());
+  const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
+  const [seed, setSeed] = useState<number>(initialState.seed);
   const [revealedTiles, setRevealedTiles] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
+
+  // ─── URL update ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = getSearchParams();
+    const optionsStr = `${tileOptions.includeTransparent ? '1' : '0'}${tileOptions.includeBlackHole ? '1' : '0'}`;
+    params.set(QUERY_PARAM_SEED, String(seed));
+    params.set(QUERY_PARAM_OPTIONS, optionsStr);
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
+    const hashPath = window.location.hash.split('?')[0];
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
+    window.history.replaceState(null, '', nextUrl);
+  }, [seed, tileOptions]);
 
   // Tile label → pixel center
   const tilePx = useMemo(
@@ -268,7 +325,9 @@ export default function Arclight() {
   }, []);
 
   const handleNewGame = useCallback(() => {
-    setPuzzle(setup(tileOptions));
+    const nextSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+    setSeed(nextSeed);
+    setPuzzle(setupWithSeed(tileOptions, nextSeed));
     setRevealedTiles(new Set());
     setClickedBorders(new Set());
     setShowAll(false);
