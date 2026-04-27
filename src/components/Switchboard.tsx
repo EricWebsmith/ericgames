@@ -14,8 +14,14 @@ const BORDER_MARKER_RADIUS = 14;
 const START_MARKER_COLOR = '#ffd36a';
 const END_MARKER_COLOR = '#ff4d4f';
 const ARC_UNHIGHLIGHTED_COLOR = '#9de7ff';
+const SOLVED_ARC_COLOR = '#00e676';
+const SOLVED_ORB_COLOR = '#ffffff';
+const SOLVED_ORB_RADIUS = 5;
 const BOARD_BACKGROUND_COLOR = '#081826';
 const ROTATION_ANIMATION_DURATION_MS = 500;
+const VICTORY_ANIMATION_DURATION = '2s';
+const HEX_ARC_RADIUS_TIGHT = HEX_R / 2;
+const HEX_ARC_RADIUS_MEDIUM = Math.sqrt((3 / 4) * HEX_R * HEX_R - (3 / 2) * HEX_R * HEX_SIZE + 3 * HEX_SIZE * HEX_SIZE);
 const HEX_DIRECTION_COUNT = 6;
 const DEGREES_PER_HEX_ROTATION = 60;
 const HEX_VERTEX_TOP = 0;
@@ -85,16 +91,14 @@ const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): str
     const dir = distance === 1 ? inDir : outDir;
     const s = edgeMidForDir(cx, cy, dir);
     const e = edgeMidForDir(cx, cy, (dir + 1) % 6);
-    const r = HEX_R / 2;
-    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r},${r} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${HEX_ARC_RADIUS_TIGHT},${HEX_ARC_RADIUS_TIGHT} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
   }
 
   if (distance === 2 || distance === 4) {
     const dir = distance === 2 ? inDir : outDir;
     const s = edgeMidForDir(cx, cy, dir);
     const e = edgeMidForDir(cx, cy, (dir + 2) % 6);
-    const r = Math.sqrt((3 / 4) * HEX_R * HEX_R - (3 / 2) * HEX_R * HEX_SIZE + 3 * HEX_SIZE * HEX_SIZE);
-    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+    return `M${s.x.toFixed(1)},${s.y.toFixed(1)} A${HEX_ARC_RADIUS_MEDIUM.toFixed(1)},${HEX_ARC_RADIUS_MEDIUM.toFixed(1)} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
   }
 
   if (distance === 3) {
@@ -104,6 +108,34 @@ const makeArcPath = (inDir: number, outDir: number, cx: number, cy: number): str
   }
 
   return null;
+};
+
+// Build one arc segment of the directed path (from inDir to outDir) for animateMotion.
+// Includes "M" for the first segment; subsequent segments start with "L" to bridge the
+// small gap between adjacent tile edges before drawing the arc.
+const makeDirectedArcPathSegment = (
+  inDir: number, outDir: number, cx: number, cy: number, isFirst: boolean,
+): string => {
+  const s = edgeMidForDir(cx, cy, inDir);
+  const e = edgeMidForDir(cx, cy, outDir);
+  const distance = ((outDir - inDir) + 6) % 6;
+  const lead = isFirst
+    ? `M${s.x.toFixed(1)},${s.y.toFixed(1)} `
+    : `L${s.x.toFixed(1)},${s.y.toFixed(1)} `;
+
+  if (distance === 3) {
+    return `${lead}L${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+  if (distance === 1 || distance === 2) {
+    const r = distance === 1 ? HEX_ARC_RADIUS_TIGHT : HEX_ARC_RADIUS_MEDIUM;
+    return `${lead}A${r.toFixed(1)},${r.toFixed(1)} 0 0,0 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+  if (distance === 4 || distance === 5) {
+    const normalizedDistance = 6 - distance; // 5→1, 4→2
+    const r = normalizedDistance === 1 ? HEX_ARC_RADIUS_TIGHT : HEX_ARC_RADIUS_MEDIUM;
+    return `${lead}A${r.toFixed(1)},${r.toFixed(1)} 0 0,1 ${e.x.toFixed(1)},${e.y.toFixed(1)}`;
+  }
+  return lead.trimEnd();
 };
 
 const hexPoints = (cx: number, cy: number, R: number): string =>
@@ -487,6 +519,22 @@ export default function Switchboard() {
     [history, historyIndex],
   );
 
+  const isConnected = useMemo(() => {
+    if (startPathSegments.length === 0) return false;
+    const last = startPathSegments[startPathSegments.length - 1];
+    return last.tileIndex === board.endTileIndex && last.outDir === board.endTileDirection;
+  }, [startPathSegments, board.endTileIndex, board.endTileDirection]);
+
+  const connectedAnimPath = useMemo(() => {
+    if (!isConnected) return null;
+    return startPathSegments
+      .map((seg, i) => {
+        const { x: cx, y: cy } = tilePx[seg.tileIndex];
+        return makeDirectedArcPathSegment(seg.inDir, seg.outDir, cx, cy, i === 0);
+      })
+      .join(' ');
+  }, [isConnected, startPathSegments, tilePx]);
+
   return (
     <div className="game-container">
       <h2 className="game-title">{t('switchboard.title')}</h2>
@@ -536,6 +584,15 @@ export default function Switchboard() {
         className="game-svg"
         aria-label={t('switchboard.boardAriaLabel')}
       >
+        <defs>
+          <filter id="orb-glow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
         <rect width={SVG_W} height={SVG_H} fill={BOARD_BACKGROUND_COLOR} rx={10} />
 
         {board.tiles.map((tile) => {
@@ -574,11 +631,13 @@ export default function Switchboard() {
                   const segmentKey = pathSegmentKey(tile.tileNo, inDir, outDir);
                   const stroke = !showTips
                     ? ARC_UNHIGHLIGHTED_COLOR
-                    : endPathSegmentKeys.has(segmentKey)
-                      ? END_MARKER_COLOR
-                      : startPathSegmentKeys.has(segmentKey)
-                        ? START_MARKER_COLOR
-                        : ARC_UNHIGHLIGHTED_COLOR;
+                    : isConnected && (startPathSegmentKeys.has(segmentKey) || endPathSegmentKeys.has(segmentKey))
+                      ? SOLVED_ARC_COLOR
+                      : endPathSegmentKeys.has(segmentKey)
+                        ? END_MARKER_COLOR
+                        : startPathSegmentKeys.has(segmentKey)
+                          ? START_MARKER_COLOR
+                          : ARC_UNHIGHLIGHTED_COLOR;
                   return (
                     <path
                       key={`${tile.tileNo}-${inDir}-${outDir}`}
@@ -646,9 +705,24 @@ export default function Switchboard() {
             </text>
           </g>
         ))}
+
+        {connectedAnimPath && (
+          <circle r={SOLVED_ORB_RADIUS} fill={SOLVED_ORB_COLOR} filter="url(#orb-glow)">
+            <animateMotion
+              dur={VICTORY_ANIMATION_DURATION}
+              repeatCount="indefinite"
+              path={connectedAnimPath}
+            />
+          </circle>
+        )}
       </svg>
 
       <div style={{ width: '100%', maxWidth: SVG_W }}>
+        {isConnected && (
+          <p className="status-message" style={{ textAlign: 'center', color: SOLVED_ARC_COLOR, fontWeight: 'bold' }}>
+            {t('switchboard.solved')}
+          </p>
+        )}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
           {steps.map((step, index) => (
             <StepSvg
