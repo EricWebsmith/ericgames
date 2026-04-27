@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../engine/orapa/gameManager';
+import { putTile, setup, setupWithPlacement } from '../engine/orapa/gameManager';
 import { getBoard, } from '../engine/orapa/mineData';
-import type { Color, Puzzle } from '../engine/orapa/models';
+import { TileInBoard, type Color, type Puzzle } from '../engine/orapa/models';
 import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/spaceData';
 import BlackHole from './BlackHole';
 import BorderCircle from './shared/BorderCircle';
@@ -155,11 +155,96 @@ function seededStars(count: number): { x: number; y: number; r: number; }[] {
 }
 const STARS = seededStars(70);
 
+// ─── URL sharing ──────────────────────────────────────────────────
+// Canonical parent-tile names in a fixed order (7 slots, always encoded).
+const SPACE_CANONICAL_NAMES = [
+    'White Big', 'Red Small', 'Red Big', 'Blue', 'Yellow', 'White Small', 'Black Hole',
+] as const;
+const SPACE_ROW_LETTERS = 'ABCDEFGH';
+
+const QUERY_PARAM_OPTIONS_SPACE = 'o';
+const QUERY_PARAM_PIECES_SPACE = 'p';
+
+const getSearchParamsSpace = (): URLSearchParams => {
+    if (typeof window === 'undefined') return new URLSearchParams();
+    const params = new URLSearchParams(window.location.search);
+    const hashQuery = window.location.hash.split('?')[1];
+    if (hashQuery) {
+        const hashParams = new URLSearchParams(hashQuery);
+        hashParams.forEach((value, key) => {
+            if (!params.has(key)) params.set(key, value);
+        });
+    }
+    return params;
+};
+
+/** Encode a single parent-tile anchor as 3 chars (rowIdx + colChar + rotation), or 'xxx'. */
+const encodeSpaceAnchor = (tiles: TileInBoard[], parentName: string): string => {
+    const anchor = tiles.find(
+        tb => tb.tile.parentName === parentName && tb.tile.coordinate[0] === 0 && tb.tile.coordinate[1] === 0,
+    );
+    if (!anchor) return 'xxx';
+    const m = anchor.coordinate.match(/^([A-H])(\d{1,2})$/);
+    if (!m) return 'xxx';
+    const rowIdx = SPACE_ROW_LETTERS.indexOf(m[1]);
+    const col = parseInt(m[2], 10);
+    const colChar = col === 10 ? 'a' : String(col);
+    return `${rowIdx}${colChar}${anchor.rotate_angle}`;
+};
+
+/** Decode a 3-char piece encoding into { row (0-7), col (1-10), rotation } or null. */
+const decodeSpaceAnchor = (chars: string): { row: number; col: number; rotation: number; } | null => {
+    if (chars.length !== 3 || chars === 'xxx') return null;
+    const rowIdx = parseInt(chars[0], 10);
+    if (!Number.isInteger(rowIdx) || rowIdx < 0 || rowIdx > 7) return null;
+    const col = chars[1] === 'a' ? 10 : parseInt(chars[1], 10);
+    if (!Number.isInteger(col) || col < 1 || col > 10) return null;
+    const rotation = parseInt(chars[2], 10);
+    if (!Number.isInteger(rotation) || rotation < 0 || rotation > 3) return null;
+    return { row: rowIdx, col, rotation };
+};
+
+const getInitialSpaceStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; } => {
+    const params = getSearchParamsSpace();
+    const optStr = params.get(QUERY_PARAM_OPTIONS_SPACE) ?? '';
+    const tileOptions: TileOptions = { includeBlackHole: optStr[0] === '1' };
+    if (!/^[01]$/.test(optStr)) {
+        return { puzzle: setup(getBoard(), getTiles(defaultTileOptions)), tileOptions: defaultTileOptions };
+    }
+
+    const pStr = params.get(QUERY_PARAM_PIECES_SPACE) ?? '';
+    const expectedLen = SPACE_CANONICAL_NAMES.length * 3;
+    if (pStr.length !== expectedLen) {
+        return { puzzle: setup(getBoard(), getTiles(tileOptions)), tileOptions };
+    }
+
+    // Get all parent tile definitions (with all optionals enabled).
+    const allParentTiles = getTiles({ includeBlackHole: true });
+    const parentByName = Object.fromEntries(allParentTiles.map(pt => [pt.name, pt]));
+
+    const board = getBoard();
+    const tilesInBoard: Record<string, TileInBoard> = {};
+
+    for (let i = 0; i < SPACE_CANONICAL_NAMES.length; i++) {
+        const name = SPACE_CANONICAL_NAMES[i];
+        const decoded = decodeSpaceAnchor(pStr.slice(i * 3, i * 3 + 3));
+        if (!decoded) continue;
+        const parentTile = parentByName[name];
+        if (!parentTile) continue;
+        const anchorLabel = `${SPACE_ROW_LETTERS[decoded.row]}${decoded.col}`;
+        const placed = putTile(parentTile, anchorLabel, decoded.rotation);
+        Object.assign(tilesInBoard, placed);
+    }
+
+    return { puzzle: setupWithPlacement(board, tilesInBoard), tileOptions };
+};
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaSpace() {
     const { t } = useTranslation();
-    const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
-    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
+    const [initialState] = useState(() => getInitialSpaceStateFromQuery());
+    const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+    const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
     const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
     const [showAll, setShowAll] = useState(false);
     const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -179,6 +264,25 @@ export default function OrapaSpace() {
         }
         return set;
     }, [clickedBorders, lightResults]);
+
+    // ─── URL update ───────────────────────────────────────────────────
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = getSearchParamsSpace();
+        params.set(QUERY_PARAM_OPTIONS_SPACE, tileOptions.includeBlackHole ? '1' : '0');
+        const pStr = SPACE_CANONICAL_NAMES.map(name => encodeSpaceAnchor(puzzle.tiles, name)).join('');
+        params.set(QUERY_PARAM_PIECES_SPACE, pStr);
+        const search = params.toString();
+        const querySuffix = search ? `?${search}` : '';
+        const hashPath = window.location.hash.split('?')[0];
+        const hasHashPathRoute = hashPath.startsWith('#/');
+        const nextUrl = hasHashPathRoute
+            ? `${window.location.pathname}${hashPath}${querySuffix}`
+            : `${window.location.pathname}${querySuffix}${hashPath}`;
+        const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (currentUrl === nextUrl) return;
+        window.history.replaceState(null, '', nextUrl);
+    }, [puzzle, tileOptions]);
 
     const handleCellClick = useCallback((label: string) => {
         setRevealedCells(prev => {

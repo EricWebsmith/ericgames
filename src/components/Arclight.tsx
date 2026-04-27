@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
-import { setup } from '../engine/arclight/gameManager';
-import type { Color, Puzzle } from '../engine/arclight/models';
+import { defaultTileOptions, getBasicTiles, type TileOptions } from '../engine/arclight/data';
+import { setup, setupWithPlacement } from '../engine/arclight/gameManager';
+import { TileInBoard, type Color, type Puzzle } from '../engine/arclight/models';
 import BorderCircle from './shared/BorderCircle';
 import { GEM_FILL } from './shared/colors';
 
@@ -181,14 +181,99 @@ const getGemColor = (colors: string[]): string => {
   return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 };
 
+// ─── URL sharing ──────────────────────────────────────────────────
+const QUERY_PARAM_TILES = 't';
+const QUERY_PARAM_ROTATES = 'r';
+const QUERY_PARAM_OPTIONS = 'o';
+
+const getSearchParams = (): URLSearchParams => {
+  if (typeof window === 'undefined') return new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  const hashQuery = window.location.hash.split('?')[1];
+  if (hashQuery) {
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) params.set(key, value);
+    });
+  }
+  return params;
+};
+
+const parseTileOptions = (value: string | null): TileOptions | null => {
+  if (value === null || value.length !== 2 || !/^[01]{2}$/.test(value)) return null;
+  return { includeTransparent: value[0] === '1', includeBlackHole: value[1] === '1' };
+};
+
+const getInitialStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; } => {
+  const params = getSearchParams();
+  const tileOptions = parseTileOptions(params.get(QUERY_PARAM_OPTIONS)) ?? defaultTileOptions;
+  const tilesStr = params.get(QUERY_PARAM_TILES);
+  const rotatesStr = params.get(QUERY_PARAM_ROTATES);
+
+  if (
+    tilesStr && tilesStr.length === ALL_TILES.length &&
+    rotatesStr && rotatesStr.length === ALL_TILES.length
+  ) {
+    const tileById = Object.fromEntries(
+      getBasicTiles({ includeTransparent: true, includeBlackHole: true }).map(t => [String(t.id), t]),
+    );
+    const tilesInBoard: Record<string, TileInBoard> = {};
+    for (let i = 0; i < ALL_TILES.length; i++) {
+      const tileChar = tilesStr[i];
+      if (tileChar === '-') continue;
+      const tile = tileById[tileChar];
+      if (!tile) continue;
+      const rotation = Number(rotatesStr[i]);
+      if (!Number.isInteger(rotation) || rotation < 0 || rotation > 5) continue;
+      const label = ALL_TILES[i].label;
+      const tib = new TileInBoard({ tile, coordinate: label, rotate_angle: rotation });
+      tib.resolve_rotate();
+      tilesInBoard[label] = tib;
+    }
+    return { puzzle: setupWithPlacement(tilesInBoard), tileOptions };
+  }
+
+  return { puzzle: setup(tileOptions), tileOptions };
+};
+
 // ─── Component ────────────────────────────────────────────────────
 export default function Arclight() {
   const { t } = useTranslation();
-  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(defaultTileOptions));
+  const [initialState] = useState(() => getInitialStateFromQuery());
+  const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
   const [revealedTiles, setRevealedTiles] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
+
+  // ─── URL update ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = getSearchParams();
+    const tileMap = Object.fromEntries(puzzle.tiles.map(tb => [tb.coordinate, tb]));
+    const tilesStr = ALL_TILES.map(({ label }) => {
+      const tb = tileMap[label];
+      return tb ? String(tb.tile.id) : '-';
+    }).join('');
+    const rotatesStr = ALL_TILES.map(({ label }) => {
+      const tb = tileMap[label];
+      return tb ? String(tb.rotate_angle) : '0';
+    }).join('');
+    const optionsStr = `${tileOptions.includeTransparent ? '1' : '0'}${tileOptions.includeBlackHole ? '1' : '0'}`;
+    params.set(QUERY_PARAM_TILES, tilesStr);
+    params.set(QUERY_PARAM_ROTATES, rotatesStr);
+    params.set(QUERY_PARAM_OPTIONS, optionsStr);
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
+    const hashPath = window.location.hash.split('?')[0];
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
+    window.history.replaceState(null, '', nextUrl);
+  }, [puzzle, tileOptions]);
 
   // Tile label → pixel center
   const tilePx = useMemo(

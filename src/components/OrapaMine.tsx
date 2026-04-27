@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setup } from '../engine/orapa/gameManager';
-import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
-import type { Color, Puzzle } from '../engine/orapa/models';
+import { putTile, setup, setupWithPlacement } from '../engine/orapa/gameManager';
+import { defaultTileOptions, getAlternativeRedTile, getBoard, getRedTile, getTiles, type TileOptions } from '../engine/orapa/mineData';
+import { TileInBoard, type Color, type Puzzle } from '../engine/orapa/models';
 import BorderCircle from './shared/BorderCircle';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -138,11 +138,109 @@ function seededPebbles(count: number): { x: number; y: number; rx: number; ry: n
 }
 const PEBBLES = seededPebbles(50);
 
+// ─── URL sharing ──────────────────────────────────────────────────
+// Canonical parent-tile names in a fixed order (8 slots, always encoded).
+// The Red/FlippedRed slot is always index 0; optional tiles occupy fixed indices.
+const MINE_CANONICAL_NAMES = [
+  'Red', 'Blue', 'Yellow', 'White Big', 'White Small',
+  'Transparent', 'Black', 'Light Blue',
+] as const;
+const MINE_ROW_LETTERS = 'ABCDEFGH';
+
+const QUERY_PARAM_OPTIONS_MINE = 'o';
+const QUERY_PARAM_VARIANT = 'v';
+const QUERY_PARAM_PIECES_MINE = 'p';
+
+const getSearchParamsMine = (): URLSearchParams => {
+  if (typeof window === 'undefined') return new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  const hashQuery = window.location.hash.split('?')[1];
+  if (hashQuery) {
+    const hashParams = new URLSearchParams(hashQuery);
+    hashParams.forEach((value, key) => {
+      if (!params.has(key)) params.set(key, value);
+    });
+  }
+  return params;
+};
+
+/** Encode a single parent-tile anchor as 3 chars (rowIdx + colChar + rotation), or 'xxx'. */
+const encodeMineAnchor = (tiles: TileInBoard[], parentName: string): string => {
+  // Anchor sub-tile has relative coordinate (0, 0)
+  const anchor = tiles.find(
+    tb => tb.tile.parentName === parentName && tb.tile.coordinate[0] === 0 && tb.tile.coordinate[1] === 0,
+  );
+  if (!anchor) return 'xxx';
+  const m = anchor.coordinate.match(/^([A-H])(\d{1,2})$/);
+  if (!m) return 'xxx';
+  const rowIdx = MINE_ROW_LETTERS.indexOf(m[1]);
+  const col = parseInt(m[2], 10);
+  const colChar = col === 10 ? 'a' : String(col);
+  return `${rowIdx}${colChar}${anchor.rotate_angle}`;
+};
+
+/** Decode a 3-char piece encoding into { row (0-7), col (1-10), rotation } or null. */
+const decodeMineAnchor = (chars: string): { row: number; col: number; rotation: number; } | null => {
+  if (chars.length !== 3 || chars === 'xxx') return null;
+  const rowIdx = parseInt(chars[0], 10);
+  if (!Number.isInteger(rowIdx) || rowIdx < 0 || rowIdx > 7) return null;
+  const col = chars[1] === 'a' ? 10 : parseInt(chars[1], 10);
+  if (!Number.isInteger(col) || col < 1 || col > 10) return null;
+  const rotation = parseInt(chars[2], 10);
+  if (!Number.isInteger(rotation) || rotation < 0 || rotation > 3) return null;
+  return { row: rowIdx, col, rotation };
+};
+
+const getInitialMineStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; } => {
+  const params = getSearchParamsMine();
+  const optStr = params.get(QUERY_PARAM_OPTIONS_MINE) ?? '';
+  const tileOptions: TileOptions = {
+    includeTransparent: optStr[0] === '1',
+    includeBlack: optStr[1] === '1',
+    includeLightBlue: optStr[2] === '1',
+  };
+  if (!/^[01]{3}$/.test(optStr)) {
+    return { puzzle: setup(getBoard(), getTiles(defaultTileOptions)), tileOptions: defaultTileOptions };
+  }
+
+  const variantStr = params.get(QUERY_PARAM_VARIANT) ?? '0';
+  const variant = variantStr === '1' ? 1 : 0;
+
+  const pStr = params.get(QUERY_PARAM_PIECES_MINE) ?? '';
+  const expectedLen = MINE_CANONICAL_NAMES.length * 3;
+  if (pStr.length !== expectedLen) {
+    return { puzzle: setup(getBoard(), getTiles(tileOptions)), tileOptions };
+  }
+
+  // Get all possible parent tile definitions (with all optionals enabled).
+  const allParentTiles = getTiles({ includeTransparent: true, includeBlack: true, includeLightBlue: true });
+  // Override index 0 with the correct Red variant.
+  allParentTiles[0] = variant === 1 ? getAlternativeRedTile() : getRedTile();
+  const parentByName = Object.fromEntries(allParentTiles.map(pt => [pt.name, pt]));
+
+  const board = getBoard();
+  const tilesInBoard: Record<string, TileInBoard> = {};
+
+  for (let i = 0; i < MINE_CANONICAL_NAMES.length; i++) {
+    const name = MINE_CANONICAL_NAMES[i];
+    const decoded = decodeMineAnchor(pStr.slice(i * 3, i * 3 + 3));
+    if (!decoded) continue;
+    const parentTile = parentByName[name] ?? (name === 'Red' ? parentByName['Flipped Red'] : null);
+    if (!parentTile) continue;
+    const anchorLabel = `${MINE_ROW_LETTERS[decoded.row]}${decoded.col}`;
+    const placed = putTile(parentTile, anchorLabel, decoded.rotation);
+    Object.assign(tilesInBoard, placed);
+  }
+
+  return { puzzle: setupWithPlacement(board, tilesInBoard), tileOptions };
+};
+
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
-  const [tileOptions, setTileOptions] = useState<TileOptions>(defaultTileOptions);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => setup(getBoard(), getTiles(defaultTileOptions)));
+  const [initialState] = useState(() => getInitialMineStateFromQuery());
+  const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+  const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
@@ -162,6 +260,36 @@ export default function OrapaMine() {
     }
     return set;
   }, [clickedBorders, lightResults]);
+
+  // ─── URL update ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = getSearchParamsMine();
+    const optStr = `${tileOptions.includeTransparent ? '1' : '0'}${tileOptions.includeBlack ? '1' : '0'}${tileOptions.includeLightBlue ? '1' : '0'}`;
+    params.set(QUERY_PARAM_OPTIONS_MINE, optStr);
+    // Determine Red variant from placed tiles
+    const hasFlippedRed = puzzle.tiles.some(tb => tb.tile.parentName === 'Flipped Red');
+    params.set(QUERY_PARAM_VARIANT, hasFlippedRed ? '1' : '0');
+    // Encode each canonical parent tile (using 'Red' key to search for both variants)
+    const pStr = MINE_CANONICAL_NAMES.map(name => {
+      // For Red slot, match either 'Red' or 'Flipped Red'
+      const searchName = name === 'Red'
+        ? (hasFlippedRed ? 'Flipped Red' : 'Red')
+        : name;
+      return encodeMineAnchor(puzzle.tiles, searchName);
+    }).join('');
+    params.set(QUERY_PARAM_PIECES_MINE, pStr);
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : '';
+    const hashPath = window.location.hash.split('?')[0];
+    const hasHashPathRoute = hashPath.startsWith('#/');
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl === nextUrl) return;
+    window.history.replaceState(null, '', nextUrl);
+  }, [puzzle, tileOptions]);
 
   const handleCellClick = useCallback((label: string) => {
     setRevealedCells(prev => {

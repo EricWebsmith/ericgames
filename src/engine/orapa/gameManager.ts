@@ -405,6 +405,28 @@ function putTiles(board: Board, tiles: ParentTile[]): Record<string, TileInBoard
     return tilesInBoard;
 }
 
+/** Create an Orapa puzzle from a pre-built tile placement and pre-compute all wave results. */
+export function setupWithPlacement(board: Board, tilesInBoard: Record<string, TileInBoard>): Puzzle {
+    const lightResults: Record<string, LightResult> = {};
+    for (const coord of borderLabels) {
+        lightResults[coord] = tranverse(board, tilesInBoard, coord);
+    }
+
+    const sightResults: Record<string, Color[]> = {};
+    for (const node of Object.values(board.spaces)) {
+        if (node.is_border) continue;
+        const coord = node.label;
+        sightResults[coord] = coord in tilesInBoard ? tilesInBoard[coord].tile.colors : [];
+    }
+
+    return {
+        id: 0,
+        tiles: Object.values(tilesInBoard),
+        light_results: lightResults,
+        sight_results: sightResults,
+    };
+}
+
 /** Create a random Orapa Mine puzzle and pre-compute all wave results. */
 export function setup(board: Board, tiles: ParentTile[]): Puzzle {
     const tilesInBoard = putTiles(board, tiles);

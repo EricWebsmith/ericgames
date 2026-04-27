@@ -118,6 +118,29 @@ function putTiles(board: Board, tiles: Tile[]): Record<string, TileInBoard> {
     return tilesInBoard;
 }
 
+export function setupWithPlacement(tilesInBoard: Record<string, TileInBoard>): Puzzle {
+    const board = getBoard();
+
+    const lightResults: Record<string, LightResult> = {};
+    for (const coord of borderNodeCoordinates) {
+        lightResults[coord] = traverse(board, tilesInBoard, coord);
+    }
+
+    const sightResults: Record<string, Color[]> = {};
+    for (const node of Object.values(board.spaces)) {
+        if (node.is_border) continue;
+        const coord = node.label;
+        sightResults[coord] = coord in tilesInBoard ? tilesInBoard[coord].tile.colors : [];
+    }
+
+    return {
+        id: 0,
+        tiles: Object.values(tilesInBoard),
+        light_results: lightResults,
+        sight_results: sightResults,
+    };
+}
+
 export function setup(options: TileOptions = defaultTileOptions): Puzzle {
     const board = getBoard();
     const tilesInBoard = putTiles(board, getBasicTiles(options));
