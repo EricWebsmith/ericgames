@@ -54,7 +54,10 @@
     "newGame": "新遊戲",
     "boardAriaLabel": "奧拉帕宇宙拼圖棋盤",
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
-    "includeBlackHole": "黑洞擴展"
+    "includeBlackHole": "黑洞擴展",
+    "boardSizeLabel": "棋盤尺寸",
+    "10by8": "10 × 8",
+    "11by7": "11 × 7"
   },
   "switchboard": {
     "title": "接線總機",

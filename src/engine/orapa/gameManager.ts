@@ -193,8 +193,8 @@ export function putTile(
     anchorLabel: string,
     rotateAngle: number = 0,
 ): Record<string, TileInBoard> {
-    const rowLetters = 'ABCDEFGH';
-    const m = anchorLabel.match(/^([A-H])(\d{1,2})$/);
+    const rowLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const m = anchorLabel.match(/^([A-Z])(\d{1,2})$/);
     if (!m) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
     const anchorRow = rowLetters.indexOf(m[1]);
     const anchorCol = parseInt(m[2], 10);
@@ -366,7 +366,7 @@ function putTiles(board: Board, tiles: ParentTile[], rng: () => number): Record<
 
     const internalCoords = Object.keys(board.spaces).filter(k => !board.spaces[k].is_border);
     const randomChoice = (arr: string[]): string => arr[Math.floor(rng() * arr.length)];
-    const rowLetters = 'ABCDEFGH';
+    const rowLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     for (const parentTile of tiles) {
         let placed = false;
@@ -375,7 +375,7 @@ function putTiles(board: Board, tiles: ParentTile[], rng: () => number): Record<
             const anchorCoord = randomChoice(internalCoords);
             if (occupiedSpaces.has(anchorCoord)) continue;
 
-            const m = anchorCoord.match(/^([A-H])(\d{1,2})$/);
+            const m = anchorCoord.match(/^([A-Z])(\d{1,2})$/);
             if (!m) continue;
             const anchorRow = rowLetters.indexOf(m[1]);
             const anchorCol = parseInt(m[2], 10);
@@ -388,7 +388,7 @@ function putTiles(board: Board, tiles: ParentTile[], rng: () => number): Record<
                 const [rotCol, rotRow] = rotateCoord(subTile.coordinate[0], subTile.coordinate[1], rotateAngle);
                 const row = anchorRow + rotRow;
                 const col = anchorCol + rotCol;
-                if (row < 0 || row >= 8 || col < 1 || col > 10) { valid = false; break; }
+                if (row < 0 || row >= board.rows || col < 1 || col > board.cols) { valid = false; break; }
                 const coord = `${rowLetters[row]}${col}`;
                 if (occupiedSpaces.has(coord)) { valid = false; break; }
             }
