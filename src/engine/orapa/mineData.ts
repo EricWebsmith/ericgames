@@ -130,24 +130,24 @@ export function getBoard(cols: number = 10, rows: number = 8): Board {
     const colMax = cols;
     const nodes: Record<string, Node> = {};
 
-    // Internal cells – {RowLetter}{col}, col 1–colMax, row 1–rowMax
+    // Internal cells – {rowLetter}{col}, col 1–colMax, row 1–rowMax
     const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lebalLetters = ALL_LETTERS.slice(0, rowMax).split('');
+    const rowLetters = ALL_LETTERS.slice(0, rowMax).split('');
     for (let col = 0; col < colMax; col++) {
         for (let row = 0; row < rowMax; row++) {
-            const label = `${lebalLetters[row]}${col + 1}`;
+            const label = `${rowLetters[row]}${col + 1}`;
             nodes[label] = { label, is_border: false, edges: {} };
             // Connect to orthogonal neighbours (if they exist)
-            if (col > 0) nodes[label].edges[0] = `${lebalLetters[row]}${col}`; // West
-            if (row > 0) nodes[label].edges[1] = `${lebalLetters[row - 1]}${col + 1}`; // North
-            if (col < colMax - 1) nodes[label].edges[2] = `${lebalLetters[row]}${col + 2}`; // East
-            if (row < rowMax - 1) nodes[label].edges[3] = `${lebalLetters[row + 1]}${col + 1}`; // South
+            if (col > 0) nodes[label].edges[0] = `${rowLetters[row]}${col}`; // West
+            if (row > 0) nodes[label].edges[1] = `${rowLetters[row - 1]}${col + 1}`; // North
+            if (col < colMax - 1) nodes[label].edges[2] = `${rowLetters[row]}${col + 2}`; // East
+            if (row < rowMax - 1) nodes[label].edges[3] = `${rowLetters[row + 1]}${col + 1}`; // South
         }
     }
 
     // Border nodes: top/bottom use numbers/letters; left/right use row letters/numbers.
     // Top: 1–colMax (numbers), Right: (colMax+1)–(colMax+rowMax) (numbers)
-    // Left: A–(row letter for rowMax) (letters), Bottom: next rowMax letters after left letters
+    // Left: A–(row letter for rowMax) (letters), Bottom: next colMax letters after left letters
     for (let k = 1; k <= colMax + rowMax; k++) nodes[String(k)] = { label: String(k), is_border: true, edges: {} };
     // Left border letters (A..rowMax letter) and bottom border letters (next colMax letters)
     const bottomLetterStart = rowMax; // bottom letters start after the row letters in the alphabet
@@ -165,7 +165,7 @@ export function getBoard(cols: number = 10, rows: number = 8): Board {
 
     // Add top and bottom nodes
     const bottomLetters = ALL_LETTERS.slice(bottomLetterStart, bottomLetterStart + colMax).split('');
-    const lastRowLetter = lebalLetters[rowMax - 1];
+    const lastRowLetter = rowLetters[rowMax - 1];
     for (let col = 0; col < colMax; col++) {
         addBorderEdge(String(col + 1), 3, `A${col + 1}`); // Top
         addBorderEdge(bottomLetters[col], 1, `${lastRowLetter}${col + 1}`); // Bottom
@@ -173,8 +173,8 @@ export function getBoard(cols: number = 10, rows: number = 8): Board {
 
     // Add left and right nodes
     for (let row = 0; row < rowMax; row++) {
-        addBorderEdge(lebalLetters[row], 2, `${lebalLetters[row]}1`); // Left
-        addBorderEdge(String(colMax + row + 1), 0, `${lebalLetters[row]}${colMax}`); // Right
+        addBorderEdge(rowLetters[row], 2, `${rowLetters[row]}1`); // Left
+        addBorderEdge(String(colMax + row + 1), 0, `${rowLetters[row]}${colMax}`); // Right
     }
 
     return { spaces: nodes, rows: rowMax, cols: colMax };
