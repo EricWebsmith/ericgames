@@ -7,23 +7,36 @@ import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/
 import BlackHole from './BlackHole';
 import BorderCircle from './shared/BorderCircle';
 
+// ─── Board size options ────────────────────────────────────────────
+const BOARD_SIZES = ['10x8', '11x7'] as const;
+type BoardSize = typeof BOARD_SIZES[number];
+const DEFAULT_BOARD_SIZE: BoardSize = '10x8';
+
+function parseBoardSize(size: BoardSize): { cols: number; rows: number } {
+    const [c, r] = size.split('x').map(Number);
+    return { cols: c, rows: r };
+}
+
 // ─── Layout constants ──────────────────────────────────────────────
-const COLS = 10;
-const ROWS = 8;
 const CELL = 46;   // cell size in px
 const BD_R = 12;   // border circle radius
 const BD_OFF = 28; // distance from grid edge to border circle centre
 const GX = 64;     // x of left edge of grid
 const GY = 64;     // y of top edge of grid
-const SVG_W = GX + COLS * CELL + GX;  // 64 + 460 + 64 = 588
-const SVG_H = GY + ROWS * CELL + GY;  // 64 + 368 + 64 = 496
+
+function getSvgDimensions(cols: number, rows: number) {
+    return {
+        svgW: GX + cols * CELL + GX,
+        svgH: GY + rows * CELL + GY,
+    };
+}
 
 // ─── Row/column helpers ────────────────────────────────────────────
-// Engine format: row letter A–H (A = top row), column number 1–10.
-const ROW_LETTERS = 'ABCDEFGH';
+// Engine format: row letter A–? (A = top row), column number 1–cols.
+const ALL_ROW_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function cellLabel(col: number, row: number): string {
-    return `${ROW_LETTERS[row - 1]}${col}`;
+    return `${ALL_ROW_LETTERS[row - 1]}${col}`;
 }
 
 function cellTL(col: number, row: number) {
@@ -49,41 +62,45 @@ function getGemColor(colors: string[]): string {
 }
 
 // ─── Border node data ──────────────────────────────────────────────
-// Engine border layout (matches getBoard() in data.ts):
-//   Top    (1–10):   numbers, above columns 1–10
-//   Left   (A–H):   letters, left of rows A–H (A = top)
-//   Bottom (I–R):   letters, below columns 1–10  (I = col 1, R = col 10)
-//   Right  (11–18): numbers, right of rows A–H  (11 = row A)
+// Engine border layout (matches getBoard() in mineData.ts):
+//   Top    (1–cols):          numbers, above columns 1–cols
+//   Left   (A–rowLetter):     letters, left of rows (A = top)
+//   Bottom (next cols letters after row letters): below columns 1–cols
+//   Right  ((cols+1)–(cols+rows)): numbers, right of rows
 type Side = 'top' | 'left' | 'bottom' | 'right';
 interface BorderInfo { label: string; side: Side; idx: number; }
 
-const ALL_BORDERS: BorderInfo[] = [
-    // Top: 1–10, above columns 1–10 (idx 0–9)
-    ...Array.from({ length: 10 }, (_, i) => ({ label: String(i + 1), side: 'top' as Side, idx: i })),
-    // Left: A–H, left of rows 1–8 (idx 0–7)
-    ...'ABCDEFGH'.split('').map((c, i) => ({ label: c, side: 'left' as Side, idx: i })),
-    // Bottom: I–R, below columns 1–10 (idx 0–9)
-    ...'IJKLMNOPQR'.split('').map((c, i) => ({ label: c, side: 'bottom' as Side, idx: i })),
-    // Right: 11–18, right of rows 1–8 (idx 0–7)
-    ...Array.from({ length: 8 }, (_, i) => ({ label: String(11 + i), side: 'right' as Side, idx: i })),
-];
+function buildBorders(cols: number, rows: number): BorderInfo[] {
+    const rowLetters = ALL_ROW_LETTERS.slice(0, rows).split('');
+    const bottomLetters = ALL_ROW_LETTERS.slice(rows, rows + cols).split('');
+    return [
+        // Top: 1–cols, above columns 1–cols (idx 0–cols-1)
+        ...Array.from({ length: cols }, (_, i) => ({ label: String(i + 1), side: 'top' as Side, idx: i })),
+        // Left: row letters, left of rows (idx 0–rows-1)
+        ...rowLetters.map((c, i) => ({ label: c, side: 'left' as Side, idx: i })),
+        // Bottom: next cols letters after row letters (idx 0–cols-1)
+        ...bottomLetters.map((c, i) => ({ label: c, side: 'bottom' as Side, idx: i })),
+        // Right: (cols+1)–(cols+rows), right of rows (idx 0–rows-1)
+        ...Array.from({ length: rows }, (_, i) => ({ label: String(cols + 1 + i), side: 'right' as Side, idx: i })),
+    ];
+}
 
 // ─── Pixel helpers ─────────────────────────────────────────────────
-function borderPx(b: BorderInfo): { x: number; y: number; } {
+function borderPx(b: BorderInfo, cols: number, rows: number): { x: number; y: number; } {
     switch (b.side) {
         case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF };
         case 'left': return { x: GX - BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
-        case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF };
-        case 'right': return { x: GX + COLS * CELL + BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
+        case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + rows * CELL + BD_OFF };
+        case 'right': return { x: GX + cols * CELL + BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
     }
 }
 
-function notePx(b: BorderInfo): { x: number; y: number; } {
+function notePx(b: BorderInfo, cols: number, rows: number): { x: number; y: number; } {
     switch (b.side) {
         case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
         case 'left': return { x: GX - BD_OFF - BD_R - 8, y: GY + b.idx * CELL + CELL / 2 };
-        case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF + BD_R + 8 };
-        case 'right': return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + b.idx * CELL + CELL / 2 };
+        case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + rows * CELL + BD_OFF + BD_R + 8 };
+        case 'right': return { x: GX + cols * CELL + BD_OFF + BD_R + 8, y: GY + b.idx * CELL + CELL / 2 };
     }
 }
 
@@ -141,23 +158,23 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 const LCG_MULTIPLIER = 1664525;
 const LCG_INCREMENT = 1013904223;
 
-function seededStars(count: number): { x: number; y: number; r: number; }[] {
+function seededStars(count: number, svgW: number, svgH: number): { x: number; y: number; r: number; }[] {
     const stars: { x: number; y: number; r: number; }[] = [];
     let seed = 7919;
     for (let i = 0; i < count; i++) {
         seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
-        const x = seed % SVG_W;
+        const x = seed % svgW;
         seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
-        const y = seed % SVG_H;
+        const y = seed % svgH;
         stars.push({ x, y, r: i % 6 === 0 ? 1.5 : 0.8 });
     }
     return stars;
 }
-const STARS = seededStars(70);
 
 // ─── URL sharing ──────────────────────────────────────────────────
 const QUERY_PARAM_OPTIONS_SPACE = 'o';
 const QUERY_PARAM_SEED_SPACE = 's';
+const QUERY_PARAM_SIZE_SPACE = 'z';
 
 const getSearchParamsSpace = (): URLSearchParams => {
     if (typeof window === 'undefined') return new URLSearchParams();
@@ -172,36 +189,46 @@ const getSearchParamsSpace = (): URLSearchParams => {
     return params;
 };
 
-const getInitialSpaceStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; seed: number; } => {
+const getInitialSpaceStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; seed: number; boardSize: BoardSize; } => {
     const params = getSearchParamsSpace();
     const optStr = params.get(QUERY_PARAM_OPTIONS_SPACE) ?? '';
     const tileOptions: TileOptions = { includeBlackHole: optStr[0] === '1' };
+    const sizeParam = params.get(QUERY_PARAM_SIZE_SPACE);
+    const boardSize: BoardSize = (BOARD_SIZES as readonly string[]).includes(sizeParam ?? '') ? (sizeParam as BoardSize) : DEFAULT_BOARD_SIZE;
+    const { cols, rows } = parseBoardSize(boardSize);
+
     if (!/^[01]$/.test(optStr)) {
         const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-        return { puzzle: setupWithSeed(getBoard(), getTiles(defaultTileOptions), seed), tileOptions: defaultTileOptions, seed };
+        return { puzzle: setupWithSeed(getBoard(cols, rows), getTiles(defaultTileOptions), seed), tileOptions: defaultTileOptions, seed, boardSize };
     }
 
     const seedStr = params.get(QUERY_PARAM_SEED_SPACE);
     const parsedSeed = seedStr !== null && /^\d+$/.test(seedStr) ? parseInt(seedStr, 10) : null;
 
     if (parsedSeed !== null && Number.isInteger(parsedSeed) && parsedSeed >= 0) {
-        return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), parsedSeed), tileOptions, seed: parsedSeed };
+        return { puzzle: setupWithSeed(getBoard(cols, rows), getTiles(tileOptions), parsedSeed), tileOptions, seed: parsedSeed, boardSize };
     }
 
     const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-    return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), seed), tileOptions, seed };
+    return { puzzle: setupWithSeed(getBoard(cols, rows), getTiles(tileOptions), seed), tileOptions, seed, boardSize };
 };
 
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaSpace() {
     const { t } = useTranslation();
     const [initialState] = useState(() => getInitialSpaceStateFromQuery());
+    const [boardSize, setBoardSize] = useState<BoardSize>(initialState.boardSize);
     const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
     const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
     const [seed, setSeed] = useState<number>(initialState.seed);
     const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
     const [showAll, setShowAll] = useState(false);
     const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
+
+    const { cols, rows } = parseBoardSize(boardSize);
+    const { svgW, svgH } = getSvgDimensions(cols, rows);
+    const allBorders = useMemo(() => buildBorders(cols, rows), [cols, rows]);
+    const stars = useMemo(() => seededStars(70, svgW, svgH), [svgW, svgH]);
 
     const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
@@ -225,6 +252,7 @@ export default function OrapaSpace() {
         const params = getSearchParamsSpace();
         params.set(QUERY_PARAM_OPTIONS_SPACE, tileOptions.includeBlackHole ? '1' : '0');
         params.set(QUERY_PARAM_SEED_SPACE, String(seed));
+        params.set(QUERY_PARAM_SIZE_SPACE, boardSize);
         const search = params.toString();
         const querySuffix = search ? `?${search}` : '';
         const hashPath = window.location.hash.split('?')[0];
@@ -235,7 +263,7 @@ export default function OrapaSpace() {
         const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
         if (currentUrl === nextUrl) return;
         window.history.replaceState(null, '', nextUrl);
-    }, [seed, tileOptions]);
+    }, [seed, tileOptions, boardSize]);
 
     const handleCellClick = useCallback((label: string) => {
         setRevealedCells(prev => {
@@ -256,13 +284,24 @@ export default function OrapaSpace() {
     }, []);
 
     const handleClickAllBorders = useCallback(() => {
-        setClickedBorders(new Set(ALL_BORDERS.map(b => b.label)));
-    }, []);
+        setClickedBorders(new Set(allBorders.map(b => b.label)));
+    }, [allBorders]);
 
     const handleNewGame = useCallback(() => {
         const nextSeed = Math.floor(Math.random() * 0xFFFFFFFF);
         setSeed(nextSeed);
-        setPuzzle(setupWithSeed(getBoard(), getTiles(tileOptions), nextSeed));
+        setPuzzle(setupWithSeed(getBoard(cols, rows), getTiles(tileOptions), nextSeed));
+        setRevealedCells(new Set());
+        setClickedBorders(new Set());
+        setShowAll(false);
+    }, [tileOptions, cols, rows]);
+
+    const handleBoardSizeChange = useCallback((newSize: BoardSize) => {
+        setBoardSize(newSize);
+        const { cols: newCols, rows: newRows } = parseBoardSize(newSize);
+        const nextSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+        setSeed(nextSeed);
+        setPuzzle(setupWithSeed(getBoard(newCols, newRows), getTiles(tileOptions), nextSeed));
         setRevealedCells(new Set());
         setClickedBorders(new Set());
         setShowAll(false);
@@ -274,9 +313,9 @@ export default function OrapaSpace() {
             <p className="status-message">{t('orapaSpace.instructions')}</p>
 
             <svg
-                width={SVG_W}
-                height={SVG_H}
-                viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+                width={svgW}
+                height={svgH}
+                viewBox={`0 0 ${svgW} ${svgH}`}
                 className="game-svg space-svg"
                 aria-label={t('orapaSpace.boardAriaLabel')}
             >
@@ -291,16 +330,16 @@ export default function OrapaSpace() {
                 </defs>
 
                 {/* Space background */}
-                <rect width={SVG_W} height={SVG_H} fill="#060614" rx={10} />
+                <rect width={svgW} height={svgH} fill="#060614" rx={10} />
 
                 {/* Stars */}
-                {STARS.map((s, i) => (
+                {stars.map((s, i) => (
                     <circle key={`star-${i}`} cx={s.x} cy={s.y} r={s.r} fill="white" opacity={0.6 + (i % 4) * 0.1} />
                 ))}
 
                 {/* ── Grid cells ── */}
-                {Array.from({ length: COLS }, (_, ci) =>
-                    Array.from({ length: ROWS }, (_, ri) => {
+                {Array.from({ length: cols }, (_, ci) =>
+                    Array.from({ length: rows }, (_, ri) => {
                         const col = ci + 1, row = ri + 1;
                         const label = cellLabel(col, row);
                         const { x, y } = cellTL(col, row);
@@ -435,9 +474,9 @@ export default function OrapaSpace() {
                 )}
 
                 {/* ── Border circles ── */}
-                {ALL_BORDERS.map(b => {
-                    const bp = borderPx(b);
-                    const np = notePx(b);
+                {allBorders.map(b => {
+                    const bp = borderPx(b, cols, rows);
+                    const np = notePx(b, cols, rows);
                     const isEntry = clickedBorders.has(b.label);
                     const isExit = exitHighlights.has(b.label);
                     const result = lightResults[b.label];
@@ -482,7 +521,20 @@ export default function OrapaSpace() {
                 })}
             </svg>
 
-            <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
+            <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+                <label htmlFor="space-board-size">{t('orapaSpace.boardSizeLabel')}</label>
+                <select
+                    id="space-board-size"
+                    className="lang-switcher"
+                    value={boardSize}
+                    onChange={e => handleBoardSizeChange(e.target.value as BoardSize)}
+                >
+                    {BOARD_SIZES.map(size => (
+                        <option key={size} value={size}>
+                            {t(`orapaSpace.${size.replace('x', 'by')}`)}
+                        </option>
+                    ))}
+                </select>
                 <button className="btn-reset" onClick={() => setShowAll(!showAll)}>
                     {t('orapaSpace.showAnswer')}
                 </button>

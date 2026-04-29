@@ -125,13 +125,14 @@ export function getTiles(options: TileOptions = defaultTileOptions): ParentTile[
 }
 
 
-export function getBoard(): Board {
-    const rowMax = 8;
-    const colMax = 10;
+export function getBoard(cols: number = 10, rows: number = 8): Board {
+    const rowMax = rows;
+    const colMax = cols;
     const nodes: Record<string, Node> = {};
 
-    // Internal cells – c{col}r{row}, col 1–10, row 1–8
-    const lebalLetters = 'ABCDEFGH'.split('');
+    // Internal cells – {RowLetter}{col}, col 1–colMax, row 1–rowMax
+    const ALL_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lebalLetters = ALL_LETTERS.slice(0, rowMax).split('');
     for (let col = 0; col < colMax; col++) {
         for (let row = 0; row < rowMax; row++) {
             const label = `${lebalLetters[row]}${col + 1}`;
@@ -144,10 +145,14 @@ export function getBoard(): Board {
         }
     }
 
-
-    // Border nodes
-    for (let k = 1; k <= 18; k++) nodes[String(k)] = { label: String(k), is_border: true, edges: {} };
-    for (const c of 'ABCDEFGHIJKLMNOPQR'.split('')) nodes[c] = { label: c, is_border: true, edges: {} };
+    // Border nodes: top/bottom use numbers/letters; left/right use row letters/numbers.
+    // Top: 1–colMax (numbers), Right: (colMax+1)–(colMax+rowMax) (numbers)
+    // Left: A–(row letter for rowMax) (letters), Bottom: next rowMax letters after left letters
+    for (let k = 1; k <= colMax + rowMax; k++) nodes[String(k)] = { label: String(k), is_border: true, edges: {} };
+    // Left border letters (A..rowMax letter) and bottom border letters (next colMax letters)
+    const bottomLetterStart = rowMax; // bottom letters start after the row letters in the alphabet
+    const allBorderLetters = ALL_LETTERS.slice(0, rowMax + colMax).split('');
+    for (const c of allBorderLetters) nodes[c] = { label: c, is_border: true, edges: {} };
 
     // Connect each border node to its adjacent cell.
     // borderDir is the direction FROM the border node INTO the grid.
@@ -159,16 +164,17 @@ export function getBoard(): Board {
     };
 
     // Add top and bottom nodes
-    const bottomLetters = 'IJKLMNOPQR'.split('');
+    const bottomLetters = ALL_LETTERS.slice(bottomLetterStart, bottomLetterStart + colMax).split('');
+    const lastRowLetter = lebalLetters[rowMax - 1];
     for (let col = 0; col < colMax; col++) {
         addBorderEdge(String(col + 1), 3, `A${col + 1}`); // Top
-        addBorderEdge(bottomLetters[col], 1, `H${col + 1}`); // Bottom
+        addBorderEdge(bottomLetters[col], 1, `${lastRowLetter}${col + 1}`); // Bottom
     }
 
     // Add left and right nodes
     for (let row = 0; row < rowMax; row++) {
         addBorderEdge(lebalLetters[row], 2, `${lebalLetters[row]}1`); // Left
-        addBorderEdge(String(10 + row + 1), 0, `${lebalLetters[row]}10`); // Right
+        addBorderEdge(String(colMax + row + 1), 0, `${lebalLetters[row]}${colMax}`); // Right
     }
 
     return { spaces: nodes, rows: rowMax, cols: colMax };

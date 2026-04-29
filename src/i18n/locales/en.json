@@ -54,7 +54,10 @@
     "newGame": "New Game",
     "boardAriaLabel": "Orapa Space puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
-    "includeBlackHole": "Black Hole Expansion"
+    "includeBlackHole": "Black Hole Expansion",
+    "boardSizeLabel": "Board Size",
+    "10by8": "10 × 8",
+    "11by7": "11 × 7"
   },
   "switchboard": {
     "title": "Switchboard",
