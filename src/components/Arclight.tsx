@@ -4,6 +4,7 @@ import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
 import { setupWithSeed } from '../engine/arclight/gameManager';
 import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 import { GEM_FILL } from './shared/colors';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -227,7 +228,6 @@ export default function Arclight() {
   const [revealedTiles, setRevealedTiles] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
-  const [linkCopied, setLinkCopied] = useState(false);
 
   // ─── URL update ───────────────────────────────────────────────────
   useEffect(() => {
@@ -333,16 +333,6 @@ export default function Arclight() {
     setClickedBorders(new Set());
     setShowAll(false);
   }, [tileOptions]);
-
-  const handleShare = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      // Clipboard API not available – silently ignore
-    }
-  }, []);
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
@@ -532,9 +522,7 @@ export default function Arclight() {
         <button className="btn-reset" onClick={handleNewGame}>
           {t('arclight.newGame')}
         </button>
-        <button className="btn-reset" onClick={handleShare}>
-          {linkCopied ? t('arclight.linkCopied') : t('arclight.shareGame')}
-        </button>
+        <ShareButton />
       </div>
 
       <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>

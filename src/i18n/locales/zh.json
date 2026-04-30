@@ -2,6 +2,10 @@
   "nav": {
     "brand": "卡坦王Eric的游戏"
   },
+  "shared": {
+    "shareGame": "分享游戏",
+    "linkCopied": "链接已复制！✓"
+  },
   "home": {
     "title": "卡坦王Eric的游戏",
     "subtitle": "闲鱼卡坦王Eric",
@@ -36,9 +40,7 @@
     "boardAriaLabel": "弧光拼图棋盘",
     "tileAriaLabel": "格子 {{label}}",
     "includeTransparent": "透明扩展",
-    "includeBlackHole": "黑宝石扩展",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓"
+    "includeBlackHole": "黑宝石扩展"
   },
   "orapaMine": {
     "title": "奥拉帕矿山",
@@ -50,9 +52,7 @@
     "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeTransparent": "透明扩展",
     "includeBlack": "黑宝石扩展",
-    "includeLightBlue": "浅蓝宝石扩展",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓"
+    "includeLightBlue": "浅蓝宝石扩展"
   },
   "orapaSpace": {
     "title": "奥拉帕宇宙",
@@ -65,9 +65,7 @@
     "includeBlackHole": "黑洞扩展",
     "boardSizeLabel": "棋盘尺寸",
     "10by8": "10 × 8",
-    "11by7": "11 × 7",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓"
+    "11by7": "11 × 7"
   },
   "switchboard": {
     "title": "接线总机",
@@ -87,9 +85,7 @@
     "rhombic25": "菱形 25",
     "hexagonal19": "六边形 19",
     "hexagonal37": "六边形 37",
-    "solved": "完成！🎉",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓"
+    "solved": "完成！🎉"
   },
   "ricochetRobots": {
     "title": "碰撞机器人六边形",
@@ -107,8 +103,6 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 机器人",
     "blockedCellAriaLabel": "阻挡格",
     "boardSize": "棋盘大小：",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓",
     "color": {
       "red": "红色",
       "blue": "蓝色",

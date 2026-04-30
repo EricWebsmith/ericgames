@@ -2,6 +2,10 @@
   "nav": {
     "brand": "Eric Games"
   },
+  "shared": {
+    "shareGame": "Share Game",
+    "linkCopied": "Link Copied! ✓"
+  },
   "home": {
     "title": "Eric's Games",
     "subtitle": "Eric's collection of games",
@@ -36,9 +40,7 @@
     "boardAriaLabel": "Arclight puzzle board",
     "tileAriaLabel": "Tile {{label}}",
     "includeTransparent": "Transparent Gem Expansion",
-    "includeBlackHole": "Black Gem Expansion",
-    "shareGame": "Share Game",
-    "linkCopied": "Link Copied! ✓"
+    "includeBlackHole": "Black Gem Expansion"
   },
   "orapaMine": {
     "title": "Orapa Mine",
@@ -50,9 +52,7 @@
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeTransparent": "Transparent Gem Expansion",
     "includeBlack": "Black Gem Expansion",
-    "includeLightBlue": "Light Blue Gem Expansion",
-    "shareGame": "Share Game",
-    "linkCopied": "Link Copied! ✓"
+    "includeLightBlue": "Light Blue Gem Expansion"
   },
   "orapaSpace": {
     "title": "Orapa Space",
@@ -65,9 +65,7 @@
     "includeBlackHole": "Black Hole Expansion",
     "boardSizeLabel": "Board Size",
     "10by8": "10 × 8",
-    "11by7": "11 × 7",
-    "shareGame": "Share Game",
-    "linkCopied": "Link Copied! ✓"
+    "11by7": "11 × 7"
   },
   "switchboard": {
     "title": "Switchboard",
@@ -88,9 +86,7 @@
     "rhombic25": "Rhombic 25",
     "hexagonal19": "Hexagonal 19",
     "hexagonal37": "Hexagonal 37",
-    "solved": "Solved! 🎉",
-    "shareGame": "Share Game",
-    "linkCopied": "Link Copied! ✓"
+    "solved": "Solved! 🎉"
   },
   "ricochetRobots": {
     "title": "Ricochet Robots Hex",
@@ -109,8 +105,6 @@
     "stepAriaLabel": "Step {{index}}: {{color}} robot",
     "blockedCellAriaLabel": "Blocked cell",
     "boardSize": "Board size:",
-    "shareGame": "Share Game",
-    "linkCopied": "Link copied! ✓",
     "color": {
       "red": "Red",
       "blue": "Blue",

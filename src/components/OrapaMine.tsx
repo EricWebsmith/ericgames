@@ -4,6 +4,7 @@ import { setupWithSeed } from '../engine/orapa/gameManager';
 import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
 import { type Color, type Puzzle } from '../engine/orapa/models';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;
@@ -189,7 +190,6 @@ export default function OrapaMine() {
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
-  const [linkCopied, setLinkCopied] = useState(false);
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
@@ -256,16 +256,6 @@ export default function OrapaMine() {
     setClickedBorders(new Set());
     setShowAll(false);
   }, [tileOptions]);
-
-  const handleShare = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      // Clipboard API not available – silently ignore
-    }
-  }, []);
 
   return (
     <div className="game-container">
@@ -464,9 +454,7 @@ export default function OrapaMine() {
         <button className="btn-reset" onClick={handleNewGame}>
           {t('orapaMine.newGame')}
         </button>
-        <button className="btn-reset" onClick={handleShare}>
-          {linkCopied ? t('orapaMine.linkCopied') : t('orapaMine.shareGame')}
-        </button>
+        <ShareButton />
       </div>
 
       <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>

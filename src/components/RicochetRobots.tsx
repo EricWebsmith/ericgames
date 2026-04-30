@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import RicochetStepSvg from './shared/RicochetStepSvg';
+import ShareButton from './shared/ShareButton';
 import {
     applyMove,
     buildBlockedCellSet,
@@ -136,7 +137,6 @@ export default function RicochetRobots() {
     const [moveHistory, setMoveHistory] = useState<Move[]>([]);
     const [redoStack, setRedoStack] = useState<Move[]>([]);
     const [selectedColor, setSelectedColor] = useState<RobotColor | null>(null);
-    const [linkCopied, setLinkCopied] = useState(false);
 
     // Write the initial seed + size into the URL so the current game is always shareable,
     // even on a fresh load without query params. { replace: true } avoids polluting history.
@@ -233,16 +233,6 @@ export default function RicochetRobots() {
         handleNewGame(size);
     }, [handleNewGame]);
 
-    const handleShare = useCallback(async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-            setLinkCopied(true);
-            setTimeout(() => setLinkCopied(false), 2000);
-        } catch {
-            // Clipboard API not available – silently ignore
-        }
-    }, []);
-
     const handleUndo = useCallback(() => {
         if (moveHistory.length === 0) return;
         const last = moveHistory[moveHistory.length - 1];
@@ -334,9 +324,7 @@ export default function RicochetRobots() {
                 >
                     {t('ricochetRobots.redo')}
                 </button>
-                <button className="btn-reset" onClick={handleShare}>
-                    {linkCopied ? t('ricochetRobots.linkCopied') : t('ricochetRobots.shareGame')}
-                </button>
+                <ShareButton />
             </div>
 
             {/* Board size selector */}

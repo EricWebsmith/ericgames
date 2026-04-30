@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getBasicTiles, getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
 import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
+import ShareButton from './shared/ShareButton';
 import StepSvg from './shared/StepSvg';
 
 const SVG_W = 700;
@@ -344,7 +345,6 @@ export default function Switchboard() {
   const [history, setHistory] = useState<Step[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [rotatingTile, setRotatingTile] = useState<{ tileNo: number; delta: number; } | null>(null);
-  const [linkCopied, setLinkCopied] = useState(false);
   const rotationTimeoutRef = useRef<number | null>(null);
 
   const clearPendingRotation = useCallback(() => {
@@ -439,16 +439,6 @@ export default function Switchboard() {
     }
     setHistoryIndex(index + 1);
   }, [clearPendingRotation, history, historyIndex, rotatingTile]);
-
-  const handleShare = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      // Clipboard API not available – silently ignore
-    }
-  }, []);
 
   useEffect(() => () => {
     clearPendingRotation();
@@ -594,9 +584,7 @@ export default function Switchboard() {
         <button className="btn-reset" onClick={handleRedo} disabled={historyIndex >= history.length || Boolean(rotatingTile)}>
           {t('switchboard.redo')}
         </button>
-        <button className="btn-reset" onClick={handleShare}>
-          {linkCopied ? t('switchboard.linkCopied') : t('switchboard.shareGame')}
-        </button>
+        <ShareButton />
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             id="switchboard-show-tips"

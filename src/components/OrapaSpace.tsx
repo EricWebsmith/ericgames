@@ -6,6 +6,7 @@ import { type Color, type Puzzle } from '../engine/orapa/models';
 import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/spaceData';
 import BlackHole from './BlackHole';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 
 // ─── Board size options ────────────────────────────────────────────
 const BOARD_SIZES = ['10x8', '11x7'] as const;
@@ -224,7 +225,6 @@ export default function OrapaSpace() {
     const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
     const [showAll, setShowAll] = useState(false);
     const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
-    const [linkCopied, setLinkCopied] = useState(false);
 
     const { cols, rows } = parseBoardSize(boardSize);
     const { svgW, svgH } = getSvgDimensions(cols, rows);
@@ -307,16 +307,6 @@ export default function OrapaSpace() {
         setClickedBorders(new Set());
         setShowAll(false);
     }, [tileOptions]);
-
-    const handleShare = useCallback(async () => {
-        try {
-            await navigator.clipboard.writeText(window.location.href);
-            setLinkCopied(true);
-            setTimeout(() => setLinkCopied(false), 2000);
-        } catch {
-            // Clipboard API not available – silently ignore
-        }
-    }, []);
 
     return (
         <div className="game-container">
@@ -555,9 +545,7 @@ export default function OrapaSpace() {
                 <button className="btn-reset" onClick={handleNewGame}>
                     {t('orapaSpace.newGame')}
                 </button>
-                <button className="btn-reset" onClick={handleShare}>
-                    {linkCopied ? t('orapaSpace.linkCopied') : t('orapaSpace.shareGame')}
-                </button>
+                <ShareButton />
             </div>
 
             <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>

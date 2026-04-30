@@ -2,6 +2,10 @@
   "nav": {
     "brand": "卡坦王Eric的遊戲"
   },
+  "shared": {
+    "shareGame": "分享遊戲",
+    "linkCopied": "連結已複製！✓"
+  },
   "home": {
     "title": "卡坦王Eric的遊戲",
     "subtitle": "閒魚卡坦王Eric",
@@ -36,9 +40,7 @@
     "boardAriaLabel": "弧光拼圖棋盤",
     "tileAriaLabel": "格子 {{label}}",
     "includeTransparent": "透明擴展",
-    "includeBlackHole": "黑寶石擴展",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓"
+    "includeBlackHole": "黑寶石擴展"
   },
   "orapaMine": {
     "title": "奧拉帕礦山",
@@ -50,9 +52,7 @@
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
     "includeTransparent": "透明擴展",
     "includeBlack": "黑寶石擴展",
-    "includeLightBlue": "淺藍寶石擴展",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓"
+    "includeLightBlue": "淺藍寶石擴展"
   },
   "orapaSpace": {
     "title": "奧拉帕宇宙",
@@ -65,9 +65,7 @@
     "includeBlackHole": "黑洞擴展",
     "boardSizeLabel": "棋盤尺寸",
     "10by8": "10 × 8",
-    "11by7": "11 × 7",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓"
+    "11by7": "11 × 7"
   },
   "switchboard": {
     "title": "接線總機",
@@ -87,9 +85,7 @@
     "rhombic25": "菱形 25",
     "hexagonal19": "六邊形 19",
     "hexagonal37": "六邊形 37",
-    "solved": "完成！🎉",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓"
+    "solved": "完成！🎉"
   },
   "ricochetRobots": {
     "title": "碰撞機器人六邊形",
@@ -107,8 +103,6 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 機器人",
     "blockedCellAriaLabel": "阻擋格",
     "boardSize": "棋盤大小：",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓",
     "color": {
       "red": "紅色",
       "blue": "藍色",
