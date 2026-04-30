@@ -227,17 +227,22 @@ export default function RicochetRobots() {
                     />
                 ))}
 
-                {/* Target marker: star in the target robot's color */}
+                {/* Target tile: filled hex in robot's color + white star */}
                 {targetPos && (
                     <g
                         aria-label={t('ricochetRobots.targetAriaLabel', { color: t(`ricochetRobots.color.${puzzle.target.color}`) })}
                     >
                         <polygon
-                            points={starPoints(targetPos.x, targetPos.y, TARGET_R, TARGET_R * 0.42)}
+                            points={hexPoints(targetPos.x, targetPos.y, HEX_R)}
                             fill={ROBOT_FILL[puzzle.target.color]}
-                            fillOpacity={0.9}
+                            fillOpacity={0.75}
                             stroke={ROBOT_STROKE[puzzle.target.color]}
-                            strokeWidth={1}
+                            strokeWidth={2}
+                        />
+                        <polygon
+                            points={starPoints(targetPos.x, targetPos.y, TARGET_R, TARGET_R * 0.42)}
+                            fill="#ffffff"
+                            fillOpacity={0.95}
                             strokeLinejoin="round"
                         />
                     </g>
