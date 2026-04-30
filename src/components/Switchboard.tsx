@@ -344,6 +344,7 @@ export default function Switchboard() {
   const [history, setHistory] = useState<Step[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [rotatingTile, setRotatingTile] = useState<{ tileNo: number; delta: number; } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const rotationTimeoutRef = useRef<number | null>(null);
 
   const clearPendingRotation = useCallback(() => {
@@ -421,6 +422,33 @@ export default function Switchboard() {
     setHistory([]);
     setHistoryIndex(0);
   }, [clearPendingRotation, history, historyIndex, rotatingTile]);
+
+  const handleStepClick = useCallback((index: number) => {
+    if (rotatingTile) return;
+    clearPendingRotation();
+    if (index + 1 < historyIndex) {
+      setBoard(prevBoard => [...history.slice(index + 1, historyIndex)].reverse().reduce(
+        (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: inverseRotate(step.rotate) }),
+        prevBoard,
+      ));
+    } else if (index + 1 > historyIndex) {
+      setBoard(prevBoard => history.slice(historyIndex, index + 1).reduce(
+        (nextBoard, step) => applyStep(nextBoard, step),
+        prevBoard,
+      ));
+    }
+    setHistoryIndex(index + 1);
+  }, [clearPendingRotation, history, historyIndex, rotatingTile]);
+
+  const handleShare = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      // Clipboard API not available – silently ignore
+    }
+  }, []);
 
   useEffect(() => () => {
     clearPendingRotation();
@@ -565,6 +593,9 @@ export default function Switchboard() {
         </button>
         <button className="btn-reset" onClick={handleRedo} disabled={historyIndex >= history.length || Boolean(rotatingTile)}>
           {t('switchboard.redo')}
+        </button>
+        <button className="btn-reset" onClick={handleShare}>
+          {linkCopied ? t('switchboard.linkCopied') : t('switchboard.shareGame')}
         </button>
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
@@ -732,6 +763,7 @@ export default function Switchboard() {
               ariaLabel={step.rotate === 1
                 ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
                 : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
+              onClick={() => handleStepClick(index)}
             />
           ))}
         </div>
