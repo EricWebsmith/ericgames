@@ -18,7 +18,7 @@ function Home() {
         <NavLink to="/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <defs>
-              <filter id="al-gf" x="-40%" y="-40%" width="180%" height="180%">
+              <filter id="arclight-glow" x="-40%" y="-40%" width="180%" height="180%">
                 <feGaussianBlur stdDeviation="1.5" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
@@ -31,15 +31,15 @@ function Home() {
             {/* Right pointy-top hex tile, r=18, center (56,40) */}
             <polygon points="56,22 72,31 72,49 56,58 40,49 40,31" fill="#070f1e" stroke="#1e5070" strokeWidth={1.5} />
             {/* Light beam through left tile: top-left edge → shared right edge */}
-            <path d="M16,27 C26,22 38,26 40,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#al-gf)" />
+            <path d="M16,27 C26,22 38,26 40,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#arclight-glow)" />
             {/* Light beam through right tile: shared left edge → bottom-right edge */}
-            <path d="M40,40 C44,50 60,57 64,54" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#al-gf)" />
+            <path d="M40,40 C44,50 60,57 64,54" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#arclight-glow)" />
             {/* Entry glow */}
-            <circle cx={16} cy={27} r={3.5} fill="#00e5ff" filter="url(#al-gf)" />
+            <circle cx={16} cy={27} r={3.5} fill="#00e5ff" filter="url(#arclight-glow)" />
             {/* Mid-point dot at shared edge */}
             <circle cx={40} cy={40} r={2} fill="#7ff6ff" opacity={0.9} />
             {/* Exit glow */}
-            <circle cx={64} cy={54} r={3.5} fill="#00e5ff" filter="url(#al-gf)" />
+            <circle cx={64} cy={54} r={3.5} fill="#00e5ff" filter="url(#arclight-glow)" />
           </svg>
           <h2>{t('home.arclight.title')}</h2>
           <p>{t('home.arclight.description')}</p>
