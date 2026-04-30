@@ -84,13 +84,13 @@
     "solved": "完成！🎉"
   },
   "ricochetRobots": {
-    "title": "弹射机器人六边形",
-    "instructions": "点击机器人选中它，再点击高亮格子让它滑动。机器人会一直滑动直到碰到墙壁或另一个机器人。将目标机器人（用字母标记）移到菱形目标格。",
+    "title": "碰撞机器人六边形",
+    "instructions": "点击机器人选中它，再点击高亮格子让它滑动。机器人会一直滑动直到碰到墙壁或另一个机器人。将目标机器人移到目标格。",
     "newGame": "新游戏",
     "undo": "撤销",
     "solved_other": "用了 {{count}} 步完成！🎉",
     "moveCount": "步数：{{count}}",
-    "boardAriaLabel": "弹射机器人六边形拼图棋盘",
+    "boardAriaLabel": "碰撞机器人六边形拼图棋盘",
     "robotAriaLabel": "{{color}} 机器人",
     "targetAriaLabel": "{{color}} 机器人的目标",
     "moveAriaLabel": "向方向 {{direction}} 滑动 {{color}} 机器人",
