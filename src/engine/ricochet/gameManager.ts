@@ -158,9 +158,8 @@ export function setupWithSeed(seed: number, radius = 4): Puzzle {
     const rng = seededRandom(seed);
     const allCells = getAllCells(radius);
 
-    // Number of edge-walls and blocked cells scaled with board area
+    // Number of edge-walls scaled with board area
     const targetWallCount = Math.round(BASE_WALL_COUNT * allCells.length / BASE_CELL_COUNT);
-    const targetBlockedCount = Math.max(2, Math.round(radius - 2));
 
     // Add random internal walls (stored in both directions for easy lookup)
     const walls: Board['walls'] = [];
@@ -177,19 +176,13 @@ export function setupWithSeed(seed: number, radius = 4): Puzzle {
         addWall(walls, q, r, direction);
     }
 
-    // Place blocked cells (impassable hex obstacles)
-    const usedCells = new Set<string>();
-    const blockedCells: Array<[number, number]> = [];
-    for (let i = 0; i < targetBlockedCount * 10 && blockedCells.length < targetBlockedCount; i++) {
-        const [q, r] = allCells[Math.floor(rng() * allCells.length)];
-        if (usedCells.has(`${q},${r}`)) continue;
-        usedCells.add(`${q},${r}`);
-        blockedCells.push([q, r]);
-    }
+    // The center cell (0,0) is always a blocked (impassable) cell
+    const blockedCells: Array<[number, number]> = [[0, 0]];
 
     const board: Board = { radius, walls, blockedCells };
 
-    // Place robots at distinct random cells (not on blocked cells)
+    // Place robots at distinct random cells (not on the center blocked cell)
+    const usedCells = new Set<string>(['0,0']);
     const robots: Robot[] = [];
     for (const color of ROBOT_COLORS) {
         let q: number, r: number;
