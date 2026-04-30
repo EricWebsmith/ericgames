@@ -5,6 +5,7 @@ import Arclight from './components/Arclight';
 import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
+import RicochetRobots from './components/RicochetRobots';
 import Switchboard from './components/Switchboard';
 
 function Home() {
@@ -68,6 +69,25 @@ function Home() {
           <h2>{t('home.switchboard.title')}</h2>
           <p>{t('home.switchboard.description')}</p>
         </NavLink>
+
+        <NavLink to="/ricochet-robots" className="game-card space-card">
+          <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
+            <rect width={80} height={80} fill="#03060f" rx={4} />
+            {/* Hex grid background tiles */}
+            <polygon points="40,10 55,19 55,37 40,46 25,37 25,19" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
+            <polygon points="55,19 70,28 70,46 55,55 40,46 40,28" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
+            <polygon points="25,37 40,46 40,64 25,73 10,64 10,46" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
+            {/* Wall */}
+            <line x1={55} y1={19} x2={55} y2={37} stroke="#ffffff" strokeWidth={2.5} strokeLinecap="round" />
+            {/* Red robot */}
+            <circle cx={40} cy={28} r={7} fill="#ff5555" stroke="#ff2222" strokeWidth={1.5} />
+            <text x={40} y={28} textAnchor="middle" dominantBaseline="middle" fill="#fff" fontSize={7} fontWeight="bold">R</text>
+            {/* Yellow target diamond */}
+            <polygon points="55,55 62,64 55,73 48,64" fill="none" stroke="#ffdd00" strokeWidth={2} />
+          </svg>
+          <h2>{t('home.ricochetRobots.title')}</h2>
+          <p>{t('home.ricochetRobots.description')}</p>
+        </NavLink>
       </div>
     </div>
   );
@@ -83,6 +103,7 @@ function Nav() {
         <li><NavLink to="/orapa-mine">{t('home.orapaMine.title')}</NavLink></li>
         <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
         <li><NavLink to="/switchboard">{t('home.switchboard.title')}</NavLink></li>
+        <li><NavLink to="/ricochet-robots">{t('home.ricochetRobots.title')}</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -109,6 +130,7 @@ export default function App() {
           <Route path="/orapa-mine" element={<OrapaMine />} />
           <Route path="/orapa-space" element={<OrapaSpace />} />
           <Route path="/switchboard" element={<Switchboard />} />
+          <Route path="/ricochet-robots" element={<RicochetRobots />} />
         </Routes>
       </main>
       <Footer />
