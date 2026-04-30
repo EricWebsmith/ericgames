@@ -35,7 +35,6 @@ const MIN_HEX_R       = 14;
 const MIN_ROBOT_R     = 6;
 const MIN_TARGET_R    = 5;
 // Inner blocked-cell polygon as a fraction of hexR
-const BLOCKED_CELL_SCALE = 0.52;
 
 // Degrees for each of the 6 hex directions (pointy-top, SVG y-down)
 // 0=left, 1=upper-left, 2=upper-right, 3=right, 4=lower-right, 5=lower-left
@@ -303,9 +302,9 @@ export default function RicochetRobots() {
                     return (
                         <polygon
                             key={`blocked-${q},${r}`}
-                            points={hexPoints(pos.x, pos.y, hexR * BLOCKED_CELL_SCALE)}
+                            points={hexPoints(pos.x, pos.y, hexR)}
                             fill={WALL_COLOR}
-                            fillOpacity={0.85}
+                            fillOpacity={1}
                             stroke={WALL_COLOR}
                             strokeWidth={1}
                             aria-label={t('ricochetRobots.blockedCellAriaLabel')}
