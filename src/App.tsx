@@ -17,10 +17,29 @@ function Home() {
       <div className="game-grid">
         <NavLink to="/arclight" className="game-card arclight-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
-            {/* Pointy-top hex tile, matching in-game tile style */}
-            <polygon points="40,12 63,26 63,54 40,68 17,54 17,26" fill="#1a0a04" stroke="#8a5a30" strokeWidth={2} />
-            {/* Light-beam arc: upper-right edge → right edge (tight 120° corner) */}
-            <path d="M 51.5,21.5 A 13,13 0 0,0 63,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" />
+            <defs>
+              <filter id="al-gf" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Left pointy-top hex tile, r=18, center (24,40) */}
+            <polygon points="24,22 40,31 40,49 24,58 8,49 8,31" fill="#070f1e" stroke="#1e5070" strokeWidth={1.5} />
+            {/* Right pointy-top hex tile, r=18, center (56,40) */}
+            <polygon points="56,22 72,31 72,49 56,58 40,49 40,31" fill="#070f1e" stroke="#1e5070" strokeWidth={1.5} />
+            {/* Light beam through left tile: top-left edge → shared right edge */}
+            <path d="M16,27 C26,22 38,26 40,40" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#al-gf)" />
+            {/* Light beam through right tile: shared left edge → bottom-right edge */}
+            <path d="M40,40 C44,50 60,57 64,54" fill="none" stroke="#00e5ff" strokeWidth={2.5} strokeLinecap="round" filter="url(#al-gf)" />
+            {/* Entry glow */}
+            <circle cx={16} cy={27} r={3.5} fill="#00e5ff" filter="url(#al-gf)" />
+            {/* Mid-point dot at shared edge */}
+            <circle cx={40} cy={40} r={2} fill="#7ff6ff" opacity={0.9} />
+            {/* Exit glow */}
+            <circle cx={64} cy={54} r={3.5} fill="#00e5ff" filter="url(#al-gf)" />
           </svg>
           <h2>{t('home.arclight.title')}</h2>
           <p>{t('home.arclight.description')}</p>
