@@ -209,8 +209,12 @@ export function setupWithSeed(seed: number, radius = 4): Puzzle {
     return { board, robots, target };
 }
 
+export function generateSeed(): number {
+    return Math.floor(Math.random() * 0xFFFFFFFF);
+}
+
 export function setup(boardSize: BoardSizeOption = BOARD_SIZE_OPTIONS[0]): Puzzle {
     const radius = SIZE_TO_RADIUS[boardSize];
-    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
+    const seed = generateSeed();
     return setupWithSeed(seed, radius);
 }

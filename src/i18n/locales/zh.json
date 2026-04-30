@@ -99,6 +99,8 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 机器人",
     "blockedCellAriaLabel": "阻挡格",
     "boardSize": "棋盘大小：",
+    "shareGame": "分享游戏",
+    "linkCopied": "链接已复制！✓",
     "color": {
       "red": "红色",
       "blue": "蓝色",

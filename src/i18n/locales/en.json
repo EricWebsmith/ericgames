@@ -101,6 +101,8 @@
     "stepAriaLabel": "Step {{index}}: {{color}} robot",
     "blockedCellAriaLabel": "Blocked cell",
     "boardSize": "Board size:",
+    "shareGame": "Share Game",
+    "linkCopied": "Link copied! ✓",
     "color": {
       "red": "Red",
       "blue": "Blue",

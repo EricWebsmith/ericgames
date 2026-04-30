@@ -99,6 +99,8 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 機器人",
     "blockedCellAriaLabel": "阻擋格",
     "boardSize": "棋盤大小：",
+    "shareGame": "分享遊戲",
+    "linkCopied": "連結已複製！✓",
     "color": {
       "red": "紅色",
       "blue": "藍色",
