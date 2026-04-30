@@ -47,7 +47,7 @@ function Home() {
 
         <NavLink to="/orapa-mine" className="game-card mine-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
-            <rect width={80} height={80} fill="#080818" rx={4} />
+            <rect width={80} height={80} fill="#03030f" rx={4} />
             <rect x={10} y={20} width={60} height={40} fill="none" stroke="#2a2a6a" strokeWidth={1} />
             <rect x={20} y={27} width={12} height={12} fill="#ff5555" rx={1} />
             <rect x={40} y={35} width={12} height={12} fill="#5577ff" rx={1} />
