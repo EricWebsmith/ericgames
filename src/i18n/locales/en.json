@@ -96,6 +96,7 @@
     "robotAriaLabel": "{{color}} robot",
     "targetAriaLabel": "Target for {{color}} robot",
     "moveAriaLabel": "Slide {{color}} robot in direction {{direction}}",
+    "stepAriaLabel": "Step {{index}}: {{color}} robot",
     "targetRobotLabel": "{{color}} (target)",
     "color": {
       "red": "Red",

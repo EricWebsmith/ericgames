@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import RicochetStepSvg from './shared/RicochetStepSvg';
 import {
     applyMove,
     buildRobotPositions,
@@ -364,6 +365,24 @@ export default function RicochetRobots() {
                 <p className="status-message" style={{ textAlign: 'center' }}>
                     {t('ricochetRobots.moveCount', { count: moveHistory.length })}
                 </p>
+
+                {/* Move step trail */}
+                {moveHistory.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 8 }}>
+                        {moveHistory.map((move, index) => (
+                            <RicochetStepSvg
+                                key={index}
+                                fill={ROBOT_FILL[move.color]}
+                                stroke={ROBOT_STROKE[move.color]}
+                                directionDeg={DIR_DEG[move.direction]}
+                                ariaLabel={t('ricochetRobots.stepAriaLabel', {
+                                    index: index + 1,
+                                    color: t(`ricochetRobots.color.${move.color}`),
+                                })}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 {/* Robot color legend */}
                 <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 4 }}>
