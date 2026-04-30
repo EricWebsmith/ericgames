@@ -23,7 +23,7 @@ import {
 // ─── Layout constants ─────────────────────────────────────────────────
 const BASE_HEX_SIZE = 38;  // center-to-vertex radius at radius-4
 const BASE_HEX_R    = 33;  // visual hex radius at radius-4
-const BASE_ROBOT_R  = 13;
+const BASE_ROBOT_R  = 18;
 const BASE_TARGET_R = 10;
 const BASE_RADIUS   = 4;
 const SVG_W = 700;
@@ -32,7 +32,7 @@ const SVG_H = 620;
 // Minimum geometry sizes to keep cells legible on large boards
 const MIN_HEX_SIZE    = 16;
 const MIN_HEX_R       = 14;
-const MIN_ROBOT_R     = 6;
+const MIN_ROBOT_R     = 8;
 const MIN_TARGET_R    = 5;
 // Inner blocked-cell polygon as a fraction of hexR
 
