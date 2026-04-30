@@ -39,13 +39,6 @@ const ROBOT_STROKE: Record<RobotColor, string> = {
     yellow: '#ccaa00',
 };
 
-const ROBOT_LABEL: Record<RobotColor, string> = {
-    red:    'R',
-    blue:   'B',
-    green:  'G',
-    yellow: 'Y',
-};
-
 const BOARD_BG = '#081826';
 const CELL_FILL = '#0b2438';
 const CELL_STROKE = '#3a78a1';
@@ -68,6 +61,15 @@ const hexVertices = (cx: number, cy: number, R: number) =>
 
 const hexPoints = (cx: number, cy: number, R: number): string =>
     hexVertices(cx, cy, R).map(v => `${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' ');
+
+// 5-pointed star polygon centered at (cx, cy), outer radius outerR, inner radius innerR.
+// First point at the top (-90°).
+const starPoints = (cx: number, cy: number, outerR: number, innerR: number): string =>
+    Array.from({ length: 10 }, (_, i) => {
+        const angle = (Math.PI / 180) * (-90 + 36 * i);
+        const r = i % 2 === 0 ? outerR : innerR;
+        return `${(cx + r * Math.cos(angle)).toFixed(1)},${(cy + r * Math.sin(angle)).toFixed(1)}`;
+    }).join(' ');
 
 // ─── Pre-computed cell pixel map ──────────────────────────────────────
 
@@ -225,34 +227,19 @@ export default function RicochetRobots() {
                     />
                 ))}
 
-                {/* Target marker: colored diamond */}
+                {/* Target marker: star in the target robot's color */}
                 {targetPos && (
                     <g
                         aria-label={t('ricochetRobots.targetAriaLabel', { color: t(`ricochetRobots.color.${puzzle.target.color}`) })}
                     >
                         <polygon
-                            points={[
-                                `${targetPos.x},${(targetPos.y - TARGET_R).toFixed(1)}`,
-                                `${(targetPos.x + TARGET_R).toFixed(1)},${targetPos.y}`,
-                                `${targetPos.x},${(targetPos.y + TARGET_R).toFixed(1)}`,
-                                `${(targetPos.x - TARGET_R).toFixed(1)},${targetPos.y}`,
-                            ].join(' ')}
+                            points={starPoints(targetPos.x, targetPos.y, TARGET_R, TARGET_R * 0.42)}
                             fill={ROBOT_FILL[puzzle.target.color]}
-                            fillOpacity={0.25}
-                            stroke={ROBOT_FILL[puzzle.target.color]}
-                            strokeWidth={2}
+                            fillOpacity={0.9}
+                            stroke={ROBOT_STROKE[puzzle.target.color]}
+                            strokeWidth={1}
+                            strokeLinejoin="round"
                         />
-                        <text
-                            x={targetPos.x}
-                            y={targetPos.y}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            fill={ROBOT_FILL[puzzle.target.color]}
-                            fontSize={9}
-                            fontWeight="bold"
-                        >
-                            {ROBOT_LABEL[puzzle.target.color]}
-                        </text>
                     </g>
                 )}
 
@@ -317,6 +304,7 @@ export default function RicochetRobots() {
                     const pos = cellPx.get(`${robot.q},${robot.r}`);
                     if (!pos) return null;
                     const isSelected = robot.color === selectedColor;
+                    const isTargetRobot = robot.color === puzzle.target.color;
                     return (
                         <g
                             key={robot.color}
@@ -333,18 +321,14 @@ export default function RicochetRobots() {
                                 strokeWidth={isSelected ? 2.5 : 1.5}
                                 filter={isSelected ? 'url(#rr-selected-glow)' : undefined}
                             />
-                            <text
-                                x={pos.x}
-                                y={pos.y}
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                fill="#ffffff"
-                                fontSize={11}
-                                fontWeight="bold"
-                                style={{ pointerEvents: 'none' }}
-                            >
-                                {ROBOT_LABEL[robot.color]}
-                            </text>
+                            {isTargetRobot && (
+                                <polygon
+                                    points={starPoints(pos.x, pos.y, ROBOT_R * 0.55, ROBOT_R * 0.23)}
+                                    fill="#ffffff"
+                                    fillOpacity={0.95}
+                                    style={{ pointerEvents: 'none' }}
+                                />
+                            )}
                         </g>
                     );
                 })}
@@ -378,41 +362,41 @@ export default function RicochetRobots() {
 
                 {/* Robot color legend */}
                 <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 4 }}>
-                    {ROBOT_COLORS.map(color => (
-                        <span
-                            key={color}
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 6,
-                                fontSize: 13,
-                                color: ROBOT_FILL[color],
-                                fontWeight: 600,
-                            }}
-                        >
-                            <svg width={16} height={16} aria-hidden="true">
-                                <circle
-                                    cx={8} cy={8} r={6}
-                                    fill={ROBOT_FILL[color]}
-                                    stroke={ROBOT_STROKE[color]}
-                                    strokeWidth={1.5}
-                                />
-                                <text
-                                    x={8} y={8}
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                    fill="#fff"
-                                    fontSize={7}
-                                    fontWeight="bold"
-                                >
-                                    {ROBOT_LABEL[color]}
-                                </text>
-                            </svg>
-                            {color === puzzle.target.color
-                                ? t('ricochetRobots.targetRobotLabel', { color: t(`ricochetRobots.color.${color}`) })
-                                : t(`ricochetRobots.color.${color}`)}
-                        </span>
-                    ))}
+                    {ROBOT_COLORS.map(color => {
+                        const isTarget = color === puzzle.target.color;
+                        return (
+                            <span
+                                key={color}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 6,
+                                    fontSize: 13,
+                                    color: ROBOT_FILL[color],
+                                    fontWeight: 600,
+                                }}
+                            >
+                                <svg width={16} height={16} aria-hidden="true">
+                                    <circle
+                                        cx={8} cy={8} r={6}
+                                        fill={ROBOT_FILL[color]}
+                                        stroke={ROBOT_STROKE[color]}
+                                        strokeWidth={1.5}
+                                    />
+                                    {isTarget && (
+                                        <polygon
+                                            points={starPoints(8, 8, 3.5, 1.5)}
+                                            fill="#ffffff"
+                                            fillOpacity={0.95}
+                                        />
+                                    )}
+                                </svg>
+                                {isTarget
+                                    ? t('ricochetRobots.targetRobotLabel', { color: t(`ricochetRobots.color.${color}`) })
+                                    : t(`ricochetRobots.color.${color}`)}
+                            </span>
+                        );
+                    })}
                 </div>
             </div>
         </div>
