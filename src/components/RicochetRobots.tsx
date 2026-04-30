@@ -1,14 +1,16 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import RicochetStepSvg from './shared/RicochetStepSvg';
 import {
     applyMove,
     buildBlockedCellSet,
     buildRobotPositions,
     buildWallSet,
+    generateSeed,
     getAllCells,
     isSolved,
-    setup,
+    setupWithSeed,
     slideRobot,
 } from '../engine/ricochet/gameManager';
 import {
@@ -101,15 +103,51 @@ function buildCellPx(radius: number, hexSize: number): Map<string, { x: number; 
 
 // ─── Component ────────────────────────────────────────────────────────
 
+function parseSeedParam(value: string | null): number | null {
+    if (!value) return null;
+    const n = parseInt(value, 10);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function parseSizeParam(value: string | null): BoardSizeOption | null {
+    const n = parseInt(value ?? '', 10);
+    return (BOARD_SIZE_OPTIONS as readonly number[]).includes(n) ? (n as BoardSizeOption) : null;
+}
+
 export default function RicochetRobots() {
     const { t } = useTranslation();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const [boardSize, setBoardSize] = useState<BoardSizeOption>(BOARD_SIZE_OPTIONS[0]);
-    const [puzzle, setPuzzle] = useState<Puzzle>(() => setup());
+    const [boardSize, setBoardSize] = useState<BoardSizeOption>(() =>
+        parseSizeParam(searchParams.get('size')) ?? BOARD_SIZE_OPTIONS[0],
+    );
+
+    // seed is initialized from the URL param (if valid) or a freshly generated value
+    const [seed, setSeed] = useState<number>(() =>
+        parseSeedParam(searchParams.get('seed')) ?? generateSeed(),
+    );
+
+    // puzzle is initialized from the already-resolved seed and boardSize initial values
+    const [puzzle, setPuzzle] = useState<Puzzle>(() =>
+        setupWithSeed(seed, SIZE_TO_RADIUS[boardSize]),
+    );
+
     const [currentRobots, setCurrentRobots] = useState(() => puzzle.robots);
     const [moveHistory, setMoveHistory] = useState<Move[]>([]);
     const [redoStack, setRedoStack] = useState<Move[]>([]);
     const [selectedColor, setSelectedColor] = useState<RobotColor | null>(null);
+    const [linkCopied, setLinkCopied] = useState(false);
+
+    // Write the initial seed + size into the URL so the current game is always shareable,
+    // even on a fresh load without query params. { replace: true } avoids polluting history.
+    useEffect(() => {
+        setSearchParams(
+            { seed: String(seed), size: String(boardSize) },
+            { replace: true },
+        );
+    // Intentionally runs once on mount; seed and boardSize are stable initial values here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // ─── Dynamic geometry based on board size ─────────────────────────
     const hexSize = useMemo(
@@ -179,18 +217,31 @@ export default function RicochetRobots() {
 
     const handleNewGame = useCallback((size?: BoardSizeOption) => {
         const nextSize = size ?? boardSize;
-        const newPuzzle = setup(nextSize);
+        const nextSeed = generateSeed();
+        const newPuzzle = setupWithSeed(nextSeed, SIZE_TO_RADIUS[nextSize]);
+        setSeed(nextSeed);
         setPuzzle(newPuzzle);
         setCurrentRobots(newPuzzle.robots);
         setMoveHistory([]);
         setRedoStack([]);
         setSelectedColor(null);
-    }, [boardSize]);
+        setSearchParams({ seed: String(nextSeed), size: String(nextSize) });
+    }, [boardSize, setSearchParams]);
 
     const handleBoardSizeChange = useCallback((size: BoardSizeOption) => {
         setBoardSize(size);
         handleNewGame(size);
     }, [handleNewGame]);
+
+    const handleShare = useCallback(async () => {
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+            setLinkCopied(true);
+            setTimeout(() => setLinkCopied(false), 2000);
+        } catch {
+            // Clipboard API not available – silently ignore
+        }
+    }, []);
 
     const handleUndo = useCallback(() => {
         if (moveHistory.length === 0) return;
@@ -282,6 +333,9 @@ export default function RicochetRobots() {
                     disabled={redoStack.length === 0}
                 >
                     {t('ricochetRobots.redo')}
+                </button>
+                <button className="btn-reset" onClick={handleShare}>
+                    {linkCopied ? t('ricochetRobots.linkCopied') : t('ricochetRobots.shareGame')}
                 </button>
             </div>
 
