@@ -92,17 +92,26 @@ function Home() {
         <NavLink to="/ricochet-robots" className="game-card space-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#03060f" rx={4} />
-            {/* Hex grid background tiles */}
-            <polygon points="40,10 55,19 55,37 40,46 25,37 25,19" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
-            <polygon points="55,19 70,28 70,46 55,55 40,46 40,28" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
-            <polygon points="25,37 40,46 40,64 25,73 10,64 10,46" fill="#0b1a30" stroke="#3a78a1" strokeWidth={1} />
-            {/* Wall */}
-            <line x1={55} y1={19} x2={55} y2={37} stroke="#ffffff" strokeWidth={2.5} strokeLinecap="round" />
-            {/* Red robot */}
-            <circle cx={40} cy={28} r={7} fill="#ff5555" stroke="#ff2222" strokeWidth={1.5} />
-            <text x={40} y={28} textAnchor="middle" dominantBaseline="middle" fill="#fff" fontSize={7} fontWeight="bold">R</text>
-            {/* Yellow target diamond */}
-            <polygon points="55,55 62,64 55,73 48,64" fill="none" stroke="#ffdd00" strokeWidth={2} />
+            {/* Square grid: 5×5 cells, 14px each (x: 3–73, y: 3–73) */}
+            {[3, 17, 31, 45, 59, 73].map(v => (
+              <g key={v}>
+                <line x1={v} y1={3} x2={v} y2={73} stroke="#1a3050" strokeWidth={0.5} />
+                <line x1={3} y1={v} x2={73} y2={v} stroke="#1a3050" strokeWidth={0.5} />
+              </g>
+            ))}
+            {/* Wall segments (orange, thick) */}
+            {/* East wall of col 3, row 1 – stops robot sliding right */}
+            <line x1={59} y1={17} x2={59} y2={31} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
+            {/* South wall of col 3, row 3 – stops robot sliding down */}
+            <line x1={45} y1={59} x2={59} y2={59} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
+            {/* Ricochet path: right then down */}
+            <polyline points="10,24 52,24 52,52" fill="none" stroke="#4488ff" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.8} />
+            {/* Red robot at col 0, row 1 */}
+            <rect x={4} y={18} width={12} height={12} rx={2} fill="#ff4444" stroke="#cc2222" strokeWidth={1} />
+            {/* Yellow bullseye target at col 3, row 3 */}
+            <circle cx={52} cy={52} r={6} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={52} cy={52} r={3} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={52} cy={52} r={1} fill="#ffdd00" />
           </svg>
           <h2>{t('home.ricochetRobots.title')}</h2>
           <p>{t('home.ricochetRobots.description')}</p>
