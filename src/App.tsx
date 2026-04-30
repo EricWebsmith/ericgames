@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Arclight from './components/Arclight';
-import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
 import RicochetRobots from './components/RicochetRobots';
+import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import Switchboard from './components/Switchboard';
 
 function Home() {
@@ -47,7 +47,7 @@ function Home() {
 
         <NavLink to="/orapa-mine" className="game-card mine-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
-            <rect width={80} height={80} fill="#080818" rx={4} />
+            <rect width={80} height={80} fill="#03030f" rx={4} />
             <rect x={10} y={20} width={60} height={40} fill="none" stroke="#2a2a6a" strokeWidth={1} />
             <rect x={20} y={27} width={12} height={12} fill="#ff5555" rx={1} />
             <rect x={40} y={35} width={12} height={12} fill="#5577ff" rx={1} />
@@ -93,26 +93,28 @@ function Home() {
         <NavLink to="/ricochet-robots" className="game-card space-card">
           <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
             <rect width={80} height={80} fill="#03060f" rx={4} />
-            {/* Square grid: 5×5 cells, 14px each (x: 3–73, y: 3–73) */}
-            {[3, 17, 31, 45, 59, 73].map(v => (
-              <g key={v}>
-                <line x1={v} y1={3} x2={v} y2={73} stroke="#1a3050" strokeWidth={0.5} />
-                <line x1={3} y1={v} x2={73} y2={v} stroke="#1a3050" strokeWidth={0.5} />
-              </g>
-            ))}
+            {/* Hex grid: pointy-top hexes, r=9. Even rows x=[10,26,42,58,74], odd rows x=[18,34,50,66] */}
+            {[12, 26, 40, 54, 68].flatMap((cy, row) =>
+              (row % 2 === 0 ? [10, 26, 42, 58, 74] : [18, 34, 50, 66]).map(cx => (
+                <polygon key={`h-${cx}-${cy}`}
+                  points={`${cx},${cy - 9} ${cx + 8},${cy - 4} ${cx + 8},${cy + 4} ${cx},${cy + 9} ${cx - 8},${cy + 4} ${cx - 8},${cy - 4}`}
+                  fill="none" stroke="#1a3050" strokeWidth={0.5}
+                />
+              ))
+            )}
             {/* Wall segments (orange, thick) */}
-            {/* East wall of col 3, row 1 – stops robot sliding right */}
-            <line x1={59} y1={17} x2={59} y2={31} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
-            {/* South wall of col 3, row 3 – stops robot sliding down */}
-            <line x1={45} y1={59} x2={59} y2={59} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
+            {/* East edge of hex (42,12) – stops robot sliding right */}
+            <line x1={50} y1={8} x2={50} y2={16} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
+            {/* North edge of target hex (65,54) – stops robot sliding down */}
+            <line x1={65} y1={65} x2={73} y2={58} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
             {/* Ricochet path: right then down */}
-            <polyline points="10,24 52,24 52,52" fill="none" stroke="#4488ff" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.8} />
-            {/* Red robot at col 0, row 1 */}
-            <rect x={4} y={18} width={12} height={12} rx={2} fill="#ff4444" stroke="#cc2222" strokeWidth={1} />
-            {/* Yellow bullseye target at col 3, row 3 */}
-            <circle cx={52} cy={52} r={6} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
-            <circle cx={52} cy={52} r={3} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
-            <circle cx={52} cy={52} r={1} fill="#ffdd00" />
+            <polyline points="10,12 43,12 65,54" fill="none" stroke="#4488ff" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.8} />
+            {/* Red robot circle at (10,12) */}
+            <circle cx={10} cy={12} r={4} fill="#ff4444" stroke="#cc2222" strokeWidth={1.5} />
+            {/* Yellow bullseye target at hex (65,54) */}
+            <circle cx={65} cy={54} r={5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={65} cy={54} r={2.5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={65} cy={54} r={1} fill="#ffdd00" />
           </svg>
           <h2>{t('home.ricochetRobots.title')}</h2>
           <p>{t('home.ricochetRobots.description')}</p>
