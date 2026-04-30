@@ -301,28 +301,28 @@ export default function RicochetRobots() {
 
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <button className="btn-reset" onClick={() => handleNewGame()}>
-                    {t('ricochetRobots.newGame')}
+                    {t('shared.newGame')}
                 </button>
                 <button
                     className="btn-reset"
                     onClick={handleReset}
                     disabled={moveHistory.length === 0 && redoStack.length === 0}
                 >
-                    {t('ricochetRobots.reset')}
+                    {t('shared.reset')}
                 </button>
                 <button
                     className="btn-reset"
                     onClick={handleUndo}
                     disabled={moveHistory.length === 0}
                 >
-                    {t('ricochetRobots.undo')}
+                    {t('shared.undo')}
                 </button>
                 <button
                     className="btn-reset"
                     onClick={handleRedo}
                     disabled={redoStack.length === 0}
                 >
-                    {t('ricochetRobots.redo')}
+                    {t('shared.redo')}
                 </button>
                 <ShareButton />
             </div>

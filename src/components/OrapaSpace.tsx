@@ -543,7 +543,7 @@ export default function OrapaSpace() {
                     {t('orapaSpace.clickAllBorders')}
                 </button>
                 <button className="btn-reset" onClick={handleNewGame}>
-                    {t('orapaSpace.newGame')}
+                    {t('shared.newGame')}
                 </button>
                 <ShareButton />
             </div>

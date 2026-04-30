@@ -520,7 +520,7 @@ export default function Arclight() {
           {t('arclight.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          {t('arclight.newGame')}
+          {t('shared.newGame')}
         </button>
         <ShareButton />
       </div>

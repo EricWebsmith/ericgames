@@ -452,7 +452,7 @@ export default function OrapaMine() {
           {t('orapaMine.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          {t('orapaMine.newGame')}
+          {t('shared.newGame')}
         </button>
         <ShareButton />
       </div>

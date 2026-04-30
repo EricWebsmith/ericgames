@@ -573,16 +573,16 @@ export default function Switchboard() {
           ))}
         </select>
         <button className="btn-reset" onClick={() => handleNewGame()}>
-          {t('switchboard.newGame')}
+          {t('shared.newGame')}
         </button>
         <button className="btn-reset" onClick={handleResetSteps} disabled={steps.length === 0 || Boolean(rotatingTile)}>
-          {t('switchboard.reset')}
+          {t('shared.reset')}
         </button>
         <button className="btn-reset" onClick={handleUndo} disabled={historyIndex === 0 || Boolean(rotatingTile)}>
-          {t('switchboard.undo')}
+          {t('shared.undo')}
         </button>
         <button className="btn-reset" onClick={handleRedo} disabled={historyIndex >= history.length || Boolean(rotatingTile)}>
-          {t('switchboard.redo')}
+          {t('shared.redo')}
         </button>
         <ShareButton />
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
