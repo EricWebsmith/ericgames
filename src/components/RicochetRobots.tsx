@@ -221,6 +221,19 @@ export default function RicochetRobots() {
         setSelectedColor(null);
     }, [puzzle.robots]);
 
+    const handleStepClick = useCallback((index: number) => {
+        let robots = puzzle.robots;
+        for (let i = 0; i <= index; i++) {
+            const move = moveHistory[i];
+            robots = robots.map(r => r.color === move.color ? { ...r, q: move.toQ, r: move.toR } : r);
+        }
+        const remaining = moveHistory.slice(index + 1).reverse();
+        setCurrentRobots(robots);
+        setMoveHistory(moveHistory.slice(0, index + 1));
+        setRedoStack(remaining);
+        setSelectedColor(null);
+    }, [moveHistory, puzzle.robots]);
+
     const handleRobotClick = useCallback((color: RobotColor) => {
         if (solved) return;
         setSelectedColor(prev => (prev === color ? null : color));
@@ -499,6 +512,7 @@ export default function RicochetRobots() {
                                     index: index + 1,
                                     color: t(`ricochetRobots.color.${move.color}`),
                                 })}
+                                onClick={() => handleStepClick(index)}
                             />
                         ))}
                     </div>
