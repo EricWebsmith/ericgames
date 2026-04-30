@@ -2,10 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Arclight from './components/Arclight';
-import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
 import RicochetRobots from './components/RicochetRobots';
+import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import Switchboard from './components/Switchboard';
 
 function Home() {
@@ -105,16 +105,16 @@ function Home() {
             {/* Wall segments (orange, thick) */}
             {/* East edge of hex (42,12) – stops robot sliding right */}
             <line x1={50} y1={8} x2={50} y2={16} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
-            {/* North edge of target hex (50,54) – stops robot sliding down */}
-            <line x1={42} y1={50} x2={58} y2={50} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
+            {/* North edge of target hex (65,54) – stops robot sliding down */}
+            <line x1={65} y1={65} x2={73} y2={58} stroke="#cc7700" strokeWidth={3} strokeLinecap="square" />
             {/* Ricochet path: right then down */}
-            <polyline points="10,12 50,12 50,54" fill="none" stroke="#4488ff" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.8} />
-            {/* Red robot hex at (10,12) */}
-            <polygon points="10,3 18,8 18,16 10,21 2,16 2,8" fill="#ff4444" stroke="#cc2222" strokeWidth={1} />
-            {/* Yellow bullseye target at hex (50,54) */}
-            <circle cx={50} cy={54} r={5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
-            <circle cx={50} cy={54} r={2.5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
-            <circle cx={50} cy={54} r={1} fill="#ffdd00" />
+            <polyline points="10,12 43,12 65,54" fill="none" stroke="#4488ff" strokeWidth={1.5} strokeDasharray="3,2" opacity={0.8} />
+            {/* Red robot circle at (10,12) */}
+            <circle cx={10} cy={12} r={4} fill="#ff4444" stroke="#cc2222" strokeWidth={1.5} />
+            {/* Yellow bullseye target at hex (65,54) */}
+            <circle cx={65} cy={54} r={5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={65} cy={54} r={2.5} fill="none" stroke="#ffdd00" strokeWidth={1.5} />
+            <circle cx={65} cy={54} r={1} fill="#ffdd00" />
           </svg>
           <h2>{t('home.ricochetRobots.title')}</h2>
           <p>{t('home.ricochetRobots.description')}</p>
