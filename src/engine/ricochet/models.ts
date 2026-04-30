@@ -35,7 +35,20 @@ export interface Wall {
 export interface Board {
     radius: number;
     walls: Wall[];
+    blockedCells?: Array<[number, number]>;
 }
+
+// Cell counts and their corresponding hex grid radii
+export const BOARD_SIZE_OPTIONS = [61, 91, 127, 169, 217] as const;
+export type BoardSizeOption = typeof BOARD_SIZE_OPTIONS[number];
+
+export const SIZE_TO_RADIUS: Record<BoardSizeOption, number> = {
+    61:  4,
+    91:  5,
+    127: 6,
+    169: 7,
+    217: 8,
+};
 
 export interface Move {
     color: RobotColor;

@@ -1,4 +1,4 @@
-import { ROBOT_COLORS, type Board, type Move, type Puzzle, type Robot, type RobotColor, type Target } from './models';
+import { ROBOT_COLORS, type Board, type Move, type Puzzle, type Robot, type RobotColor, type Target, BOARD_SIZE_OPTIONS, type BoardSizeOption, SIZE_TO_RADIUS } from './models';
 
 // Pointy-top hex axial direction offsets
 // 0=left, 1=upper-left, 2=upper-right, 3=right, 4=lower-right, 5=lower-left
@@ -28,6 +28,11 @@ export function buildWallSet(walls: Board['walls']): Set<string> {
     return new Set(walls.map(w => wallKey(w.q, w.r, w.direction)));
 }
 
+export function buildBlockedCellSet(blockedCells?: Array<[number, number]>): Set<string> {
+    if (!blockedCells) return new Set();
+    return new Set(blockedCells.map(([q, r]) => `${q},${r}`));
+}
+
 function addWall(walls: Board['walls'], q: number, r: number, direction: number): void {
     walls.push({ q, r, direction });
     const [nq, nr] = getNeighbor(q, r, direction);
@@ -39,12 +44,15 @@ export function canMoveInDirection(
     direction: number,
     wallSet: Set<string>,
     radius: number,
+    blockedCellSet: Set<string> = new Set(),
 ): boolean {
     if (wallSet.has(wallKey(q, r, direction))) return false;
     const [nq, nr] = getNeighbor(q, r, direction);
     if (!isInsideBoard(nq, nr, radius)) return false;
     // A wall on the incoming side of the neighbor also blocks movement
     if (wallSet.has(wallKey(nq, nr, (direction + 3) % 6))) return false;
+    // A blocked cell is impassable
+    if (blockedCellSet.has(`${nq},${nr}`)) return false;
     return true;
 }
 
@@ -54,10 +62,11 @@ export function slideRobot(
     wallSet: Set<string>,
     robotPositions: Set<string>,
     radius: number,
+    blockedCellSet: Set<string> = new Set(),
 ): [number, number] {
     let cq = q;
     let cr = r;
-    while (canMoveInDirection(cq, cr, direction, wallSet, radius)) {
+    while (canMoveInDirection(cq, cr, direction, wallSet, radius, blockedCellSet)) {
         const [nq, nr] = getNeighbor(cq, cr, direction);
         if (robotPositions.has(`${nq},${nr}`)) break;
         cq = nq;
@@ -82,12 +91,13 @@ export function applyMove(
     direction: number,
     wallSet: Set<string>,
     radius: number,
+    blockedCellSet: Set<string> = new Set(),
 ): { robots: Robot[]; move: Move; } | null {
     const robot = robots.find(r => r.color === color);
     if (!robot) return null;
 
     const robotPositions = buildRobotPositions(robots, color);
-    const [toQ, toR] = slideRobot(robot.q, robot.r, direction, wallSet, robotPositions, radius);
+    const [toQ, toR] = slideRobot(robot.q, robot.r, direction, wallSet, robotPositions, radius, blockedCellSet);
 
     if (toQ === robot.q && toR === robot.r) return null;
 
@@ -132,6 +142,10 @@ function seededRandom(seed: number): () => number {
     };
 }
 
+// Base board parameters (radius-4 / 61-cell board) used for scaling wall and blocked-cell counts
+const BASE_WALL_COUNT = 14;
+const BASE_CELL_COUNT = 61; // getAllCells(4).length
+
 // Canonical key for a wall between two cells (direction-independent dedup)
 function wallPairKey(q: number, r: number, direction: number): string {
     const [nq, nr] = getNeighbor(q, r, direction);
@@ -140,15 +154,17 @@ function wallPairKey(q: number, r: number, direction: number): string {
     return a < b ? `${q},${r}-${nq},${nr}` : `${nq},${nr}-${q},${r}`;
 }
 
-export function setupWithSeed(seed: number): Puzzle {
+export function setupWithSeed(seed: number, radius = 4): Puzzle {
     const rng = seededRandom(seed);
-    const radius = 4; // 61-cell board
     const allCells = getAllCells(radius);
+
+    // Number of edge-walls and blocked cells scaled with board area
+    const targetWallCount = Math.round(BASE_WALL_COUNT * allCells.length / BASE_CELL_COUNT);
+    const targetBlockedCount = Math.max(2, Math.round(radius - 2));
 
     // Add random internal walls (stored in both directions for easy lookup)
     const walls: Board['walls'] = [];
     const wallPairKeys = new Set<string>();
-    const targetWallCount = 14;
 
     for (let i = 0; i < targetWallCount * 8 && wallPairKeys.size < targetWallCount; i++) {
         const [q, r] = allCells[Math.floor(rng() * allCells.length)];
@@ -161,10 +177,19 @@ export function setupWithSeed(seed: number): Puzzle {
         addWall(walls, q, r, direction);
     }
 
-    const board: Board = { radius, walls };
-
-    // Place robots at distinct random cells
+    // Place blocked cells (impassable hex obstacles)
     const usedCells = new Set<string>();
+    const blockedCells: Array<[number, number]> = [];
+    for (let i = 0; i < targetBlockedCount * 10 && blockedCells.length < targetBlockedCount; i++) {
+        const [q, r] = allCells[Math.floor(rng() * allCells.length)];
+        if (usedCells.has(`${q},${r}`)) continue;
+        usedCells.add(`${q},${r}`);
+        blockedCells.push([q, r]);
+    }
+
+    const board: Board = { radius, walls, blockedCells };
+
+    // Place robots at distinct random cells (not on blocked cells)
     const robots: Robot[] = [];
     for (const color of ROBOT_COLORS) {
         let q: number, r: number;
@@ -175,7 +200,7 @@ export function setupWithSeed(seed: number): Puzzle {
         robots.push({ color, q, r });
     }
 
-    // Pick a target cell not occupied by any robot
+    // Pick a target cell not occupied by any robot or blocked cell
     let targetQ: number, targetR: number;
     do {
         [targetQ, targetR] = allCells[Math.floor(rng() * allCells.length)];
@@ -191,7 +216,8 @@ export function setupWithSeed(seed: number): Puzzle {
     return { board, robots, target };
 }
 
-export function setup(): Puzzle {
+export function setup(boardSize: BoardSizeOption = BOARD_SIZE_OPTIONS[0]): Puzzle {
+    const radius = SIZE_TO_RADIUS[boardSize];
     const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-    return setupWithSeed(seed);
+    return setupWithSeed(seed, radius);
 }
