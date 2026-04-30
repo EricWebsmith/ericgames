@@ -21,6 +21,10 @@
       "title": "接線總機",
       "description": "接線總機"
     },
+    "ricochetRobots": {
+      "title": "彈射機器人六邊形",
+      "description": "彈射機器人六邊形"
+    },
     "contact": "購買請在閒魚搜索'卡坦王Eric', QQ: 961422707"
   },
   "arclight": {
@@ -78,5 +82,28 @@
     "hexagonal19": "六邊形 19",
     "hexagonal37": "六邊形 37",
     "solved": "完成！🎉"
+  },
+  "ricochetRobots": {
+    "title": "碰撞機器人六邊形",
+    "instructions": "點擊機器人選中它，再點擊高亮格子讓它滑動。機器人會一直滑動直到碰到牆壁或另一個機器人。將目標機器人移到目標格。",
+    "newGame": "新遊戲",
+    "reset": "重置",
+    "undo": "復原",
+    "redo": "重做",
+    "solved_other": "用了 {{count}} 步完成！🎉",
+    "moveCount": "步數：{{count}}",
+    "boardAriaLabel": "碰撞機器人六邊形拼圖棋盤",
+    "robotAriaLabel": "{{color}} 機器人",
+    "targetAriaLabel": "{{color}} 機器人的目標",
+    "moveAriaLabel": "向方向 {{direction}} 滑動 {{color}} 機器人",
+    "stepAriaLabel": "第 {{index}} 步：{{color}} 機器人",
+    "blockedCellAriaLabel": "阻擋格",
+    "boardSize": "棋盤大小：",
+    "color": {
+      "red": "紅色",
+      "blue": "藍色",
+      "green": "綠色",
+      "yellow": "黃色"
+    }
   }
 }
