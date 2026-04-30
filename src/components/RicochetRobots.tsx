@@ -46,14 +46,14 @@ const ROBOT_FILL: Record<RobotColor, string> = {
     red:    '#ff5555',
     blue:   '#5577ff',
     green:  '#44cc44',
-    yellow: '#ffdd00',
+    yellow: '#cc9900',
 };
 
 const ROBOT_STROKE: Record<RobotColor, string> = {
     red:    '#ff2222',
     blue:   '#2244dd',
     green:  '#22aa22',
-    yellow: '#ccaa00',
+    yellow: '#996600',
 };
 
 const BOARD_BG = '#081826';
