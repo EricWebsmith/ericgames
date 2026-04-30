@@ -383,45 +383,6 @@ export default function RicochetRobots() {
                         ))}
                     </div>
                 )}
-
-                {/* Robot color legend */}
-                <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', marginTop: 4 }}>
-                    {ROBOT_COLORS.map(color => {
-                        const isTarget = color === puzzle.target.color;
-                        return (
-                            <span
-                                key={color}
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: 6,
-                                    fontSize: 13,
-                                    color: ROBOT_FILL[color],
-                                    fontWeight: 600,
-                                }}
-                            >
-                                <svg width={16} height={16} aria-hidden="true">
-                                    <circle
-                                        cx={8} cy={8} r={6}
-                                        fill={ROBOT_FILL[color]}
-                                        stroke={ROBOT_STROKE[color]}
-                                        strokeWidth={1.5}
-                                    />
-                                    {isTarget && (
-                                        <polygon
-                                            points={starPoints(8, 8, 3.5, 1.5)}
-                                            fill="#ffffff"
-                                            fillOpacity={0.95}
-                                        />
-                                    )}
-                                </svg>
-                                {isTarget
-                                    ? t('ricochetRobots.targetRobotLabel', { color: t(`ricochetRobots.color.${color}`) })
-                                    : t(`ricochetRobots.color.${color}`)}
-                            </span>
-                        );
-                    })}
-                </div>
             </div>
         </div>
     );

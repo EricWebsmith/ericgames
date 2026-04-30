@@ -95,7 +95,6 @@
     "targetAriaLabel": "{{color}} 机器人的目标",
     "moveAriaLabel": "向方向 {{direction}} 滑动 {{color}} 机器人",
     "stepAriaLabel": "第 {{index}} 步：{{color}} 机器人",
-    "targetRobotLabel": "{{color}}（目标）",
     "color": {
       "red": "红色",
       "blue": "蓝色",
