@@ -108,6 +108,7 @@ export default function RicochetRobots() {
     const [puzzle, setPuzzle] = useState<Puzzle>(() => setup());
     const [currentRobots, setCurrentRobots] = useState(() => puzzle.robots);
     const [moveHistory, setMoveHistory] = useState<Move[]>([]);
+    const [redoStack, setRedoStack] = useState<Move[]>([]);
     const [selectedColor, setSelectedColor] = useState<RobotColor | null>(null);
 
     // ─── Dynamic geometry based on board size ─────────────────────────
@@ -182,6 +183,7 @@ export default function RicochetRobots() {
         setPuzzle(newPuzzle);
         setCurrentRobots(newPuzzle.robots);
         setMoveHistory([]);
+        setRedoStack([]);
         setSelectedColor(null);
     }, [boardSize]);
 
@@ -197,8 +199,27 @@ export default function RicochetRobots() {
             prev.map(r => r.color === last.color ? { ...r, q: last.fromQ, r: last.fromR } : r),
         );
         setMoveHistory(prev => prev.slice(0, -1));
+        setRedoStack(prev => [...prev, last]);
         setSelectedColor(null);
     }, [moveHistory]);
+
+    const handleRedo = useCallback(() => {
+        if (redoStack.length === 0) return;
+        const next = redoStack[redoStack.length - 1];
+        setCurrentRobots(prev =>
+            prev.map(r => r.color === next.color ? { ...r, q: next.toQ, r: next.toR } : r),
+        );
+        setRedoStack(prev => prev.slice(0, -1));
+        setMoveHistory(prev => [...prev, next]);
+        setSelectedColor(null);
+    }, [redoStack]);
+
+    const handleReset = useCallback(() => {
+        setCurrentRobots(puzzle.robots);
+        setMoveHistory([]);
+        setRedoStack([]);
+        setSelectedColor(null);
+    }, [puzzle.robots]);
 
     const handleRobotClick = useCallback((color: RobotColor) => {
         if (solved) return;
@@ -211,6 +232,7 @@ export default function RicochetRobots() {
         if (!result) return;
         setCurrentRobots(result.robots);
         setMoveHistory(prev => [...prev, result.move]);
+        setRedoStack([]);
         setSelectedColor(null);
     }, [selectedColor, solved, currentRobots, wallSet, puzzle.board.radius, blockedCellSet]);
 
@@ -229,10 +251,24 @@ export default function RicochetRobots() {
                 </button>
                 <button
                     className="btn-reset"
+                    onClick={handleReset}
+                    disabled={moveHistory.length === 0 && redoStack.length === 0}
+                >
+                    {t('ricochetRobots.reset')}
+                </button>
+                <button
+                    className="btn-reset"
                     onClick={handleUndo}
                     disabled={moveHistory.length === 0}
                 >
                     {t('ricochetRobots.undo')}
+                </button>
+                <button
+                    className="btn-reset"
+                    onClick={handleRedo}
+                    disabled={redoStack.length === 0}
+                >
+                    {t('ricochetRobots.redo')}
                 </button>
             </div>
 
