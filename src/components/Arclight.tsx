@@ -4,6 +4,7 @@ import { defaultTileOptions, type TileOptions } from '../engine/arclight/data';
 import { setupWithSeed } from '../engine/arclight/gameManager';
 import type { Color, Puzzle } from '../engine/arclight/models';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 import { GEM_FILL } from './shared/colors';
 
 // ─── Layout constants ──────────────────────────────────────────────
@@ -519,8 +520,9 @@ export default function Arclight() {
           {t('arclight.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          {t('arclight.newGame')}
+          {t('shared.newGame')}
         </button>
+        <ShareButton />
       </div>
 
       <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>

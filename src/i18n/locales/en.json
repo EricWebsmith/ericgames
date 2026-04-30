@@ -2,6 +2,14 @@
   "nav": {
     "brand": "Eric Games"
   },
+  "shared": {
+    "shareGame": "Share Game",
+    "linkCopied": "Link Copied! ✓",
+    "newGame": "New Game",
+    "reset": "Reset",
+    "undo": "Undo",
+    "redo": "Redo"
+  },
   "home": {
     "title": "Eric's Games",
     "subtitle": "Eric's collection of games",
@@ -32,7 +40,6 @@
     "instructions": "Click a cell to reveal the gem inside. Click border circles to fire waves and discover where they exit and what color they carry.",
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
-    "newGame": "New Game",
     "boardAriaLabel": "Arclight puzzle board",
     "tileAriaLabel": "Tile {{label}}",
     "includeTransparent": "Transparent Gem Expansion",
@@ -43,7 +50,6 @@
     "instructions": "Click a cell to reveal the gem inside. Click border circles to fire waves and discover where they exit and what color they carry.",
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
-    "newGame": "New Game",
     "boardAriaLabel": "Orapa Mine puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeTransparent": "Transparent Gem Expansion",
@@ -55,7 +61,6 @@
     "instructions": "Click a cell to reveal the planet inside. Click border circles to fire waves and discover where they exit and what color they carry.",
     "showAnswer": "See Answer",
     "clickAllBorders": "Click All Borders",
-    "newGame": "New Game",
     "boardAriaLabel": "Orapa Space puzzle board",
     "cellAriaLabel": "Column {{col}} Row {{row}}",
     "includeBlackHole": "Black Hole Expansion",
@@ -66,10 +71,6 @@
   "switchboard": {
     "title": "Switchboard",
     "instructions": "Click a tile to rotate it and change the paths. Click the right half to rotate clockwise, left half to rotate counter-clockwise. Your goal is to connect the start and end points.",
-    "newGame": "New Game",
-    "reset": "Reset",
-    "undo": "Undo",
-    "redo": "Redo",
     "showTips": "Show tips",
     "stepsSpent_one": "You have spent {{count}} step.",
     "stepsSpent_other": "You have spent {{count}} steps.",
@@ -87,10 +88,6 @@
   "ricochetRobots": {
     "title": "Ricochet Robots Hex",
     "instructions": "Click a robot to select it, then click a highlighted cell to slide it in that direction. Robots slide until hitting a wall or another robot. Move the target robot (marked with its letter) to the diamond target.",
-    "newGame": "New Game",
-    "reset": "Reset",
-    "undo": "Undo",
-    "redo": "Redo",
     "solved_one": "Solved in {{count}} move! 🎉",
     "solved_other": "Solved in {{count}} moves! 🎉",
     "moveCount": "Moves: {{count}}",
@@ -101,8 +98,6 @@
     "stepAriaLabel": "Step {{index}}: {{color}} robot",
     "blockedCellAriaLabel": "Blocked cell",
     "boardSize": "Board size:",
-    "shareGame": "Share Game",
-    "linkCopied": "Link copied! ✓",
     "color": {
       "red": "Red",
       "blue": "Blue",

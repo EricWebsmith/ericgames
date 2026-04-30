@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getBasicTiles, getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
 import { setup, traverse } from '../engine/switchboard/gameManager';
 import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
+import ShareButton from './shared/ShareButton';
 import StepSvg from './shared/StepSvg';
 
 const SVG_W = 700;
@@ -422,6 +423,23 @@ export default function Switchboard() {
     setHistoryIndex(0);
   }, [clearPendingRotation, history, historyIndex, rotatingTile]);
 
+  const handleStepClick = useCallback((index: number) => {
+    if (rotatingTile) return;
+    clearPendingRotation();
+    if (index + 1 < historyIndex) {
+      setBoard(prevBoard => [...history.slice(index + 1, historyIndex)].reverse().reduce(
+        (nextBoard, step) => applyStep(nextBoard, { tileNo: step.tileNo, rotate: inverseRotate(step.rotate) }),
+        prevBoard,
+      ));
+    } else if (index + 1 > historyIndex) {
+      setBoard(prevBoard => history.slice(historyIndex, index + 1).reduce(
+        (nextBoard, step) => applyStep(nextBoard, step),
+        prevBoard,
+      ));
+    }
+    setHistoryIndex(index + 1);
+  }, [clearPendingRotation, history, historyIndex, rotatingTile]);
+
   useEffect(() => () => {
     clearPendingRotation();
   }, [clearPendingRotation]);
@@ -555,17 +573,18 @@ export default function Switchboard() {
           ))}
         </select>
         <button className="btn-reset" onClick={() => handleNewGame()}>
-          {t('switchboard.newGame')}
+          {t('shared.newGame')}
         </button>
         <button className="btn-reset" onClick={handleResetSteps} disabled={steps.length === 0 || Boolean(rotatingTile)}>
-          {t('switchboard.reset')}
+          {t('shared.reset')}
         </button>
         <button className="btn-reset" onClick={handleUndo} disabled={historyIndex === 0 || Boolean(rotatingTile)}>
-          {t('switchboard.undo')}
+          {t('shared.undo')}
         </button>
         <button className="btn-reset" onClick={handleRedo} disabled={historyIndex >= history.length || Boolean(rotatingTile)}>
-          {t('switchboard.redo')}
+          {t('shared.redo')}
         </button>
+        <ShareButton />
         <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
             id="switchboard-show-tips"
@@ -732,6 +751,7 @@ export default function Switchboard() {
               ariaLabel={step.rotate === 1
                 ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
                 : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
+              onClick={() => handleStepClick(index)}
             />
           ))}
         </div>

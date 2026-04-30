@@ -2,6 +2,14 @@
   "nav": {
     "brand": "卡坦王Eric的遊戲"
   },
+  "shared": {
+    "shareGame": "分享遊戲",
+    "linkCopied": "連結已複製！✓",
+    "newGame": "新遊戲",
+    "reset": "重置",
+    "undo": "復原",
+    "redo": "重做"
+  },
   "home": {
     "title": "卡坦王Eric的遊戲",
     "subtitle": "閒魚卡坦王Eric",
@@ -32,7 +40,6 @@
     "instructions": "每回合你有兩個操作：導光（從邊界圓發射光線）或驗光（查看格子裡的寶石顏色）。點擊六邊形執行驗光，點擊邊界圓執行導光！當你準備好挑戰答案時，點擊「看答案」揭曉所有寶石和光線路徑。",
     "showAnswer": "看答案",
     "clickAllBorders": "點擊所有邊界",
-    "newGame": "新遊戲",
     "boardAriaLabel": "弧光拼圖棋盤",
     "tileAriaLabel": "格子 {{label}}",
     "includeTransparent": "透明擴展",
@@ -43,7 +50,6 @@
     "instructions": "從邊界位置（數字或字母）發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "點擊所有邊界",
-    "newGame": "新遊戲",
     "boardAriaLabel": "奧拉帕礦山拼圖棋盤",
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
     "includeTransparent": "透明擴展",
@@ -55,7 +61,6 @@
     "instructions": "從邊界位置發射超音波，觀察其從哪裡彈出及攜帶的寶石顏色。點擊格子可查看其中的寶石，點擊邊界圓發射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "點擊所有邊界",
-    "newGame": "新遊戲",
     "boardAriaLabel": "奧拉帕宇宙拼圖棋盤",
     "cellAriaLabel": "第{{col}}欄第{{row}}行",
     "includeBlackHole": "黑洞擴展",
@@ -66,10 +71,6 @@
   "switchboard": {
     "title": "接線總機",
     "instructions": "點擊六邊形格子旋轉它來改變路徑。點擊右半邊順時針旋轉，左半邊逆時針旋轉。你的目標是連接起點和終點。",
-    "newGame": "新遊戲",
-    "reset": "重置",
-    "undo": "復原",
-    "redo": "重做",
     "showTips": "顯示提示",
     "stepsSpent_other": "你已經用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 號格順時針步驟",
@@ -86,10 +87,6 @@
   "ricochetRobots": {
     "title": "碰撞機器人六邊形",
     "instructions": "點擊機器人選中它，再點擊高亮格子讓它滑動。機器人會一直滑動直到碰到牆壁或另一個機器人。將目標機器人移到目標格。",
-    "newGame": "新遊戲",
-    "reset": "重置",
-    "undo": "復原",
-    "redo": "重做",
     "solved_other": "用了 {{count}} 步完成！🎉",
     "moveCount": "步數：{{count}}",
     "boardAriaLabel": "碰撞機器人六邊形拼圖棋盤",
@@ -99,8 +96,6 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 機器人",
     "blockedCellAriaLabel": "阻擋格",
     "boardSize": "棋盤大小：",
-    "shareGame": "分享遊戲",
-    "linkCopied": "連結已複製！✓",
     "color": {
       "red": "紅色",
       "blue": "藍色",

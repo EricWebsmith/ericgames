@@ -6,6 +6,7 @@ import { type Color, type Puzzle } from '../engine/orapa/models';
 import { defaultTileOptions, getTiles, type TileOptions } from '../engine/orapa/spaceData';
 import BlackHole from './BlackHole';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 
 // ─── Board size options ────────────────────────────────────────────
 const BOARD_SIZES = ['10x8', '11x7'] as const;
@@ -542,8 +543,9 @@ export default function OrapaSpace() {
                     {t('orapaSpace.clickAllBorders')}
                 </button>
                 <button className="btn-reset" onClick={handleNewGame}>
-                    {t('orapaSpace.newGame')}
+                    {t('shared.newGame')}
                 </button>
+                <ShareButton />
             </div>
 
             <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>

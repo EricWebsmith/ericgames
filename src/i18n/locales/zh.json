@@ -2,6 +2,14 @@
   "nav": {
     "brand": "卡坦王Eric的游戏"
   },
+  "shared": {
+    "shareGame": "分享游戏",
+    "linkCopied": "链接已复制！✓",
+    "newGame": "新游戏",
+    "reset": "重置",
+    "undo": "撤销",
+    "redo": "重做"
+  },
   "home": {
     "title": "卡坦王Eric的游戏",
     "subtitle": "闲鱼卡坦王Eric",
@@ -32,7 +40,6 @@
     "instructions": "点击格子可查看其中的宝石，点击边界圆发射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
     "boardAriaLabel": "弧光拼图棋盘",
     "tileAriaLabel": "格子 {{label}}",
     "includeTransparent": "透明扩展",
@@ -43,7 +50,6 @@
     "instructions": "点击格子可查看其中的宝石，点击边界圆发射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
     "boardAriaLabel": "奥拉帕矿山拼图棋盘",
     "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeTransparent": "透明扩展",
@@ -55,7 +61,6 @@
     "instructions": "点击格子可查看其中的星球，点击边界圆发射超音波。",
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
-    "newGame": "新游戏",
     "boardAriaLabel": "奥拉帕宇宙拼图棋盘",
     "cellAriaLabel": "第{{col}}列第{{row}}行",
     "includeBlackHole": "黑洞扩展",
@@ -66,10 +71,6 @@
   "switchboard": {
     "title": "接线总机",
     "instructions": "点击六边形格子旋转它来改变路径。点击右半边顺时针旋转，左半边逆时针旋转。你的目标是连接起点和终点。",
-    "newGame": "新游戏",
-    "reset": "重置",
-    "undo": "撤销",
-    "redo": "重做",
     "showTips": "显示提示",
     "stepsSpent_other": "你已经用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 号格顺时针步骤",
@@ -86,10 +87,6 @@
   "ricochetRobots": {
     "title": "碰撞机器人六边形",
     "instructions": "点击机器人选中它，再点击高亮格子让它滑动。机器人会一直滑动直到碰到墙壁或另一个机器人。将目标机器人移到目标格。",
-    "newGame": "新游戏",
-    "reset": "重置",
-    "undo": "撤销",
-    "redo": "重做",
     "solved_other": "用了 {{count}} 步完成！🎉",
     "moveCount": "步数：{{count}}",
     "boardAriaLabel": "碰撞机器人六边形拼图棋盘",
@@ -99,8 +96,6 @@
     "stepAriaLabel": "第 {{index}} 步：{{color}} 机器人",
     "blockedCellAriaLabel": "阻挡格",
     "boardSize": "棋盘大小：",
-    "shareGame": "分享游戏",
-    "linkCopied": "链接已复制！✓",
     "color": {
       "red": "红色",
       "blue": "蓝色",

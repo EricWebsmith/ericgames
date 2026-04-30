@@ -4,6 +4,7 @@ import { setupWithSeed } from '../engine/orapa/gameManager';
 import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
 import { type Color, type Puzzle } from '../engine/orapa/models';
 import BorderCircle from './shared/BorderCircle';
+import ShareButton from './shared/ShareButton';
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;
@@ -451,8 +452,9 @@ export default function OrapaMine() {
           {t('orapaMine.clickAllBorders')}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          {t('orapaMine.newGame')}
+          {t('shared.newGame')}
         </button>
+        <ShareButton />
       </div>
 
       <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
