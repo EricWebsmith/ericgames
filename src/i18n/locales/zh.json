@@ -25,7 +25,7 @@
       "title": "奥拉帕宇宙",
       "description": "奥拉帕宇宙"
     },
-    "switchboard": {
+    "rotatingRoads": {
       "title": "接线总机",
       "description": "接线总机"
     },
@@ -68,7 +68,7 @@
     "10by8": "10 × 8",
     "11by7": "11 × 7"
   },
-  "switchboard": {
+  "rotatingRoads": {
     "title": "接线总机",
     "instructions": "点击六边形格子旋转它来改变路径。点击右半边顺时针旋转，左半边逆时针旋转。你的目标是连接起点和终点。",
     "showTips": "显示提示",

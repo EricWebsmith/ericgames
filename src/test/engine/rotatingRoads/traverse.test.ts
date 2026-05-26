@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getBasicTiles } from '../../../engine/switchboard/data';
-import { traverse } from '../../../engine/switchboard/gameManager';
-import { type Board, TileInBoard } from '../../../engine/switchboard/models';
+import { getBasicTiles } from '../../../engine/rotatingRoads/data';
+import { traverse } from '../../../engine/rotatingRoads/gameManager';
+import { type Board, TileInBoard } from '../../../engine/rotatingRoads/models';
 
 describe('traverse', () => {
     let board: Board;

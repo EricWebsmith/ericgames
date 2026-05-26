@@ -9,4 +9,4 @@ Fix the color order according to the light route. Now the colors are sorted befo
 Stop painting computed exit border circles when a border is clicked, while preserving the `isExit` property for exit-state semantics.
 
 ## [2026-04-03]
-Create Eric Games add Orapa Mine, Orapa Space, Arclight, Switchboard
+Create Eric Games add Orapa Mine, Orapa Space, Arclight, Rotating Roads

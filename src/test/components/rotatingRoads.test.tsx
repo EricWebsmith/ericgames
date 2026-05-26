@@ -1,16 +1,16 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import Switchboard from '../../components/Switchboard';
+import RotatingRoads from '../../components/RotatingRoads';
 
-describe('Switchboard', () => {
+describe('Rotating Roads', () => {
   beforeEach(() => {
-    window.history.replaceState(null, '', '/#/switchboard');
+    window.history.replaceState(null, '', '/#/rotating-roads');
   });
 
   it('records steps and clears them on reset', () => {
     vi.useFakeTimers();
     try {
-      const { container } = render(<Switchboard />);
+      const { container } = render(<RotatingRoads />);
 
       expect(screen.getByText(/spent 0 step/i)).toBeInTheDocument();
 
@@ -39,7 +39,7 @@ describe('Switchboard', () => {
   it('supports undo and redo', () => {
     vi.useFakeTimers();
     try {
-      const { container } = render(<Switchboard />);
+      const { container } = render(<RotatingRoads />);
       const rotateTargets = container.querySelectorAll('polygon[fill-opacity="0"]');
       expect(rotateTargets.length).toBeGreaterThan(2);
 
@@ -81,7 +81,7 @@ describe('Switchboard', () => {
   it('clears redo history when making a new step after undo', () => {
     vi.useFakeTimers();
     try {
-      const { container } = render(<Switchboard />);
+      const { container } = render(<RotatingRoads />);
       const rotateTargets = container.querySelectorAll('polygon[fill-opacity="0"]');
       expect(rotateTargets.length).toBeGreaterThan(4);
 
@@ -121,11 +121,11 @@ describe('Switchboard', () => {
     window.history.replaceState(
       null,
       '',
-      '/#/switchboard?b=rhombic16&t=0123012301230123&r=0123450123450123&s=0.1&e=15.5',
+      '/#/rotating-roads?b=rhombic16&t=0123012301230123&r=0123450123450123&s=0.1&e=15.5',
     );
 
-    const { container } = render(<Switchboard />);
-    const boardTypeSelect = container.querySelector('#switchboard-board-type');
+    const { container } = render(<RotatingRoads />);
+    const boardTypeSelect = container.querySelector('#rotating-roads-board-type');
 
     expect(screen.getByLabelText('Start tile 0')).toBeInTheDocument();
     expect(screen.getByLabelText('End tile 15')).toBeInTheDocument();
@@ -135,7 +135,7 @@ describe('Switchboard', () => {
   it('writes current board state to query string', () => {
     vi.useFakeTimers();
     try {
-      const { container } = render(<Switchboard />);
+      const { container } = render(<RotatingRoads />);
 
       const rotateTarget = container.querySelector('polygon[fill-opacity="0"]');
       expect(rotateTarget).not.toBeNull();

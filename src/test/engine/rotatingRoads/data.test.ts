@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getRhombicBoard, getRhombicCoordinatesByTileNo } from '../../../engine/switchboard/data';
+import { getRhombicBoard, getRhombicCoordinatesByTileNo } from '../../../engine/rotatingRoads/data';
 
 describe('getRhombicCoordinatesByTileNo', () => {
     it('returns tile coordinates in row-major order for valid sizes', () => {

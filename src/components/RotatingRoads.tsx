@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getBasicTiles, getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/switchboard/data';
-import { setup, traverse } from '../engine/switchboard/gameManager';
-import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/switchboard/models';
+import { getBasicTiles, getHexCoordinatesByTileNo, getRhombicCoordinatesByTileNo } from '../engine/rotatingRoads/data';
+import { setup, traverse } from '../engine/rotatingRoads/gameManager';
+import { BoardType, TileInBoard, type Board, type PathSegment, type Step } from '../engine/rotatingRoads/models';
 import ShareButton from './shared/ShareButton';
 import StepSvg from './shared/StepSvg';
 
@@ -336,7 +336,7 @@ const applyStep = (board: Board, step: Step): Board => {
   };
 };
 
-export default function Switchboard() {
+export default function RotatingRoads() {
   const { t } = useTranslation();
   const [initialState] = useState(() => getInitialStateFromQuery());
   const [boardType, setBoardType] = useState<BoardType>(initialState.boardType);
@@ -555,20 +555,20 @@ export default function Switchboard() {
 
   return (
     <div className="game-container">
-      <h2 className="game-title">{t('switchboard.title')}</h2>
-      <p className="status-message">{t('switchboard.instructions')}</p>
+      <h2 className="game-title">{t('rotatingRoads.title')}</h2>
+      <p className="status-message">{t('rotatingRoads.instructions')}</p>
 
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <label htmlFor="switchboard-board-type">{t('switchboard.boardSizeLabel')}</label>
+        <label htmlFor="rotating-roads-board-type">{t('rotatingRoads.boardSizeLabel')}</label>
         <select
-          id="switchboard-board-type"
+          id="rotating-roads-board-type"
           className="lang-switcher"
           value={boardType}
           onChange={(e) => handleBoardTypeChange(e.target.value)}
         >
           {BOARD_OPTIONS.map(option => (
             <option key={option} value={option}>
-              {t(`switchboard.${option}`)}
+              {t(`rotatingRoads.${option}`)}
             </option>
           ))}
         </select>
@@ -585,14 +585,14 @@ export default function Switchboard() {
           {t('shared.redo')}
         </button>
         <ShareButton />
-        <label htmlFor="switchboard-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label htmlFor="rotating-roads-show-tips" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <input
-            id="switchboard-show-tips"
+            id="rotating-roads-show-tips"
             type="checkbox"
             checked={showTips}
             onChange={(e) => setShowTips(e.target.checked)}
           />
-          {t('switchboard.showTips')}
+          {t('rotatingRoads.showTips')}
         </label>
       </div>
 
@@ -601,7 +601,7 @@ export default function Switchboard() {
         height={SVG_H}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         className="game-svg"
-        aria-label={t('switchboard.boardAriaLabel')}
+        aria-label={t('rotatingRoads.boardAriaLabel')}
       >
         <defs>
           <filter id="orb-glow" x="-100%" y="-100%" width="300%" height="300%">
@@ -739,7 +739,7 @@ export default function Switchboard() {
       <div style={{ width: '100%', maxWidth: SVG_W }}>
         {isConnected && (
           <p className="status-message" style={{ textAlign: 'center', color: SOLVED_ARC_COLOR, fontWeight: 'bold' }}>
-            {t('switchboard.solved')}
+            {t('rotatingRoads.solved')}
           </p>
         )}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
@@ -749,14 +749,14 @@ export default function Switchboard() {
               tileNo={step.tileNo}
               rotate={step.rotate}
               ariaLabel={step.rotate === 1
-                ? t('switchboard.stepClockwiseAria', { tileNo: step.tileNo })
-                : t('switchboard.stepCounterClockwiseAria', { tileNo: step.tileNo })}
+                ? t('rotatingRoads.stepClockwiseAria', { tileNo: step.tileNo })
+                : t('rotatingRoads.stepCounterClockwiseAria', { tileNo: step.tileNo })}
               onClick={() => handleStepClick(index)}
             />
           ))}
         </div>
         <p className="status-message" style={{ textAlign: 'center', marginTop: 8 }}>
-          {t('switchboard.stepsSpent', { count: steps.length })}
+          {t('rotatingRoads.stepsSpent', { count: steps.length })}
         </p>
       </div>
     </div>
