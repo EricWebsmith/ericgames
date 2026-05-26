@@ -25,9 +25,9 @@
       "title": "Orapa Space",
       "description": "Orapa Space"
     },
-    "switchboard": {
-      "title": "Switchboard",
-      "description": "Switchboard"
+    "rotatingRoads": {
+      "title": "Rotating Roads",
+      "description": "Rotating Roads"
     },
     "ricochetRobots": {
       "title": "Ricochet Robots Hex",
@@ -68,15 +68,15 @@
     "10by8": "10 × 8",
     "11by7": "11 × 7"
   },
-  "switchboard": {
-    "title": "Switchboard",
+  "rotatingRoads": {
+    "title": "Rotating Roads",
     "instructions": "Click a tile to rotate it and change the paths. Click the right half to rotate clockwise, left half to rotate counter-clockwise. Your goal is to connect the start and end points.",
     "showTips": "Show tips",
     "stepsSpent_one": "You have spent {{count}} step.",
     "stepsSpent_other": "You have spent {{count}} steps.",
     "stepClockwiseAria": "Clockwise step on tile {{tileNo}}",
     "stepCounterClockwiseAria": "Counter-clockwise step on tile {{tileNo}}",
-    "boardAriaLabel": "Switchboard puzzle board",
+    "boardAriaLabel": "Rotating Roads puzzle board",
     "boardSizeLabel": "Board Size",
     "rhombic9": "Rhombic 9",
     "rhombic16": "Rhombic 16",
