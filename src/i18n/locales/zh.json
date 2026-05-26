@@ -26,8 +26,8 @@
       "description": "奥拉帕宇宙"
     },
     "rotatingRoads": {
-      "title": "旋转道路",
-      "description": "旋转道路"
+      "title": "转路",
+      "description": "转路"
     },
     "ricochetRobots": {
       "title": "碰撞机器人六边形",
@@ -69,13 +69,13 @@
     "11by7": "11 × 7"
   },
   "rotatingRoads": {
-    "title": "旋转道路",
+    "title": "转路",
     "instructions": "点击六边形格子旋转它来改变路径。点击右半边顺时针旋转，左半边逆时针旋转。你的目标是连接起点和终点。",
     "showTips": "显示提示",
     "stepsSpent_other": "你已经用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 号格顺时针步骤",
     "stepCounterClockwiseAria": "第 {{tileNo}} 号格逆时针步骤",
-    "boardAriaLabel": "旋转道路拼图棋盘",
+    "boardAriaLabel": "转路拼图棋盘",
     "boardSizeLabel": "棋盘尺寸",
     "rhombic9": "菱形 9",
     "rhombic16": "菱形 16",
