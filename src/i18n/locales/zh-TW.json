@@ -26,8 +26,8 @@
       "description": "奧拉帕宇宙"
     },
     "rotatingRoads": {
-      "title": "接線總機",
-      "description": "接線總機"
+      "title": "旋轉道路",
+      "description": "旋轉道路"
     },
     "ricochetRobots": {
       "title": "碰撞機器人六邊形",
@@ -69,13 +69,13 @@
     "11by7": "11 × 7"
   },
   "rotatingRoads": {
-    "title": "接線總機",
+    "title": "旋轉道路",
     "instructions": "點擊六邊形格子旋轉它來改變路徑。點擊右半邊順時針旋轉，左半邊逆時針旋轉。你的目標是連接起點和終點。",
     "showTips": "顯示提示",
     "stepsSpent_other": "你已經用了 {{count}} 步。",
     "stepClockwiseAria": "第 {{tileNo}} 號格順時針步驟",
     "stepCounterClockwiseAria": "第 {{tileNo}} 號格逆時針步驟",
-    "boardAriaLabel": "接線總機拼圖棋盤",
+    "boardAriaLabel": "旋轉道路拼圖棋盤",
     "boardSizeLabel": "棋盤尺寸",
     "rhombic9": "菱形 9",
     "rhombic16": "菱形 16",

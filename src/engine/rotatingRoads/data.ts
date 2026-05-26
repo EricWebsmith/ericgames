@@ -16,7 +16,7 @@ export const defaultTileOptions: TileOptions = {
 };
 
 /**
- * Get the basic not rotated tiles for the rotatingRoads game.
+ * Get the basic not rotated tiles for the Rotating Roads game.
  * @returns An array of Tile objects representing the basic tiles.
  */
 export function getBasicTiles(): Tile[] {
