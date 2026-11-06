@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { borderEntries, BOARD_SIZE, cellKey, cellLabel, COLOR_HEX, colorName, isPlayable, ROWS } from '../engine/orapaStreet221B/models';
+import { borderEntries, BOARD_SIZE, cellKey, cellLabel, COLOR_HEX, colorName, isPlayable } from '../engine/orapaStreet221B/models';
 import { createGame, traceBrainwave } from '../engine/orapaStreet221B/gameManager';
 import BorderCircle from './shared/BorderCircle';
 import ShareButton from './shared/ShareButton';
 
-const CELL = 36;
-const PAD = 62;
+// The board is a tessellation of equilateral triangles, not square cells.
+const TRIANGLE = 42;
+const TRIANGLE_HEIGHT = TRIANGLE * Math.sqrt(3) / 2;
+const PAD = 72;
 const entries = borderEntries();
-const directions = [
-  [1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1],
-] as const;
+const BOARD_ROWS = BOARD_SIZE;
+const BOARD_COLS = BOARD_SIZE;
 
 export default function OrapaStreet221B() {
   const { t } = useTranslation();
@@ -21,35 +22,50 @@ export default function OrapaStreet221B() {
   const [selected, setSelected] = useState<string | null>(null);
   const tokenAt = useMemo(() => new Map(game.tokens.map(token => [cellKey(token.q, token.r), token])), [game]);
   const traces = useMemo(() => new Map([...fired].map(label => [label, traceBrainwave(game, label)])), [fired, game]);
-  const width = PAD * 2 + BOARD_SIZE * CELL;
-  const point = (q: number, r: number) => ({ x: PAD + q * CELL + CELL / 2, y: PAD + r * CELL + CELL / 2 });
+  const boardWidth = BOARD_COLS * TRIANGLE;
+  const boardHeight = BOARD_ROWS * TRIANGLE_HEIGHT;
+  const width = boardWidth + PAD * 2;
+  const height = boardHeight + PAD * 2;
   const newGame = () => { setGame(createGame()); setShowAnswer(false); setRevealed(new Set()); setFired(new Set()); setSelected(null); };
   const fire = (label: string) => { setFired(prev => new Set(prev).add(label)); setSelected(label); };
 
+  const triangle = (row: number, col: number, half: 0 | 1) => {
+    // Each rhombus-sized grid position contains two equilateral triangles sharing a diagonal.
+    const x = PAD + col * TRIANGLE;
+    const y = PAD + row * TRIANGLE_HEIGHT;
+    const up = (row + col + half) % 2 === 0;
+    const points = up
+      ? `${x},${y + TRIANGLE_HEIGHT} ${x + TRIANGLE},${y + TRIANGLE_HEIGHT} ${x + TRIANGLE / 2},${y}`
+      : `${x},${y} ${x + TRIANGLE},${y} ${x + TRIANGLE / 2},${y + TRIANGLE_HEIGHT}`;
+    return { points, x: x + TRIANGLE / 2, y: y + TRIANGLE_HEIGHT / 2 };
+  };
+
   return <div className="game-container">
     <h2 className="game-title">{t('orapaStreet221B.title', 'En Drapa Street 221B')}</h2>
-    <p className="status-message">{t('orapaStreet221B.instructions', 'Click a cell to inspect it. Fire a brainwave from a numbered or lettered border position to trace its path and collected colors.')}</p>
+    <p className="status-message">{t('orapaStreet221B.instructions', 'Click a triangle to inspect it. Fire a brainwave from a numbered or lettered border position to trace its path and collected colors.')}</p>
     <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-      <svg width={width} height={width} viewBox={`0 0 ${width} ${width}`} className="game-svg" aria-label="En Drapa Street 221B puzzle board">
-        <rect width={width} height={width} rx={10} fill="#101827" />
-        {Array.from({ length: BOARD_SIZE }, (_, r) => Array.from({ length: BOARD_SIZE }, (_, q) => {
-          const { x, y } = point(q, r); const key = cellKey(q, r); const token = tokenAt.get(key);
-          const visible = showAnswer || revealed.has(key);
-          const blocked = !isPlayable(q, r);
-          return <g key={key} onClick={() => setRevealed(prev => new Set(prev).add(key))} style={{ cursor: 'pointer' }}>
-            <rect x={x - CELL / 2 + 1} y={y - CELL / 2 + 1} width={CELL - 2} height={CELL - 2} rx={3}
-              fill={blocked ? '#263241' : visible && token ? COLOR_HEX[token.color] : '#172436'}
-              stroke={blocked ? '#303d4b' : '#38516b'} strokeWidth={1} />
-            {visible && token && <circle cx={x} cy={y} r={8} fill="#fff" opacity={0.45} />}
-            {visible && <text x={x} y={y + 3} textAnchor="middle" fontSize={9} fill="#dbeafe">{cellLabel(q, r)}</text>}
-          </g>;
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="game-svg" aria-label="En Drapa Street 221B triangular puzzle board">
+        <rect width={width} height={height} rx={10} fill="#101827" />
+        {Array.from({ length: BOARD_ROWS }, (_, row) => Array.from({ length: BOARD_COLS }, (_, col) => {
+          const blocked = col >= 5 && col <= 8 && row >= 5 && row <= 8;
+          return ([0, 1] as const).map(half => {
+            const { points, x, y } = triangle(row, col, half);
+            const q = col;
+            const r = row;
+            const key = `${cellKey(q, r)}:${half}`;
+            const token = half === 0 ? tokenAt.get(cellKey(q, r)) : undefined;
+            const visible = showAnswer || revealed.has(key);
+            return <g key={key} onClick={() => setRevealed(prev => new Set(prev).add(key))} style={{ cursor: blocked ? 'not-allowed' : 'pointer' }}>
+              <polygon points={points}
+                fill={blocked ? '#263241' : visible && token ? COLOR_HEX[token.color] : '#172436'}
+                stroke={blocked ? '#303d4b' : '#38516b'} strokeWidth={1.5} />
+              {visible && <text x={x} y={y + 3} textAnchor="middle" fontSize={8} fill="#dbeafe">{cellLabel(q, r)}{half ? '′' : ''}</text>}
+            </g>;
+          });
         }))}
-        {directions.map(([dq, dr], i) => <g key={`guide-${i}`} opacity={0.05}>
-          <line x1={PAD} y1={PAD} x2={PAD + dq * CELL} y2={PAD + dr * CELL} stroke="white" />
-        </g>)}
         {entries.map(item => {
-          const x = PAD + item.cell.q * CELL + CELL / 2;
-          const y = PAD + item.cell.r * CELL + CELL / 2;
+          const x = PAD + item.cell.q * TRIANGLE + TRIANGLE / 2;
+          const y = PAD + item.cell.r * TRIANGLE_HEIGHT + TRIANGLE_HEIGHT / 2;
           const result = traces.get(item.label);
           const isEntry = fired.has(item.label);
           const isExit = result?.exit ? fired.has(result.exit) : false;
@@ -60,7 +76,9 @@ export default function OrapaStreet221B() {
           </g>;
         })}
         {[...traces.entries()].flatMap(([label, result]) => result.path.slice(0, -1).map((cell, i) => {
-          const next = result.path[i + 1]; const a = point(cell.q, cell.r); const b = point(next.q, next.r);
+          const next = result.path[i + 1];
+          const a = { x: PAD + cell.q * TRIANGLE + TRIANGLE / 2, y: PAD + cell.r * TRIANGLE_HEIGHT + TRIANGLE_HEIGHT / 2 };
+          const b = { x: PAD + next.q * TRIANGLE + TRIANGLE / 2, y: PAD + next.r * TRIANGLE_HEIGHT + TRIANGLE_HEIGHT / 2 };
           return <line key={`${label}-${i}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#67e8f9" strokeWidth={2} opacity={0.55} pointerEvents="none" />;
         }))}
       </svg>
