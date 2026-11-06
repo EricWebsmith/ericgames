@@ -25,6 +25,10 @@
       "title": "Orapa Space",
       "description": "Orapa Space"
     },
+    "orapaStreet221B": {
+      "title": "En Drapa Street 221B",
+      "description": "Sherlock deduction puzzle"
+    },
     "rotatingRoads": {
       "title": "Rotating Roads",
       "description": "Rotating Roads"
@@ -34,6 +38,13 @@
       "description": "Ricochet Robots Hex"
     },
     "contact": "Buy this game at Xianyu, Search for '卡坦王Eric' QQ: 961422707"
+  },
+  "orapaStreet221B": {
+    "title": "En Drapa Street 221B",
+    "description": "Sherlock deduction puzzle",
+    "instructions": "Click a triangle to inspect it. Fire a brainwave from a border position to trace its path and the colors it collects.",
+    "showAnswer": "See Answer",
+    "fireAll": "Fire All"
   },
   "arclight": {
     "title": "Arclight",
@@ -87,7 +98,7 @@
   },
   "ricochetRobots": {
     "title": "Ricochet Robots Hex",
-    "instructions": "Click a robot to select it, then click a highlighted cell to slide it in that direction. Robots slide until hitting a wall or another robot. Move the target robot (marked with its letter) to the diamond target.",
+    "instructions": "Click a robot to select it, then click a highlighted cell to slide it in that direction. Robots slide until hitting a wall or another robot. Move the target robot (marked with a star) to the target square.",
     "solved_one": "Solved in {{count}} move! 🎉",
     "solved_other": "Solved in {{count}} moves! 🎉",
     "moveCount": "Moves: {{count}}",
@@ -97,12 +108,6 @@
     "moveAriaLabel": "Slide {{color}} robot in direction {{direction}}",
     "stepAriaLabel": "Step {{index}}: {{color}} robot",
     "blockedCellAriaLabel": "Blocked cell",
-    "boardSize": "Board size:",
-    "color": {
-      "red": "Red",
-      "blue": "Blue",
-      "green": "Green",
-      "yellow": "Yellow"
-    }
+    "boardSize": "Board size:"
   }
 }

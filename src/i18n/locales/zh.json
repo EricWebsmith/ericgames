@@ -25,6 +25,10 @@
       "title": "奥拉帕宇宙",
       "description": "奥拉帕宇宙"
     },
+    "orapaStreet221B": {
+      "title": "221B街头",
+      "description": "福尔摩斯推理谜题"
+    },
     "rotatingRoads": {
       "title": "转路",
       "description": "转路"
@@ -34,6 +38,13 @@
       "description": "碰撞机器人六边形"
     },
     "contact": "购买请在闲鱼搜索'卡坦王Eric'，QQ: 961422707，售后及规则书也请联系QQ"
+  },
+  "orapaStreet221B": {
+    "title": "221B街头",
+    "description": "福尔摩斯推理谜题",
+    "instructions": "点击三角形查看内容。从边界位置发射脑波，追踪其路径和穿过的颜色。",
+    "showAnswer": "看答案",
+    "fireAll": "全部发射"
   },
   "arclight": {
     "title": "弧光",
@@ -51,7 +62,7 @@
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "boardAriaLabel": "奥拉帕矿山拼图棋盘",
-    "cellAriaLabel": "第{{col}}列第{{row}}行",
+    "cellAriaLabel": "第 {{col}} 列 第 {{row}} 行",
     "includeTransparent": "透明扩展",
     "includeBlack": "黑宝石扩展",
     "includeLightBlue": "浅蓝宝石扩展"
@@ -62,45 +73,41 @@
     "showAnswer": "看答案",
     "clickAllBorders": "点击所有边界",
     "boardAriaLabel": "奥拉帕宇宙拼图棋盘",
-    "cellAriaLabel": "第{{col}}列第{{row}}行",
+    "cellAriaLabel": "第 {{col}} 列 第 {{row}} 行",
     "includeBlackHole": "黑洞扩展",
-    "boardSizeLabel": "棋盘尺寸",
+    "boardSizeLabel": "棋盘大小",
     "10by8": "10 × 8",
     "11by7": "11 × 7"
   },
   "rotatingRoads": {
     "title": "转路",
-    "instructions": "点击六边形格子旋转它来改变路径。点击右半边顺时针旋转，左半边逆时针旋转。你的目标是连接起点和终点。",
+    "instructions": "点击瓷砖旋转并改变路径。右半边顺时针旋转，左半边逆时针旋转。目标是连接起点与终点。",
     "showTips": "显示提示",
-    "stepsSpent_other": "你已经用了 {{count}} 步。",
-    "stepClockwiseAria": "第 {{tileNo}} 号格顺时针步骤",
-    "stepCounterClockwiseAria": "第 {{tileNo}} 号格逆时针步骤",
+    "stepsSpent_one": "你已用 {{count}} 步。",
+    "stepsSpent_other": "你已用 {{count}} 步。",
+    "stepClockwiseAria": "方块 {{tileNo}} 顺时针一步",
+    "stepCounterClockwiseAria": "方块 {{tileNo}} 逆时针一步",
     "boardAriaLabel": "转路拼图棋盘",
-    "boardSizeLabel": "棋盘尺寸",
+    "boardSizeLabel": "棋盘大小",
     "rhombic9": "菱形 9",
     "rhombic16": "菱形 16",
     "rhombic25": "菱形 25",
     "hexagonal19": "六边形 19",
     "hexagonal37": "六边形 37",
-    "solved": "完成！🎉"
+    "solved": "已完成！🎉"
   },
   "ricochetRobots": {
     "title": "碰撞机器人六边形",
-    "instructions": "点击机器人选中它，再点击高亮格子让它滑动。机器人会一直滑动直到碰到墙壁或另一个机器人。将目标机器人移到目标格。",
-    "solved_other": "用了 {{count}} 步完成！🎉",
+    "instructions": "点击机器人后，再点击高亮方格让它沿该方向滑动。机器人会一直滑动，直到撞到墙或另一台机器人。",
+    "solved_one": "在 {{count}} 步内完成！🎉",
+    "solved_other": "在 {{count}} 步内完成！🎉",
     "moveCount": "步数：{{count}}",
-    "boardAriaLabel": "碰撞机器人六边形拼图棋盘",
+    "boardAriaLabel": "碰撞机器人六边形棋盘",
     "robotAriaLabel": "{{color}} 机器人",
-    "targetAriaLabel": "{{color}} 机器人的目标",
-    "moveAriaLabel": "向方向 {{direction}} 滑动 {{color}} 机器人",
-    "stepAriaLabel": "第 {{index}} 步：{{color}} 机器人",
+    "targetAriaLabel": "{{color}} 机器人目标",
+    "moveAriaLabel": "将 {{color}} 机器人向 {{direction}} 滑动",
+    "stepAriaLabel": "步骤 {{index}}：{{color}} 机器人",
     "blockedCellAriaLabel": "阻挡格",
-    "boardSize": "棋盘大小：",
-    "color": {
-      "red": "红色",
-      "blue": "蓝色",
-      "green": "绿色",
-      "yellow": "黄色"
-    }
+    "boardSize": "棋盘大小："
   }
 }
