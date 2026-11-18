@@ -39,6 +39,9 @@ export interface Node {
      * For borders, there is only 1 link.
      */
     links: { [key in Direction]?: string }; // Links to other nodes (triangles or borders)
+
+    q: number; // Column index (0-based) -1 if border
+    r: number; // Row index (0-based) -1 if border
 }
 
 export interface Board {

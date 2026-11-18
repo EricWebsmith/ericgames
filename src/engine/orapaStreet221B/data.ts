@@ -1,24 +1,6 @@
-import { Direction, Orientation, getOppositeDirection, alternateOrientation, type Board, type Node } from './models';
+import { Direction, Orientation, alternateOrientation, getOppositeDirection, type Board, type Node } from './models';
 
-const colCounts: Record<string, number> = {
-    "A": 15,
-    "B": 17,
-    "C": 19,
-    "D": 20,
-    "E": 19,
-    "F": 17,
-    "G": 15,
-};
 
-const firstRowShapes: Record<string, Orientation> = {
-    "A": Orientation.PointyLeft,
-    "B": Orientation.PointyLeft,
-    "C": Orientation.PointyLeft,
-    "D": Orientation.PointyRight,
-    "E": Orientation.PointyRight,
-    "F": Orientation.PointyRight,
-    "G": Orientation.PointyRight,
-};
 
 function addNode(board: Board, node: Node): void {
     board.spaces[node.name] = node;
@@ -38,7 +20,7 @@ function connect(board: Board, from: string, direction: Direction, to: string): 
     destination.links[getOppositeDirection(direction)] = from; // Connect in the opposite direction
 }
 
-function connectColumns(board: Board, leftCol: string, leftColFirstRow: number, rightCol: string, bottomRowFirstCol: number): void {
+function connectColumns(board: Board, colCounts: Record<string, number>, leftCol: string, leftColFirstRow: number, rightCol: string, bottomRowFirstCol: number): void {
     for (let i = 0; i < colCounts[leftCol]; i += 2) {
         const leftId = `${leftCol}${leftColFirstRow + i}`;
         if (!board.spaces[leftId]) {
@@ -50,16 +32,46 @@ function connectColumns(board: Board, leftCol: string, leftColFirstRow: number, 
             break; // Break if the bottom node doesn't exist
         }
 
-
         connect(board, leftId, Direction.Clock2, rightId);
         connect(board, leftId, Direction.Clock4, rightId);
     }
 }
 
 export function getBoard(): Board {
+    const colCounts: Record<string, number> = {
+        "A": 15,
+        "B": 17,
+        "C": 19,
+        "D": 20,
+        "E": 19,
+        "F": 17,
+        "G": 15,
+    };
+
+    const firstRowShapes: Record<string, Orientation> = {
+        "A": Orientation.PointyLeft,
+        "B": Orientation.PointyLeft,
+        "C": Orientation.PointyLeft,
+        "D": Orientation.PointyRight,
+        "E": Orientation.PointyRight,
+        "F": Orientation.PointyRight,
+        "G": Orientation.PointyRight,
+    };
+
+    const firstRowR: Record<string, number> = {
+        "A": 2,
+        "B": 1,
+        "C": 0,
+        "D": 0,
+        "E": 1,
+        "F": 2,
+        "G": 3,
+    };
+
     const board: Board = { spaces: {} };
 
     // Create triangle nodes
+    let colOrder = 0;
     for (const col in colCounts) {
         const count = colCounts[col];
         const firstRowOrientation = firstRowShapes[col];
@@ -77,8 +89,11 @@ export function getBoard(): Board {
                 isBorder: false,
                 orientation,
                 links: {},
+                q: colOrder,
+                r: firstRowR[col] + row - 1,
             });
         }
+        colOrder++;
     }
 
     // Connect nodes in the same column.
@@ -103,12 +118,12 @@ export function getBoard(): Board {
     }
 
     // Connect rows
-    connectColumns(board, "A", 1, "B", 2);
-    connectColumns(board, "B", 1, "C", 2);
-    connectColumns(board, "C", 1, "D", 1);
-    connectColumns(board, "D", 2, "E", 1);
-    connectColumns(board, "E", 2, "F", 1);
-    connectColumns(board, "F", 2, "G", 1);
+    connectColumns(board, colCounts, "A", 1, "B", 2);
+    connectColumns(board, colCounts, "B", 1, "C", 2);
+    connectColumns(board, colCounts, "C", 1, "D", 1);
+    connectColumns(board, colCounts, "D", 2, "E", 1);
+    connectColumns(board, colCounts, "E", 2, "F", 1);
+    connectColumns(board, colCounts, "F", 2, "G", 1);
 
     // Create border nodes and connect them to the triangles
     const borderNames = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -127,6 +142,8 @@ export function getBoard(): Board {
         addNode(board, {
             name,
             isBorder: true,
+            q: -1,
+            r: -1,
             links: {},
         });
     }
