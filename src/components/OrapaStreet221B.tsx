@@ -136,7 +136,7 @@ export default function OrapaStreet221B() {
                 stroke={isSelected ? '#fff1be' : isNeighbor ? '#9bd7e8' : '#7ba4bd'}
                 strokeWidth={isSelected ? 2.5 : 1.25}
               >
-                <title>{`${node.name} · ${node.orientation} · ${Object.keys(node.links).length} links`}</title>
+                <title>{`${node.name} · q: ${node.q}, r: ${node.r} · ${node.orientation} · ${Object.keys(node.links).length} links`}</title>
               </polygon>
               {showLabels && (
                 <text

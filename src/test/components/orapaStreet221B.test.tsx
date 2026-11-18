@@ -37,4 +37,10 @@ describe('OrapaStreet221B', () => {
 
     expect(sharesEdge(getTrianglePoints('C1'), getTrianglePoints('D1'))).toBe(true);
   });
+
+  it('shows q/r coordinates in each triangle tooltip', () => {
+    render(<OrapaStreet221B />);
+
+    expect(screen.getByTestId('triangle-C1').querySelector('title')?.textContent).toContain('q: 2, r: 0');
+  });
 });
