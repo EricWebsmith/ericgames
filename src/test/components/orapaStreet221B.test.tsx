@@ -38,9 +38,23 @@ describe('OrapaStreet221B', () => {
     expect(sharesEdge(getTrianglePoints('C1'), getTrianglePoints('D1'))).toBe(true);
   });
 
+  it('aligns same-orientation triangles in a column', () => {
+    render(<OrapaStreet221B />);
+
+    const first = getTrianglePoints('A1');
+    const third = getTrianglePoints('A3');
+    expect(third.map(point => point.x)).toEqual(first.map(point => point.x));
+  });
+
   it('shows q/r coordinates in each triangle tooltip', () => {
     render(<OrapaStreet221B />);
 
     expect(screen.getByTestId('triangle-C1').querySelector('title')?.textContent).toContain('q: 2, r: 0');
+  });
+
+  it('does not show the links control', () => {
+    render(<OrapaStreet221B />);
+
+    expect(screen.queryByRole('checkbox', { name: 'Show links' })).not.toBeInTheDocument();
   });
 });

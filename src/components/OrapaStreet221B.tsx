@@ -8,14 +8,14 @@ const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
 const TRIANGLE_HALF_HEIGHT = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
 const ROW_GAP = TRIANGLE_SIDE / 2;
-const Q_STEP = (TRIANGLE_HALF_HEIGHT * 2) / 3;
+const Q_STEP = TRIANGLE_SIDE * 1.732 / 2; // TRIANGLE_SIDE * sqrt(3) / 2
 const R_X_STEP = -TRIANGLE_HALF_HEIGHT / 3;
 
 type Point = { x: number; y: number };
 
 function getGridPosition(node: Node): Point {
   return {
-    x: node.q * Q_STEP + node.r * R_X_STEP,
+    x: node.q * Q_STEP + (node.r % 2) * R_X_STEP,
     y: node.r * ROW_GAP,
   };
 }
@@ -55,17 +55,10 @@ function getTrianglePoints(center: Point, orientation: Node['orientation']): str
 export default function OrapaStreet221B() {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
-  const [showConnections, setShowConnections] = useState(false);
   const triangleNodes = TRIANGLE_NODES;
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.links ?? {}));
-  const visibleConnections = showConnections
-    ? triangleNodes.flatMap(node => Object.values(node.links)
-      .filter((name): name is string => Boolean(name) && name.localeCompare(node.name) > 0)
-      .map(name => ({ from: node, to: nodesByName.get(name) })))
-      .filter(connection => connection.to)
-    : [];
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
@@ -76,10 +69,6 @@ export default function OrapaStreet221B() {
         <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} />
           Show labels
-        </label>
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={showConnections} onChange={event => setShowConnections(event.target.checked)} />
-          Show links
         </label>
         <button className="btn-reset" onClick={() => setSelectedNode(null)} disabled={!selectedNode}>Clear selection</button>
       </div>
@@ -92,22 +81,6 @@ export default function OrapaStreet221B() {
         aria-label="Orapa Street 221B triangular board"
       >
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
-
-        {visibleConnections.map(({ from, to }) => {
-          if (!to) return null;
-          const start = getTrianglePosition(from);
-          const end = getTrianglePosition(to);
-          const isSelectedLink = from.name === selectedNode || to.name === selectedNode;
-          return (
-            <line
-              key={`${from.name}-${to.name}`}
-              x1={start.x} y1={start.y} x2={end.x} y2={end.y}
-              stroke={isSelectedLink ? '#ffd166' : '#38536d'}
-              strokeWidth={isSelectedLink ? 2 : 1}
-              opacity={isSelectedLink ? 0.9 : 0.38}
-            />
-          );
-        })}
 
         {triangleNodes.map(node => {
           const center = getTrianglePosition(node);
