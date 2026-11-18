@@ -7,7 +7,7 @@ const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
 const TRIANGLE_HALF_HEIGHT = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
-const COLUMN_GAP = 54;
+const COLUMN_GAP = TRIANGLE_HALF_HEIGHT;
 const ROW_GAP = TRIANGLE_SIDE / 2;
 
 type Point = { x: number; y: number };
@@ -19,10 +19,9 @@ function getTriangleCenter(node: Node): Point {
   const column = match[1].charCodeAt(0) - 'A'.charCodeAt(0);
   const row = Number(match[2]) - 1;
   const columnSize = Object.values(BOARD.spaces).filter(space => space.name.startsWith(match[1])).length;
-  const rowOffset = row % 2 === 0 ? -TRIANGLE_SIDE / 6 : TRIANGLE_SIDE / 6;
 
   return {
-    x: SVG_WIDTH / 2 + (column - 3) * COLUMN_GAP + rowOffset,
+    x: SVG_WIDTH / 2 + (column - 3) * COLUMN_GAP,
     y: SVG_HEIGHT / 2 + (row - (columnSize - 1) / 2) * ROW_GAP,
   };
 }
