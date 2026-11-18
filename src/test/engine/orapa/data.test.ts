@@ -1,4 +1,3 @@
-
 import { getBoard, getTiles } from '../../../engine/orapa/mineData';
 import type { Board } from '../../../engine/orapa/models';
 
