@@ -7,22 +7,41 @@ const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
 const TRIANGLE_HALF_HEIGHT = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
-const COLUMN_GAP = TRIANGLE_HALF_HEIGHT;
 const ROW_GAP = TRIANGLE_SIDE / 2;
+const Q_STEP = (TRIANGLE_HALF_HEIGHT * 2) / 3;
+const R_X_STEP = -TRIANGLE_HALF_HEIGHT / 3;
 
 type Point = { x: number; y: number };
 
-function getTriangleCenter(node: Node): Point {
-  const match = /^([A-G])(\d+)$/.exec(node.name);
-  if (!match) return { x: 0, y: 0 };
-
-  const column = match[1].charCodeAt(0) - 'A'.charCodeAt(0);
-  const row = Number(match[2]) - 1;
-  const columnSize = Object.values(BOARD.spaces).filter(space => space.name.startsWith(match[1])).length;
-
+function getGridPosition(node: Node): Point {
   return {
-    x: SVG_WIDTH / 2 + (column - 3) * COLUMN_GAP,
-    y: SVG_HEIGHT / 2 + (row - (columnSize - 1) / 2) * ROW_GAP,
+    x: node.q * Q_STEP + node.r * R_X_STEP,
+    y: node.r * ROW_GAP,
+  };
+}
+
+function getTriangleNodes(board: Board): Node[] {
+  return Object.values(board.spaces).filter(node => !node.isBorder);
+}
+
+const TRIANGLE_NODES = getTriangleNodes(BOARD);
+const gridPositions = TRIANGLE_NODES.map(getGridPosition);
+const boardBounds = {
+  left: Math.min(...gridPositions.map(point => point.x)) - (TRIANGLE_HALF_HEIGHT * 2 / 3),
+  right: Math.max(...gridPositions.map(point => point.x)) + (TRIANGLE_HALF_HEIGHT * 2 / 3),
+  top: Math.min(...gridPositions.map(point => point.y)) - TRIANGLE_SIDE / 2,
+  bottom: Math.max(...gridPositions.map(point => point.y)) + TRIANGLE_SIDE / 2,
+};
+const BOARD_OFFSET = {
+  x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
+  y: SVG_HEIGHT / 2 - (boardBounds.top + boardBounds.bottom) / 2,
+};
+
+function getTrianglePosition(node: Node): Point {
+  const position = getGridPosition(node);
+  return {
+    x: position.x + BOARD_OFFSET.x,
+    y: position.y + BOARD_OFFSET.y,
   };
 }
 
@@ -33,15 +52,11 @@ function getTrianglePoints(center: Point, orientation: Node['orientation']): str
   return `${apexX},${center.y} ${baseX},${center.y - TRIANGLE_SIDE / 2} ${baseX},${center.y + TRIANGLE_SIDE / 2}`;
 }
 
-function getTriangleNodes(board: Board): Node[] {
-  return Object.values(board.spaces).filter(node => !node.isBorder);
-}
-
 export default function OrapaStreet221B() {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
   const [showConnections, setShowConnections] = useState(false);
-  const triangleNodes = useMemo(() => getTriangleNodes(BOARD), []);
+  const triangleNodes = TRIANGLE_NODES;
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.links ?? {}));
@@ -80,8 +95,8 @@ export default function OrapaStreet221B() {
 
         {visibleConnections.map(({ from, to }) => {
           if (!to) return null;
-          const start = getTriangleCenter(from);
-          const end = getTriangleCenter(to);
+          const start = getTrianglePosition(from);
+          const end = getTrianglePosition(to);
           const isSelectedLink = from.name === selectedNode || to.name === selectedNode;
           return (
             <line
@@ -95,7 +110,7 @@ export default function OrapaStreet221B() {
         })}
 
         {triangleNodes.map(node => {
-          const center = getTriangleCenter(node);
+          const center = getTrianglePosition(node);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
           const fill = isSelected ? '#ffd166' : isNeighbor ? '#547b91' : node.orientation === Orientation.PointyLeft ? '#174a56' : '#253c65';
