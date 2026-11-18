@@ -4,6 +4,7 @@ import './App.css';
 import Arclight from './components/Arclight';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
+import OrapaStreet221B from './components/OrapaStreet221B';
 import RicochetRobots from './components/RicochetRobots';
 import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import RotatingRoads from './components/RotatingRoads';
@@ -119,6 +120,19 @@ function Home() {
           <h2>{t('home.ricochetRobots.title')}</h2>
           <p>{t('home.ricochetRobots.description')}</p>
         </NavLink>
+
+        <NavLink to="/orapa-street-221b" className="game-card" style={{ background: '#101b2c', borderColor: '#4b78a8' }}>
+          <svg viewBox="0 0 80 80" width={80} height={80} aria-hidden="true">
+            <rect width={80} height={80} fill="#08111f" rx={4} />
+            <polygon points="19,24 31,31 19,38" fill="#48c9b0" stroke="#b6fff1" />
+            <polygon points="31,31 43,24 43,38" fill="#326d81" stroke="#b6fff1" />
+            <polygon points="31,45 43,38 43,52" fill="#48c9b0" stroke="#b6fff1" />
+            <polygon points="43,38 55,45 43,52" fill="#326d81" stroke="#b6fff1" />
+            <polygon points="43,24 55,17 55,31" fill="#48c9b0" stroke="#b6fff1" />
+          </svg>
+          <h2>Orapa Street 221B</h2>
+          <p>Explore a clickable triangular board</p>
+        </NavLink>
       </div>
     </div>
   );
@@ -135,6 +149,7 @@ function Nav() {
         <li><NavLink to="/orapa-space">{t('home.orapaSpace.title')}</NavLink></li>
         <li><NavLink to="/rotating-roads">{t('home.rotatingRoads.title')}</NavLink></li>
         <li><NavLink to="/ricochet-robots">{t('home.ricochetRobots.title')}</NavLink></li>
+        <li><NavLink to="/orapa-street-221b">Orapa Street 221B</NavLink></li>
       </ul>
       <LanguageSwitcher />
     </nav>
@@ -162,6 +177,7 @@ export default function App() {
           <Route path="/orapa-space" element={<OrapaSpace />} />
           <Route path="/rotating-roads" element={<RotatingRoads />} />
           <Route path="/ricochet-robots" element={<RicochetRobots />} />
+          <Route path="/orapa-street-221b" element={<OrapaStreet221B />} />
         </Routes>
       </main>
       <Footer />
