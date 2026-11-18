@@ -6,17 +6,20 @@ const BOARD = getBoard();
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
-const TRIANGLE_HALF_HEIGHT = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
+const TRIANGLE_WIDTH = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
 const ROW_GAP = TRIANGLE_SIDE / 2;
-const Q_STEP = TRIANGLE_SIDE * 1.732 / 2; // TRIANGLE_SIDE * sqrt(3) / 2
-const R_X_STEP = -TRIANGLE_HALF_HEIGHT / 3;
 
 type Point = { x: number; y: number };
+type Bounds = { top: number; bottom: number; left: number; right: number };
 
-function getGridPosition(node: Node): Point {
+function getTriangleBounds(node: Node): Bounds {
+  const left = node.q * TRIANGLE_WIDTH;
+  const top = node.r * ROW_GAP;
   return {
-    x: node.q * Q_STEP + (node.r % 2) * R_X_STEP,
-    y: node.r * ROW_GAP,
+    top,
+    bottom: top + TRIANGLE_SIDE,
+    left,
+    right: left + TRIANGLE_WIDTH,
   };
 }
 
@@ -25,31 +28,41 @@ function getTriangleNodes(board: Board): Node[] {
 }
 
 const TRIANGLE_NODES = getTriangleNodes(BOARD);
-const gridPositions = TRIANGLE_NODES.map(getGridPosition);
-const boardBounds = {
-  left: Math.min(...gridPositions.map(point => point.x)) - (TRIANGLE_HALF_HEIGHT * 2 / 3),
-  right: Math.max(...gridPositions.map(point => point.x)) + (TRIANGLE_HALF_HEIGHT * 2 / 3),
-  top: Math.min(...gridPositions.map(point => point.y)) - TRIANGLE_SIDE / 2,
-  bottom: Math.max(...gridPositions.map(point => point.y)) + TRIANGLE_SIDE / 2,
+const triangleBounds = TRIANGLE_NODES.map(getTriangleBounds);
+const boardBounds: Bounds = {
+  left: Math.min(...triangleBounds.map(bounds => bounds.left)),
+  right: Math.max(...triangleBounds.map(bounds => bounds.right)),
+  top: Math.min(...triangleBounds.map(bounds => bounds.top)),
+  bottom: Math.max(...triangleBounds.map(bounds => bounds.bottom)),
 };
 const BOARD_OFFSET = {
   x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
   y: SVG_HEIGHT / 2 - (boardBounds.top + boardBounds.bottom) / 2,
 };
 
-function getTrianglePosition(node: Node): Point {
-  const position = getGridPosition(node);
+function getTriangleViewBounds(node: Node): Bounds {
+  const bounds = getTriangleBounds(node);
   return {
-    x: position.x + BOARD_OFFSET.x,
-    y: position.y + BOARD_OFFSET.y,
+    top: bounds.top + BOARD_OFFSET.y,
+    bottom: bounds.bottom + BOARD_OFFSET.y,
+    left: bounds.left + BOARD_OFFSET.x,
+    right: bounds.right + BOARD_OFFSET.x,
   };
 }
 
-function getTrianglePoints(center: Point, orientation: Node['orientation']): string {
-  const direction = orientation === Orientation.PointyLeft ? -1 : 1;
-  const apexX = center.x + direction * (TRIANGLE_HALF_HEIGHT * 2 / 3);
-  const baseX = center.x - direction * (TRIANGLE_HALF_HEIGHT / 3);
-  return `${apexX},${center.y} ${baseX},${center.y - TRIANGLE_SIDE / 2} ${baseX},${center.y + TRIANGLE_SIDE / 2}`;
+function getTrianglePoints(bounds: Bounds, orientation: Node['orientation']): string {
+  const middleY = (bounds.top + bounds.bottom) / 2;
+  return orientation === Orientation.PointyLeft
+    ? `${bounds.left},${middleY} ${bounds.right},${bounds.top} ${bounds.right},${bounds.bottom}`
+    : `${bounds.right},${middleY} ${bounds.left},${bounds.top} ${bounds.left},${bounds.bottom}`;
+}
+
+function getTriangleLabelPosition(bounds: Bounds, orientation: Node['orientation']): Point {
+  const width = bounds.right - bounds.left;
+  return {
+    x: bounds.left + width * (orientation === Orientation.PointyLeft ? 2 / 3 : 1 / 3),
+    y: (bounds.top + bounds.bottom) / 2,
+  };
 }
 
 export default function OrapaStreet221B() {
@@ -83,7 +96,8 @@ export default function OrapaStreet221B() {
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
 
         {triangleNodes.map(node => {
-          const center = getTrianglePosition(node);
+          const bounds = getTriangleViewBounds(node);
+          const labelPosition = getTriangleLabelPosition(bounds, node.orientation);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
           const fill = isSelected ? '#ffd166' : isNeighbor ? '#547b91' : node.orientation === Orientation.PointyLeft ? '#174a56' : '#253c65';
@@ -104,7 +118,7 @@ export default function OrapaStreet221B() {
               style={{ cursor: 'pointer', outline: 'none' }}
             >
               <polygon
-                points={getTrianglePoints(center, node.orientation)}
+                points={getTrianglePoints(bounds, node.orientation)}
                 fill={fill}
                 stroke={isSelected ? '#fff1be' : isNeighbor ? '#9bd7e8' : '#7ba4bd'}
                 strokeWidth={isSelected ? 2.5 : 1.25}
@@ -113,8 +127,8 @@ export default function OrapaStreet221B() {
               </polygon>
               {showLabels && (
                 <text
-                  x={center.x - (node.orientation === Orientation.PointyLeft ? 2 : -2)}
-                  y={center.y}
+                  x={labelPosition.x - (node.orientation === Orientation.PointyLeft ? 2 : -2)}
+                  y={labelPosition.y}
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fill="#f2f7ff"

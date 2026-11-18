@@ -38,6 +38,12 @@ describe('OrapaStreet221B', () => {
     expect(sharesEdge(getTrianglePoints('C1'), getTrianglePoints('D1'))).toBe(true);
   });
 
+  it('places consecutive triangles in a column edge-to-edge', () => {
+    render(<OrapaStreet221B />);
+
+    expect(sharesEdge(getTrianglePoints('A1'), getTrianglePoints('A2'))).toBe(true);
+  });
+
   it('aligns same-orientation triangles in a column', () => {
     render(<OrapaStreet221B />);
 
