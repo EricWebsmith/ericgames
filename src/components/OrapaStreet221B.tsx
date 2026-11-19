@@ -27,6 +27,40 @@ function getTriangleNodes(board: Board): Node[] {
   return Object.values(board.spaces).filter(node => !node.isBorder);
 }
 
+function getBorderNodes(board: Board): Node[] {
+  return Object.values(board.spaces).filter(node => node.isBorder);
+}
+
+function getTriangleVertices(node: Node): Point[] {
+  const bounds = getTriangleBounds(node);
+  const middleY = (bounds.top + bounds.bottom) / 2;
+  return node.orientation === Orientation.PointyLeft
+    ? [
+      { x: bounds.left, y: middleY },
+      { x: bounds.right, y: bounds.top },
+      { x: bounds.right, y: bounds.bottom },
+    ]
+    : [
+      { x: bounds.right, y: middleY },
+      { x: bounds.left, y: bounds.top },
+      { x: bounds.left, y: bounds.bottom },
+    ];
+}
+
+type Edge = { start: Point; end: Point };
+
+function getTriangleEdges(node: Node): Edge[] {
+  const vertices = getTriangleVertices(node);
+  return vertices.map((start, index) => ({ start, end: vertices[(index + 1) % vertices.length] }));
+}
+
+function getEdgeKey(edge: Edge): string {
+  return [edge.start, edge.end]
+    .map(point => `${point.x.toFixed(3)},${point.y.toFixed(3)}`)
+    .sort()
+    .join('|');
+}
+
 function getBoardOffset(triangleNodes: Node[]): Point {
   const triangleBounds = triangleNodes.map(getTriangleBounds);
   const boardBounds: Bounds = {
@@ -39,6 +73,95 @@ function getBoardOffset(triangleNodes: Node[]): Point {
     x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
     y: SVG_HEIGHT / 2 - (boardBounds.top + boardBounds.bottom) / 2,
   };
+}
+
+function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes: Node[], boardOffset: Point): Map<string, Point> {
+  const allEdges = triangleNodes.flatMap(triangle =>
+    getTriangleEdges(triangle).map(edge => ({ triangleName: triangle.name, ...edge })),
+  );
+  const edgeCounts = new Map<string, number>();
+  for (const edge of allEdges) {
+    const key = getEdgeKey(edge);
+    edgeCounts.set(key, (edgeCounts.get(key) ?? 0) + 1);
+  }
+
+  const openEdgesByTriangle = new Map<string, Edge[]>();
+  for (const edge of allEdges) {
+    if (edgeCounts.get(getEdgeKey(edge)) === 1) {
+      const openEdges = openEdgesByTriangle.get(edge.triangleName) ?? [];
+      openEdges.push(edge);
+      openEdgesByTriangle.set(edge.triangleName, openEdges);
+    }
+  }
+
+  const bordersByTriangle = new Map<string, Array<{ node: Node; direction: Point }>>();
+  for (const border of borderNodes) {
+    const link = Object.entries(border.links)[0];
+    if (!link) {
+      throw new Error(`Missing linked triangle for border node: ${border.name}`);
+    }
+    const [borderToTriangleDirection, triangleName] = link;
+    const triangle = board.spaces[triangleName];
+    const openEdges = openEdgesByTriangle.get(triangleName);
+    if (!triangle || triangle.isBorder || !openEdges?.length) {
+      throw new Error(`Missing exposed triangle edge for border node: ${border.name}`);
+    }
+
+    const angle = ((Number(borderToTriangleDirection) + 6) % 12) * Math.PI / 6;
+    const borders = bordersByTriangle.get(triangleName) ?? [];
+    borders.push({ node: border, direction: { x: Math.sin(angle), y: -Math.cos(angle) } });
+    bordersByTriangle.set(triangleName, borders);
+  }
+
+  const positions = new Map<string, Point>();
+  for (const [triangleName, borders] of bordersByTriangle) {
+    const triangle = board.spaces[triangleName];
+    const openEdges = openEdgesByTriangle.get(triangleName);
+    if (!triangle || !openEdges?.length) {
+      throw new Error(`Missing exposed triangle edge for triangle: ${triangleName}`);
+    }
+
+    const center = getTriangleLabelPosition(getTriangleBounds(triangle), triangle.orientation);
+    const assignments = new Map<string, { edge: Edge; borders: typeof borders }>();
+    for (const border of borders) {
+      const rankedEdges = openEdges.map(edge => {
+        const key = getEdgeKey(edge);
+        const midpoint = {
+          x: (edge.start.x + edge.end.x) / 2,
+          y: (edge.start.y + edge.end.y) / 2,
+        };
+        const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
+        const length = Math.hypot(normal.x, normal.y);
+        const alignment = (normal.x * border.direction.x + normal.y * border.direction.y) / length;
+        return { edge, key, alignment, assigned: assignments.get(key)?.borders.length ?? 0 };
+      }).sort((first, second) => first.assigned - second.assigned || second.alignment - first.alignment);
+
+      const match = rankedEdges[0];
+      if (!match) {
+        throw new Error(`Missing exposed triangle edge for border node: ${border.node.name}`);
+      }
+      const assignment = assignments.get(match.key) ?? { edge: match.edge, borders: [] };
+      assignment.borders.push(border);
+      assignments.set(match.key, assignment);
+    }
+
+    for (const { edge, borders: edgeBorders } of assignments.values()) {
+      const midpoint = {
+        x: (edge.start.x + edge.end.x) / 2,
+        y: (edge.start.y + edge.end.y) / 2,
+      };
+      const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
+      const length = Math.hypot(normal.x, normal.y);
+      edgeBorders.forEach(({ node }, index) => {
+        const fraction = (index + 1) / (edgeBorders.length + 1);
+        positions.set(node.name, {
+          x: edge.start.x + (edge.end.x - edge.start.x) * fraction + normal.x / length * 18 + boardOffset.x,
+          y: edge.start.y + (edge.end.y - edge.start.y) * fraction + normal.y / length * 18 + boardOffset.y,
+        });
+      });
+    }
+  }
+  return positions;
 }
 
 function getTriangleViewBounds(node: Node, boardOffset: Point): Bounds {
@@ -72,7 +195,12 @@ export default function OrapaStreet221B() {
   const [showLabels, setShowLabels] = useState(true);
   const board = useMemo(() => boardType === 'default' ? getDefaultBoard() : getHexBoard(), [boardType]);
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
+  const borderNodes = useMemo(() => getBorderNodes(board), [board]);
   const boardOffset = useMemo(() => getBoardOffset(triangleNodes), [triangleNodes]);
+  const borderNodePositions = useMemo(
+    () => getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
+    [board, triangleNodes, borderNodes, boardOffset],
+  );
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.links ?? {}));
@@ -159,6 +287,38 @@ export default function OrapaStreet221B() {
                   {node.name}
                 </text>
               )}
+            </g>
+          );
+        })}
+
+        {borderNodes.map(node => {
+          const position = borderNodePositions.get(node.name);
+          if (!position) {
+            throw new Error(`Missing position for border node: ${node.name}`);
+          }
+          return (
+            <g key={node.name} data-testid={`border-${node.name}`} aria-label={`Border node ${node.name}`}>
+              <circle
+                cx={position.x}
+                cy={position.y}
+                r={8}
+                fill="#08111f"
+                stroke="#a9bfd5"
+                strokeDasharray="3 2"
+                strokeWidth={1.5}
+              />
+              <text
+                x={position.x}
+                y={position.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#f2f7ff"
+                fontSize={7}
+                fontWeight={700}
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+              >
+                {node.name}
+              </text>
             </g>
           );
         })}
