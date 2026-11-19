@@ -27,14 +27,24 @@ import { Direction, type Board, type LightResult } from './models';
 export function traverse(
     board: Board,
     // Add tiles later
-    startCoordinate: string,
-): LightResult {
+    startLabel: string,
+): LightResult[] {
     // Before traverse, add virtual tiles
 
-    const startNode = board.spaces[startCoordinate];
+    const results: LightResult[] = [];
+    const labels: string[] = [startLabel];
+    const startNode = board.spaces[startLabel];
     // Border nodes have exactly one edge: the direction into the grid.
     const travelDir = Number(Object.keys(startNode.edges)[0]) as Direction;
-    let label = startNode.edges[travelDir]??"";
+    let label = startNode.edges[travelDir] ?? "";
+    labels.push(label);
+    results.push(
+        {
+            label,
+            direction: travelDir,
+            colors: [],
+        }
+    );
     let outDir = travelDir;
 
     // Guard against infinite reflection loops (e.g. two gems facing each other).
@@ -43,9 +53,25 @@ export function traverse(
     for (let step = 0; step < MAX_STEPS; step++) {
         const currentNode = board.spaces[label];
         if (currentNode.isBorder) break;
-        label = currentNode.edges[outDir]??"";
+        label = currentNode.edges[outDir] ?? "";
+        results.push(
+            {
+                label,
+                direction: travelDir,
+                colors: [],
+            }
+        );
     }
 
-    return { end_label: label, colors: [] };
-    
+    return results;
+}
+
+export function getLightResult(
+    board: Board,
+    //
+    startLabel: string,
+)
+{
+    const results = traverse(board, startLabel);
+    return results[results.length - 1];
 }

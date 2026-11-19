@@ -59,6 +59,7 @@ export const Color = {
 export type Color = typeof Color[keyof typeof Color];
 
 export interface LightResult {
-    end_label: string;
+    direction: Direction;
+    label: string;
     colors: Color[];
 }
