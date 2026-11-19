@@ -8,8 +8,8 @@ const TRIANGLE_SIDE = 36;
 const TRIANGLE_WIDTH = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
 const ROW_GAP = TRIANGLE_SIDE / 2;
 
-type Point = { x: number; y: number };
-type Bounds = { top: number; bottom: number; left: number; right: number };
+type Point = { x: number; y: number; };
+type Bounds = { top: number; bottom: number; left: number; right: number; };
 type BoardType = 'default' | 'hex';
 
 function getTriangleBounds(node: Node): Bounds {
@@ -47,7 +47,7 @@ function getTriangleVertices(node: Node): Point[] {
     ];
 }
 
-type Edge = { start: Point; end: Point };
+type Edge = { start: Point; end: Point; };
 
 function getTriangleEdges(node: Node): Edge[] {
   const vertices = getTriangleVertices(node);
@@ -94,7 +94,7 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
     }
   }
 
-  const bordersByTriangle = new Map<string, Array<{ node: Node; direction: Point }>>();
+  const bordersByTriangle = new Map<string, Array<{ node: Node; direction: Point; }>>();
   for (const border of borderNodes) {
     const link = Object.entries(border.links)[0];
     if (!link) {
@@ -122,7 +122,7 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
     }
 
     const center = getTriangleLabelPosition(getTriangleBounds(triangle), triangle.orientation);
-    const assignments = new Map<string, { edge: Edge; borders: typeof borders }>();
+    const assignments = new Map<string, { edge: Edge; borders: typeof borders; }>();
     for (const border of borders) {
       const rankedEdges = openEdges.map(edge => {
         const key = getEdgeKey(edge);
@@ -155,8 +155,8 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
       edgeBorders.forEach(({ node }, index) => {
         const fraction = (index + 1) / (edgeBorders.length + 1);
         positions.set(node.name, {
-          x: edge.start.x + (edge.end.x - edge.start.x) * fraction + normal.x / length * 18 + boardOffset.x,
-          y: edge.start.y + (edge.end.y - edge.start.y) * fraction + normal.y / length * 18 + boardOffset.y,
+          x: edge.start.x + (edge.end.x - edge.start.x) * fraction + normal.x / length * 20 + boardOffset.x,
+          y: edge.start.y + (edge.end.y - edge.start.y) * fraction + normal.y / length * 20 + boardOffset.y,
         });
       });
     }
