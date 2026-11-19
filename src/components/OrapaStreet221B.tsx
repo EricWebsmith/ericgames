@@ -424,6 +424,7 @@ export default function OrapaStreet221B() {
             y2={segment.end.y}
             stroke="#fff1a8"
             strokeWidth={2.5}
+            strokeDasharray="3 6"
             strokeLinecap="round"
             pointerEvents="none"
           />
