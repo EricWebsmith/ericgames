@@ -75,7 +75,9 @@ function getBoardOffset(triangleNodes: Node[]): Point {
   };
 }
 
-function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes: Node[], boardOffset: Point): Map<string, Point> {
+type BorderNodePosition = { sideMidpoint: Point; center: Point; };
+
+function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes: Node[], boardOffset: Point): Map<string, BorderNodePosition> {
   const allEdges = triangleNodes.flatMap(triangle =>
     getTriangleEdges(triangle).map(edge => ({ triangleName: triangle.name, ...edge })),
   );
@@ -113,7 +115,7 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
     bordersByTriangle.set(triangleName, borders);
   }
 
-  const positions = new Map<string, Point>();
+  const positions = new Map<string, BorderNodePosition>();
   for (const [triangleName, borders] of bordersByTriangle) {
     const triangle = board.spaces[triangleName];
     const openEdges = openEdgesByTriangle.get(triangleName);
@@ -133,8 +135,8 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
         const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
         const length = Math.hypot(normal.x, normal.y);
         const alignment = (normal.x * border.direction.x + normal.y * border.direction.y) / length;
-        return { edge, key, alignment, assigned: assignments.get(key)?.borders.length ?? 0 };
-      }).sort((first, second) => first.assigned - second.assigned || second.alignment - first.alignment);
+        return { edge, key, alignment };
+      }).sort((first, second) => second.alignment - first.alignment);
 
       const match = rankedEdges[0];
       if (!match) {
@@ -150,13 +152,17 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
         x: (edge.start.x + edge.end.x) / 2,
         y: (edge.start.y + edge.end.y) / 2,
       };
-      const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
-      const length = Math.hypot(normal.x, normal.y);
-      edgeBorders.forEach(({ node }, index) => {
-        const fraction = (index + 1) / (edgeBorders.length + 1);
+      edgeBorders.forEach(({ node, direction }) => {
+        const distance = Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
         positions.set(node.name, {
-          x: edge.start.x + (edge.end.x - edge.start.x) * fraction + normal.x / length * 20 + boardOffset.x,
-          y: edge.start.y + (edge.end.y - edge.start.y) * fraction + normal.y / length * 20 + boardOffset.y,
+          sideMidpoint: {
+            x: midpoint.x + boardOffset.x,
+            y: midpoint.y + boardOffset.y,
+          },
+          center: {
+            x: midpoint.x + direction.x * distance + boardOffset.x,
+            y: midpoint.y + direction.y * distance + boardOffset.y,
+          },
         });
       });
     }
@@ -297,19 +303,38 @@ export default function OrapaStreet221B() {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
           return (
+            <line
+              key={`border-link-${node.name}`}
+              x1={position.sideMidpoint.x}
+              y1={position.sideMidpoint.y}
+              x2={position.center.x}
+              y2={position.center.y}
+              stroke="#a9bfd5"
+              strokeWidth={1}
+              pointerEvents="none"
+            />
+          );
+        })}
+
+        {borderNodes.map(node => {
+          const position = borderNodePositions.get(node.name);
+          if (!position) {
+            throw new Error(`Missing position for border node: ${node.name}`);
+          }
+          return (
             <g key={node.name} data-testid={`border-${node.name}`} aria-label={`Border node ${node.name}`}>
               <circle
-                cx={position.x}
-                cy={position.y}
-                r={8}
+                cx={position.center.x}
+                cy={position.center.y}
+                r={7}
                 fill="#08111f"
                 stroke="#a9bfd5"
                 strokeDasharray="3 2"
                 strokeWidth={1.5}
               />
               <text
-                x={position.x}
-                y={position.y}
+                x={position.center.x}
+                y={position.center.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#f2f7ff"
