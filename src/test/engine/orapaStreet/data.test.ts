@@ -27,8 +27,6 @@ describe('getBoard', () => {
     });
 });
 
-
-
 describe('getHexBoard', () => {
     it('should pass smoke test', () => {
         const board: Board = getHexBoard();

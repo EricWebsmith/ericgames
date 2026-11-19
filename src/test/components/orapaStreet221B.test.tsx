@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import OrapaStreet221B from '../../components/OrapaStreet221B';
 
@@ -32,6 +32,17 @@ function sharesEdge(first: Point[], second: Point[]): boolean {
 }
 
 describe('OrapaStreet221B', () => {
+  it('switches between the default and hex boards', () => {
+    render(<OrapaStreet221B />);
+
+    expect(screen.getByText('122 triangles · click or keyboard-select a triangle to inspect its neighbors')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Board' }), { target: { value: 'hex' } });
+
+    expect(screen.getByText('150 triangles · click or keyboard-select a triangle to inspect its neighbors')).toBeInTheDocument();
+    expect(screen.getByTestId('triangle-J11')).toBeInTheDocument();
+  });
+
   it('uses q/r positions to place C1 and D1 edge-to-edge', () => {
     render(<OrapaStreet221B />);
 

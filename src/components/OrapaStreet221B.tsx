@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
-import { getDefaultBoard } from '../engine/orapaStreet221B/data';
+import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet221B/data';
 import { Orientation, type Board, type Node } from '../engine/orapaStreet221B/models';
 
-const BOARD = getDefaultBoard();
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
@@ -11,6 +10,7 @@ const ROW_GAP = TRIANGLE_SIDE / 2;
 
 type Point = { x: number; y: number };
 type Bounds = { top: number; bottom: number; left: number; right: number };
+type BoardType = 'default' | 'hex';
 
 function getTriangleBounds(node: Node): Bounds {
   const left = node.q * TRIANGLE_WIDTH;
@@ -27,26 +27,27 @@ function getTriangleNodes(board: Board): Node[] {
   return Object.values(board.spaces).filter(node => !node.isBorder);
 }
 
-const TRIANGLE_NODES = getTriangleNodes(BOARD);
-const triangleBounds = TRIANGLE_NODES.map(getTriangleBounds);
-const boardBounds: Bounds = {
-  left: Math.min(...triangleBounds.map(bounds => bounds.left)),
-  right: Math.max(...triangleBounds.map(bounds => bounds.right)),
-  top: Math.min(...triangleBounds.map(bounds => bounds.top)),
-  bottom: Math.max(...triangleBounds.map(bounds => bounds.bottom)),
-};
-const BOARD_OFFSET = {
-  x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
-  y: SVG_HEIGHT / 2 - (boardBounds.top + boardBounds.bottom) / 2,
-};
+function getBoardOffset(triangleNodes: Node[]): Point {
+  const triangleBounds = triangleNodes.map(getTriangleBounds);
+  const boardBounds: Bounds = {
+    left: Math.min(...triangleBounds.map(bounds => bounds.left)),
+    right: Math.max(...triangleBounds.map(bounds => bounds.right)),
+    top: Math.min(...triangleBounds.map(bounds => bounds.top)),
+    bottom: Math.max(...triangleBounds.map(bounds => bounds.bottom)),
+  };
+  return {
+    x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
+    y: SVG_HEIGHT / 2 - (boardBounds.top + boardBounds.bottom) / 2,
+  };
+}
 
-function getTriangleViewBounds(node: Node): Bounds {
+function getTriangleViewBounds(node: Node, boardOffset: Point): Bounds {
   const bounds = getTriangleBounds(node);
   return {
-    top: bounds.top + BOARD_OFFSET.y,
-    bottom: bounds.bottom + BOARD_OFFSET.y,
-    left: bounds.left + BOARD_OFFSET.x,
-    right: bounds.right + BOARD_OFFSET.x,
+    top: bounds.top + boardOffset.y,
+    bottom: bounds.bottom + boardOffset.y,
+    left: bounds.left + boardOffset.x,
+    right: bounds.right + boardOffset.x,
   };
 }
 
@@ -66,9 +67,12 @@ function getTriangleLabelPosition(bounds: Bounds, orientation: Node['orientation
 }
 
 export default function OrapaStreet221B() {
+  const [boardType, setBoardType] = useState<BoardType>('default');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
-  const triangleNodes = TRIANGLE_NODES;
+  const board = useMemo(() => boardType === 'default' ? getDefaultBoard() : getHexBoard(), [boardType]);
+  const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
+  const boardOffset = useMemo(() => getBoardOffset(triangleNodes), [triangleNodes]);
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.links ?? {}));
@@ -78,7 +82,23 @@ export default function OrapaStreet221B() {
       <h2 className="game-title">Orapa Street 221B</h2>
       <p className="status-message">A triangular tiling built from the board data. Select a triangle to inspect its six-direction links.</p>
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 18 }}>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <label htmlFor="orapa-street-board-type">Board</label>
+        <select
+          id="orapa-street-board-type"
+          className="lang-switcher"
+          value={boardType}
+          onChange={event => {
+            const nextBoardType = event.target.value;
+            if (nextBoardType === 'default' || nextBoardType === 'hex') {
+              setBoardType(nextBoardType);
+              setSelectedNode(null);
+            }
+          }}
+        >
+          <option value="default">Default board</option>
+          <option value="hex">Hex board</option>
+        </select>
         <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <input type="checkbox" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} />
           Show labels
@@ -96,7 +116,7 @@ export default function OrapaStreet221B() {
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
 
         {triangleNodes.map(node => {
-          const bounds = getTriangleViewBounds(node);
+          const bounds = getTriangleViewBounds(node, boardOffset);
           const labelPosition = getTriangleLabelPosition(bounds, node.orientation);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
