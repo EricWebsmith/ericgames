@@ -73,8 +73,6 @@ describe('traverse default board (empty board)', () => {
 });
 
 
-
-
 describe('traverse hex board (empty board)', () => {
     it.each([
         ['A', '31'],
