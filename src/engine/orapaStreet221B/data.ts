@@ -1,4 +1,4 @@
-import { Direction, Orientation, alternateOrientation, getOppositeDirection, type Board, type Node } from './models';
+import { Color, Direction, Orientation, Tile, alternateOrientation, getOppositeDirection, type Board, type Node, type ParentTile } from './models';
 
 
 
@@ -347,3 +347,16 @@ export function getHexBoard(): Board {
     return board;
 }
 
+export function getTiles(): ParentTile[] {
+    return [
+        // Blue tile – irregular 6-cell shape
+        {
+            name: 'Blue', optional: false, subTiles: [
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 10], [10, 0], [2, 4], [4, 2]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: [[10, 8], [8, 10]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: [[2, 4], [4, 2]], parentName: 'Blue' }),
+                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 3 }, reflect: [[10, 8], [8, 10], [6, 4], [4, 6],], parentName: 'Blue' }),
+            ]
+        },
+    ];
+}
