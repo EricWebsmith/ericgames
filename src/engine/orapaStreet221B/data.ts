@@ -6,6 +6,38 @@ function addNode(board: Board, node: Node): void {
     board.spaces[node.name] = node;
 }
 
+function createTriangleNodes(
+    board: Board,
+    colCounts: Record<string, number>,
+    firstRowShapes: Record<string, Orientation>,
+    firstRowR: Record<string, number>,
+): void {
+    let colOrder = 0;
+    for (const col in colCounts) {
+        const count = colCounts[col];
+        const firstRowOrientation = firstRowShapes[col];
+        let orientation = firstRowOrientation;
+        for (let row = 1; row <= count; row++) {
+            const id = `${col}${row}`;
+            if (row === 1) {
+                orientation = firstRowOrientation;
+            } else {
+                orientation = alternateOrientation(orientation);
+            }
+
+            addNode(board, {
+                name: id,
+                isBorder: false,
+                orientation,
+                links: {},
+                q: colOrder,
+                r: firstRowR[col] + row - 1,
+            });
+        }
+        colOrder++;
+    }
+}
+
 function connect(board: Board, from: string, direction: Direction, to: string): void {
     const source = board.spaces[from];
     if (!source) {
@@ -18,6 +50,28 @@ function connect(board: Board, from: string, direction: Direction, to: string): 
 
     source.links[direction] = to;
     destination.links[getOppositeDirection(direction)] = from; // Connect in the opposite direction
+}
+
+function connectNodesWithinColumns(board: Board, colCounts: Record<string, number>): void {
+    for (const col in colCounts) {
+        const count = colCounts[col];
+        for (let row = 1; row < count; row++) {
+            // Connect to next row in the same column on Horizontal direction (Degrees0)
+            const currentId = `${col}${row}`;
+            const nextId = `${col}${row + 1}`;
+            connect(board, currentId, Direction.Clock6, nextId);
+
+            // Connect to next triangle from 2 o'clock if this triangle is pointy-left.
+            if (board.spaces[currentId].orientation === Orientation.PointyLeft) {
+                connect(board, currentId, Direction.Clock8, nextId);
+            }
+
+            // Connect to next triangle from 4 o'clock if this triangle is pointy-right.
+            if (board.spaces[currentId].orientation === Orientation.PointyRight) {
+                connect(board, currentId, Direction.Clock4, nextId);
+            }
+        }
+    }
 }
 
 function connectColumns(board: Board, colCounts: Record<string, number>, leftCol: string, leftColFirstRow: number, rightCol: string, bottomRowFirstCol: number): void {
@@ -37,7 +91,7 @@ function connectColumns(board: Board, colCounts: Record<string, number>, leftCol
     }
 }
 
-export function getBoard(): Board {
+export function getDefaultBoard(): Board {
     const colCounts: Record<string, number> = {
         "A": 15,
         "B": 17,
@@ -70,52 +124,9 @@ export function getBoard(): Board {
 
     const board: Board = { spaces: {} };
 
-    // Create triangle nodes
-    let colOrder = 0;
-    for (const col in colCounts) {
-        const count = colCounts[col];
-        const firstRowOrientation = firstRowShapes[col];
-        let orientation = firstRowOrientation;
-        for (let row = 1; row <= count; row++) {
-            const id = `${col}${row}`;
-            if (row === 1) {
-                orientation = firstRowOrientation;
-            } else {
-                orientation = alternateOrientation(orientation);
-            }
+    createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
 
-            addNode(board, {
-                name: id,
-                isBorder: false,
-                orientation,
-                links: {},
-                q: colOrder,
-                r: firstRowR[col] + row - 1,
-            });
-        }
-        colOrder++;
-    }
-
-    // Connect nodes in the same column.
-    for (const col in colCounts) {
-        const count = colCounts[col];
-        for (let row = 1; row < count; row++) {
-            // Connect to next row in the same column on Horizontal direction (Degrees0)
-            const currentId = `${col}${row}`;
-            const nextId = `${col}${row + 1}`;
-            connect(board, currentId, Direction.Clock6, nextId);
-
-            // Connect to next triangle from 2 o'clock if this triangle is pointy-left.
-            if (board.spaces[currentId].orientation === Orientation.PointyLeft) {
-                connect(board, currentId, Direction.Clock8, nextId);
-            }
-
-            // Connect to next triangle from 4 o'clock if this triangle is pointy-right.
-            if (board.spaces[currentId].orientation === Orientation.PointyRight) {
-                connect(board, currentId, Direction.Clock4, nextId);
-            }
-        }
-    }
+    connectNodesWithinColumns(board, colCounts);
 
     // Connect rows
     connectColumns(board, colCounts, "A", 1, "B", 2);
@@ -191,6 +202,146 @@ export function getBoard(): Board {
     for (let row = 2; row <= 14; row += 2) {
         connect(board, `${row * 2 - 2}`, Direction.Clock8, `G${row}`);
         connect(board, `${row * 2}`, Direction.Clock10, `G${row}`);
+    }
+
+    return board;
+}
+
+
+
+export function getHexBoard(): Board {
+    const colCounts: Record<string, number> = {
+        "A": 11,
+        "B": 13,
+        "C": 15,
+        "D": 17,
+        "E": 19,
+        "F": 19,
+        "G": 17,
+        "H": 15,
+        "I": 13,
+        "J": 11,
+    };
+
+    const firstRowShapes: Record<string, Orientation> = {
+        "A": Orientation.PointyLeft,
+        "B": Orientation.PointyLeft,
+        "C": Orientation.PointyLeft,
+        "D": Orientation.PointyLeft,
+        "E": Orientation.PointyLeft,
+        "F": Orientation.PointyRight,
+        "G": Orientation.PointyRight,
+        "H": Orientation.PointyRight,
+        "I": Orientation.PointyRight,
+        "J": Orientation.PointyRight,
+    };
+
+    const firstRowR: Record<string, number> = {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 1,
+        "E": 0,
+        "F": 0,
+        "G": 1,
+        "H": 2,
+        "I": 3,
+        "J": 4,
+    };
+
+    const board: Board = { spaces: {} };
+
+    createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
+
+    connectNodesWithinColumns(board, colCounts);
+
+    // Connect rows
+    connectColumns(board, colCounts, "A", 1, "B", 2);
+    connectColumns(board, colCounts, "B", 1, "C", 2);
+    connectColumns(board, colCounts, "C", 1, "D", 2);
+    connectColumns(board, colCounts, "D", 1, "E", 2);
+    connectColumns(board, colCounts, "E", 1, "F", 1);
+    connectColumns(board, colCounts, "F", 2, "G", 1);
+    connectColumns(board, colCounts, "G", 2, "H", 1);
+    connectColumns(board, colCounts, "H", 2, "I", 1);
+    connectColumns(board, colCounts, "I", 2, "J", 1);
+
+    // Create border nodes and connect them to the triangles
+    const borderNames = "ABCDEFGHIJKLMNOPQRST".split("");
+
+    for (let i = 1; i <= 40; i++) {
+        borderNames.push(`${i}`);
+    }
+
+    for (const name of borderNames) {
+        addNode(board, {
+            name,
+            isBorder: true,
+            q: -1,
+            r: -1,
+            links: {},
+        });
+    }
+
+    // Connect border nodes to triangles
+    connect(board, "A", Direction.Clock4, "A1");
+    connect(board, "B", Direction.Clock6, "A1");
+    connect(board, "C", Direction.Clock4, "B1");
+    connect(board, "D", Direction.Clock6, "B1");
+    connect(board, "E", Direction.Clock4, "C1");
+    connect(board, "F", Direction.Clock6, "C1");
+    connect(board, "G", Direction.Clock4, "D1");
+    connect(board, "H", Direction.Clock6, "D1");
+    connect(board, "I", Direction.Clock4, "E1");
+    connect(board, "J", Direction.Clock6, "E1");
+
+    connect(board, "K", Direction.Clock6, "F1");
+    connect(board, "L", Direction.Clock8, "F1");
+    connect(board, "M", Direction.Clock6, "G1");
+    connect(board, "N", Direction.Clock8, "G1");
+    connect(board, "O", Direction.Clock6, "H1");
+    connect(board, "P", Direction.Clock8, "H1");
+    connect(board, "Q", Direction.Clock6, "I1");
+    connect(board, "R", Direction.Clock8, "I1");
+    connect(board, "S", Direction.Clock6, "J1");
+    connect(board, "T", Direction.Clock8, "J1");
+
+
+
+    // Col A connects border nodes 1 to 10
+    for (let row = 2; row <= 10; row += 2) {
+        connect(board, `${row - 1}`, Direction.Clock4, `A${row}`);
+        connect(board, `${row}`, Direction.Clock2, `A${row}`);
+    }
+
+    // Left bottom border nodes connect to border nodes 11 to 20
+    connect(board, "11", Direction.Clock2, "A11");
+    connect(board, "12", Direction.Clock0, "A11");
+    connect(board, "13", Direction.Clock2, "B13");
+    connect(board, "14", Direction.Clock0, "B13");
+    connect(board, "15", Direction.Clock2, "C15");
+    connect(board, "16", Direction.Clock0, "C15");
+    connect(board, "17", Direction.Clock2, "D17");
+    connect(board, "18", Direction.Clock0, "D17");
+    connect(board, "19", Direction.Clock2, "E19");
+    connect(board, "20", Direction.Clock0, "E19");
+
+    // Right bottom border nodes connect to border nodes 21 to 30
+    connect(board, "21", Direction.Clock0, "F19");
+    connect(board, "22", Direction.Clock10, "F19");
+    connect(board, "23", Direction.Clock0, "G17");
+    connect(board, "24", Direction.Clock10, "G17");
+    connect(board, "25", Direction.Clock0, "H15");
+    connect(board, "26", Direction.Clock10, "H15");
+    connect(board, "27", Direction.Clock0, "I13");
+    connect(board, "28", Direction.Clock10, "I13");
+    connect(board, "29", Direction.Clock0, "J11");
+    connect(board, "30", Direction.Clock10, "J11");
+
+    // Col J connects border nodes 31 to 40
+    for (let row = 10; row >= 2; row -= 2) {
+        connect(board, `${40 - row + 1}`, Direction.Clock10, `J${row}`);
+        connect(board, `${40 - row + 2}`, Direction.Clock8, `J${row}`);
     }
 
     return board;

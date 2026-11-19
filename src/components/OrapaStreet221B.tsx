@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { getBoard } from '../engine/orapaStreet221B/data';
+import { getDefaultBoard } from '../engine/orapaStreet221B/data';
 import { Orientation, type Board, type Node } from '../engine/orapaStreet221B/models';
 
-const BOARD = getBoard();
+const BOARD = getDefaultBoard();
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
