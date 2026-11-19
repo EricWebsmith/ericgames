@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet221B/data';
+import { traverse } from '../engine/orapaStreet221B/gameManager';
 import { Orientation, type Board, type Node } from '../engine/orapaStreet221B/models';
 
 const SVG_WIDTH = 760;
@@ -59,6 +60,39 @@ function getEdgeKey(edge: Edge): string {
     .map(point => `${point.x.toFixed(3)},${point.y.toFixed(3)}`)
     .sort()
     .join('|');
+}
+
+function getConnectionMidpoint(
+  board: Board,
+  firstName: string,
+  secondName: string,
+  borderNodePositions: Map<string, BorderNodePosition>,
+  boardOffset: Point,
+): Point {
+  const first = board.spaces[firstName];
+  const second = board.spaces[secondName];
+  if (!first || !second) {
+    throw new Error(`Missing node in light path: ${firstName} or ${secondName}`);
+  }
+
+  if (first.isBorder || second.isBorder) {
+    const borderName = first.isBorder ? firstName : secondName;
+    const position = borderNodePositions.get(borderName);
+    if (!position) {
+      throw new Error(`Missing position for border node: ${borderName}`);
+    }
+    return position.sideMidpoint;
+  }
+
+  const secondEdgeKeys = new Set(getTriangleEdges(second).map(getEdgeKey));
+  const sharedEdge = getTriangleEdges(first).find(edge => secondEdgeKeys.has(getEdgeKey(edge)));
+  if (!sharedEdge) {
+    throw new Error(`Missing shared edge between triangles: ${firstName} and ${secondName}`);
+  }
+  return {
+    x: (sharedEdge.start.x + sharedEdge.end.x) / 2 + boardOffset.x,
+    y: (sharedEdge.start.y + sharedEdge.end.y) / 2 + boardOffset.y,
+  };
 }
 
 function getBoardOffset(triangleNodes: Node[]): Point {
@@ -208,6 +242,7 @@ function getTriangleLabelPosition(bounds: Bounds, orientation: Node['orientation
 export default function OrapaStreet221B() {
   const [boardType, setBoardType] = useState<BoardType>('default');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [selectedBorder, setSelectedBorder] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
   const board = useMemo(() => boardType === 'default' ? getDefaultBoard() : getHexBoard(), [boardType]);
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
@@ -220,11 +255,38 @@ export default function OrapaStreet221B() {
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.edges ?? {}));
+  const lightSegments = useMemo(() => {
+    if (!selectedBorder) {
+      return [];
+    }
+
+    const results = traverse(board, selectedBorder);
+    return results.flatMap((result, index) => {
+      const triangle = board.spaces[result.label];
+      if (!triangle) {
+        throw new Error(`Missing traversed node: ${result.label}`);
+      }
+      if (triangle.isBorder) {
+        return [];
+      }
+
+      const previousLabel = index === 0 ? selectedBorder : results[index - 1]?.label;
+      const nextLabel = results[index + 1]?.label;
+      if (!previousLabel || !nextLabel) {
+        throw new Error(`Incomplete light path at triangle: ${triangle.name}`);
+      }
+      return [{
+        triangleName: triangle.name,
+        start: getConnectionMidpoint(board, previousLabel, triangle.name, borderNodePositions, boardOffset),
+        end: getConnectionMidpoint(board, triangle.name, nextLabel, borderNodePositions, boardOffset),
+      }];
+    });
+  }, [selectedBorder, board, borderNodePositions, boardOffset]);
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
       <h2 className="game-title">Orapa Street 221B</h2>
-      <p className="status-message">A triangular tiling built from the board data. Select a triangle to inspect its six-direction links.</p>
+      <p className="status-message">Select a triangle to inspect its links, or click a border to trace the light path.</p>
 
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
         <label htmlFor="orapa-street-board-type">Board</label>
@@ -237,6 +299,7 @@ export default function OrapaStreet221B() {
             if (nextBoardType === 'default' || nextBoardType === 'hex') {
               setBoardType(nextBoardType);
               setSelectedNode(null);
+              setSelectedBorder(null);
             }
           }}
         >
@@ -247,7 +310,16 @@ export default function OrapaStreet221B() {
           <input type="checkbox" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} />
           Show labels
         </label>
-        <button className="btn-reset" onClick={() => setSelectedNode(null)} disabled={!selectedNode}>Clear selection</button>
+        <button
+          className="btn-reset"
+          onClick={() => {
+            setSelectedNode(null);
+            setSelectedBorder(null);
+          }}
+          disabled={!selectedNode && !selectedBorder}
+        >
+          Clear selection
+        </button>
       </div>
 
       <svg
@@ -272,10 +344,14 @@ export default function OrapaStreet221B() {
               role="button"
               tabIndex={0}
               aria-label={`${node.name}, ${node.orientation}, ${Object.keys(node.edges).length} links`}
-              onClick={() => setSelectedNode(node.name)}
+              onClick={() => {
+                setSelectedBorder(null);
+                setSelectedNode(node.name);
+              }}
               onKeyDown={event => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
+                  setSelectedBorder(null);
                   setSelectedNode(node.name);
                 }
               }}
@@ -338,6 +414,21 @@ export default function OrapaStreet221B() {
           );
         })}
 
+        {lightSegments.map(segment => (
+          <line
+            key={`light-line-${segment.triangleName}`}
+            data-testid={`light-line-${segment.triangleName}`}
+            x1={segment.start.x}
+            y1={segment.start.y}
+            x2={segment.end.x}
+            y2={segment.end.y}
+            stroke="#fff1a8"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
+        ))}
+
         {borderNodes.map(node => {
           const position = borderNodePositions.get(node.name);
           if (!position) {
@@ -353,6 +444,20 @@ export default function OrapaStreet221B() {
                 stroke="#a9bfd5"
                 strokeDasharray="3 2"
                 strokeWidth={1.5}
+                data-testid={`border-${node.name}`}
+                aria-label={`Border node ${node.name}`}
+                onClick={() => {
+                  setSelectedNode(null);
+                  setSelectedBorder(node.name);
+                }}
+                onKeyDown={event => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setSelectedNode(null);
+                    setSelectedBorder(node.name);
+                  }
+                }}
+                style={{ cursor: 'pointer' }}
               />
               <circle
                 data-testid={`border-extension-circle-${node.name}`}
@@ -384,7 +489,7 @@ export default function OrapaStreet221B() {
       <p className="status-message" aria-live="polite" style={{ textAlign: 'center' }}>
         {selected
           ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.edges).join(', ') || 'none'}`
-          : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
+            : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
       </p>
     </section>
   );

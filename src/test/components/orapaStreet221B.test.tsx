@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import OrapaStreet221B from '../../components/OrapaStreet221B';
+import { getDefaultBoard } from '../../engine/orapaStreet221B/data';
+import { traverse } from '../../engine/orapaStreet221B/gameManager';
 
 type Point = { x: number; y: number };
 
@@ -32,6 +34,38 @@ function sharesEdge(first: Point[], second: Point[]): boolean {
 }
 
 describe('OrapaStreet221B', () => {
+  it('draws each traversed triangle from one side midpoint to another', () => {
+    render(<OrapaStreet221B />);
+
+    fireEvent.click(screen.getByTestId('border-A'));
+
+    const board = getDefaultBoard();
+    const results = traverse(board, 'A');
+    const traversedTriangles = results.filter(result => !board.spaces[result.label].isBorder);
+    expect(screen.getAllByTestId(/^light-line-/)).toHaveLength(traversedTriangles.length);
+
+    const firstSegment = screen.getByTestId('light-line-A1');
+    const trianglePoints = getTrianglePoints('A1');
+    const sideMidpoints = trianglePoints.map((start, index) => {
+      const end = trianglePoints[(index + 1) % trianglePoints.length];
+      return { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
+    });
+    const start = {
+      x: Number(firstSegment.getAttribute('x1')),
+      y: Number(firstSegment.getAttribute('y1')),
+    };
+    const end = {
+      x: Number(firstSegment.getAttribute('x2')),
+      y: Number(firstSegment.getAttribute('y2')),
+    };
+    expect(sideMidpoints.some(midpoint => pointsMatch(start, midpoint))).toBe(true);
+    expect(sideMidpoints.some(midpoint => pointsMatch(end, midpoint))).toBe(true);
+    expect(sideMidpoints.some(midpoint => pointsMatch(start, midpoint) && pointsMatch(end, midpoint))).toBe(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear selection' }));
+    expect(screen.queryAllByTestId(/^light-line-/)).toHaveLength(0);
+  });
+
   it('draws a perpendicular extension from a border node to a second circle', () => {
     render(<OrapaStreet221B />);
 
