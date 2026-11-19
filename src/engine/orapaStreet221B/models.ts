@@ -38,7 +38,7 @@ export interface Node {
      * For triangles, there are 6 links,
      * For borders, there is only 1 link.
      */
-    links: { [key in Direction]?: string }; // Links to other nodes (triangles or borders)
+    edges: { [key in Direction]?: string }; // Links to other nodes (triangles or borders)
 
     q: number; // Column index (0-based) -1 if border
     r: number; // Row index (0-based) -1 if border
@@ -46,4 +46,19 @@ export interface Node {
 
 export interface Board {
     spaces: Record<string, Node>;
+}
+
+
+export const Color = {
+    Red: "red",
+    Blue: "blue",
+    Yellow: "yellow",
+    White: "white",
+} as const;
+
+export type Color = typeof Color[keyof typeof Color];
+
+export interface LightResult {
+    end_label: string;
+    colors: Color[];
 }

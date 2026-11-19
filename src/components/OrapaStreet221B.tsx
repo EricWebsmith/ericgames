@@ -75,7 +75,7 @@ function getBoardOffset(triangleNodes: Node[]): Point {
   };
 }
 
-type BorderNodePosition = { sideMidpoint: Point; center: Point; };
+type BorderNodePosition = { sideMidpoint: Point; center: Point; outerCenter: Point; };
 
 function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes: Node[], boardOffset: Point): Map<string, BorderNodePosition> {
   const allEdges = triangleNodes.flatMap(triangle =>
@@ -98,7 +98,7 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
 
   const bordersByTriangle = new Map<string, Array<{ node: Node; direction: Point; }>>();
   for (const border of borderNodes) {
-    const link = Object.entries(border.links)[0];
+    const link = Object.entries(border.edges)[0];
     if (!link) {
       throw new Error(`Missing linked triangle for border node: ${border.name}`);
     }
@@ -152,16 +152,26 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
         x: (edge.start.x + edge.end.x) / 2,
         y: (edge.start.y + edge.end.y) / 2,
       };
+      const outward = { x: midpoint.x - center.x, y: midpoint.y - center.y };
+      const outwardLength = Math.hypot(outward.x, outward.y);
       edgeBorders.forEach(({ node, direction }) => {
         const distance = Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
+        const borderCenter = {
+          x: midpoint.x + direction.x * distance,
+          y: midpoint.y + direction.y * distance,
+        };
         positions.set(node.name, {
           sideMidpoint: {
             x: midpoint.x + boardOffset.x,
             y: midpoint.y + boardOffset.y,
           },
           center: {
-            x: midpoint.x + direction.x * distance + boardOffset.x,
-            y: midpoint.y + direction.y * distance + boardOffset.y,
+            x: borderCenter.x + boardOffset.x,
+            y: borderCenter.y + boardOffset.y,
+          },
+          outerCenter: {
+            x: borderCenter.x + outward.x / outwardLength * distance + boardOffset.x,
+            y: borderCenter.y + outward.y / outwardLength * distance + boardOffset.y,
           },
         });
       });
@@ -209,7 +219,7 @@ export default function OrapaStreet221B() {
   );
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
-  const selectedNeighbors = new Set(Object.values(selected?.links ?? {}));
+  const selectedNeighbors = new Set(Object.values(selected?.edges ?? {}));
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
@@ -261,7 +271,7 @@ export default function OrapaStreet221B() {
               data-testid={`triangle-${node.name}`}
               role="button"
               tabIndex={0}
-              aria-label={`${node.name}, ${node.orientation}, ${Object.keys(node.links).length} links`}
+              aria-label={`${node.name}, ${node.orientation}, ${Object.keys(node.edges).length} links`}
               onClick={() => setSelectedNode(node.name)}
               onKeyDown={event => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -277,7 +287,7 @@ export default function OrapaStreet221B() {
                 stroke={isSelected ? '#fff1be' : isNeighbor ? '#9bd7e8' : '#7ba4bd'}
                 strokeWidth={isSelected ? 2.5 : 1.25}
               >
-                <title>{`${node.name} · q: ${node.q}, r: ${node.r} · ${node.orientation} · ${Object.keys(node.links).length} links`}</title>
+                <title>{`${node.name} · q: ${node.q}, r: ${node.r} · ${node.orientation} · ${Object.keys(node.edges).length} links`}</title>
               </polygon>
               {showLabels && (
                 <text
@@ -303,16 +313,28 @@ export default function OrapaStreet221B() {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
           return (
-            <line
-              key={`border-link-${node.name}`}
-              x1={position.sideMidpoint.x}
-              y1={position.sideMidpoint.y}
-              x2={position.center.x}
-              y2={position.center.y}
-              stroke="#a9bfd5"
-              strokeWidth={1}
-              pointerEvents="none"
-            />
+            <g key={`border-lines-${node.name}`}>
+              <line
+                data-testid={`border-link-line-${node.name}`}
+                x1={position.sideMidpoint.x}
+                y1={position.sideMidpoint.y}
+                x2={position.center.x}
+                y2={position.center.y}
+                stroke="#a9bfd5"
+                strokeWidth={1}
+                pointerEvents="none"
+              />
+              <line
+                data-testid={`border-extension-line-${node.name}`}
+                x1={position.center.x}
+                y1={position.center.y}
+                x2={position.outerCenter.x}
+                y2={position.outerCenter.y}
+                stroke="#a9bfd5"
+                strokeWidth={1}
+                pointerEvents="none"
+              />
+            </g>
           );
         })}
 
@@ -326,6 +348,16 @@ export default function OrapaStreet221B() {
               <circle
                 cx={position.center.x}
                 cy={position.center.y}
+                r={7}
+                fill="#08111f"
+                stroke="#a9bfd5"
+                strokeDasharray="3 2"
+                strokeWidth={1.5}
+              />
+              <circle
+                data-testid={`border-extension-circle-${node.name}`}
+                cx={position.outerCenter.x}
+                cy={position.outerCenter.y}
                 r={7}
                 fill="#08111f"
                 stroke="#a9bfd5"
@@ -351,7 +383,7 @@ export default function OrapaStreet221B() {
 
       <p className="status-message" aria-live="polite" style={{ textAlign: 'center' }}>
         {selected
-          ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.links).join(', ') || 'none'}`
+          ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.edges).join(', ') || 'none'}`
           : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
       </p>
     </section>

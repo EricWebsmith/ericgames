@@ -14,14 +14,14 @@ describe('getBoard', () => {
         // For each border node, check that it has exactly 1 link
         for (const node of Object.values(board.spaces)) {
             if (node.isBorder) {
-                expect(Object.keys(node.links).length).toBe(1);
+                expect(Object.keys(node.edges).length).toBe(1);
             }
         }
 
         // For each triangle node, check that it has exactly 4 links
         for (const node of Object.values(board.spaces)) {
             if (!node.isBorder) {
-                expect(Object.keys(node.links).length).toBe(6);
+                expect(Object.keys(node.edges).length).toBe(6);
             }
         }
     });
@@ -40,14 +40,14 @@ describe('getHexBoard', () => {
         // For each border node, check that it has exactly 1 link
         for (const node of Object.values(board.spaces)) {
             if (node.isBorder) {
-                expect(Object.keys(node.links).length).toBe(1);
+                expect(Object.keys(node.edges).length).toBe(1);
             }
         }
 
         // For each triangle node, check that it has exactly 4 links
         for (const node of Object.values(board.spaces)) {
             if (!node.isBorder) {
-                expect(Object.keys(node.links).length).toBe(6);
+                expect(Object.keys(node.edges).length).toBe(6);
             }
         }
     });

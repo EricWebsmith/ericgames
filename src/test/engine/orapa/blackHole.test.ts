@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { putTile, tranverse } from '../../../engine/orapa/gameManager';
+import { putTile, traverse } from '../../../engine/orapa/gameManager';
 import { getBoard } from '../../../engine/orapa/mineData';
 import { type Board, TileInBoard } from '../../../engine/orapa/models';
 import { getTiles } from '../../../engine/orapa/spaceData';
@@ -35,7 +35,7 @@ describe('Black hole at D5', () => {
     ['C', 'N', []],
     ['B', '12', []],
   ])('start %s → end %s', (startCoordinate, expectedEnd, expectedColors) => {
-    const result = tranverse(board, blackHoleTiles, startCoordinate);
+    const result = traverse(board, blackHoleTiles, startCoordinate);
     expect(result.end_label).toBe(expectedEnd);
     expect(result.colors).toEqual(expectedColors);
   });

@@ -32,6 +32,45 @@ function sharesEdge(first: Point[], second: Point[]): boolean {
 }
 
 describe('OrapaStreet221B', () => {
+  it('draws a perpendicular extension from a border node to a second circle', () => {
+    render(<OrapaStreet221B />);
+
+    const borderCircle = screen.getByTestId('border-A').querySelector('circle');
+    const sideLine = screen.getByTestId('border-link-line-A');
+    const extensionLine = screen.getByTestId('border-extension-line-A');
+    const extensionCircle = screen.getByTestId('border-extension-circle-A');
+    if (!borderCircle) throw new Error('Missing border circle');
+
+    expect(extensionLine.getAttribute('x1')).toBe(borderCircle.getAttribute('cx'));
+    expect(extensionLine.getAttribute('y1')).toBe(borderCircle.getAttribute('cy'));
+    expect(extensionLine.getAttribute('x2')).toBe(extensionCircle.getAttribute('cx'));
+    expect(extensionLine.getAttribute('y2')).toBe(extensionCircle.getAttribute('cy'));
+
+    const sideMidpoint = {
+      x: Number(sideLine.getAttribute('x1')),
+      y: Number(sideLine.getAttribute('y1')),
+    };
+    const trianglePoints = getTrianglePoints('A1');
+    const edgeIndex = trianglePoints.findIndex((start, index) => {
+      const end = trianglePoints[(index + 1) % trianglePoints.length];
+      return pointsMatch(
+        sideMidpoint,
+        { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 },
+      );
+    });
+    expect(edgeIndex).toBeGreaterThanOrEqual(0);
+
+    const edgeStart = trianglePoints[edgeIndex];
+    const edgeEnd = trianglePoints[(edgeIndex + 1) % trianglePoints.length];
+    const extension = {
+      x: Number(extensionLine.getAttribute('x2')) - Number(extensionLine.getAttribute('x1')),
+      y: Number(extensionLine.getAttribute('y2')) - Number(extensionLine.getAttribute('y1')),
+    };
+    expect(Math.abs(
+      (edgeEnd.x - edgeStart.x) * extension.x + (edgeEnd.y - edgeStart.y) * extension.y,
+    )).toBeLessThan(0.001);
+  });
+
   it('switches between the default and hex boards', () => {
     render(<OrapaStreet221B />);
 

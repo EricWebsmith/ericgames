@@ -84,12 +84,12 @@ function getBlackHoleVirtualTiles(board: Board, tilesInBoard: Record<string, Til
  * After redirecting via an arc, the new travel direction equals the exit face
  * (face 1 = North face → travel North, etc.).
  */
-export function tranverse(
+export function traverse(
     board: Board,
     tilesInBoard: Record<string, TileInBoard>,
     startCoordinate: string,
 ): LightResult {
-    // Before tranverse, add virtual tiles
+    // Before traverse, add virtual tiles
     let virtualTiles = getBlackHoleVirtualTiles(board, tilesInBoard);
 
     const startNode = board.spaces[startCoordinate];
@@ -421,7 +421,7 @@ function putTiles(board: Board, tiles: ParentTile[], rng: () => number): Record<
 export function setupWithPlacement(board: Board, tilesInBoard: Record<string, TileInBoard>): Puzzle {
     const lightResults: Record<string, LightResult> = {};
     for (const coord of borderLabels) {
-        lightResults[coord] = tranverse(board, tilesInBoard, coord);
+        lightResults[coord] = traverse(board, tilesInBoard, coord);
     }
 
     const sightResults: Record<string, Color[]> = {};
@@ -446,7 +446,7 @@ export function setupWithSeed(board: Board, tiles: ParentTile[], seed: number): 
 
     const lightResults: Record<string, LightResult> = {};
     for (const coord of borderLabels) {
-        lightResults[coord] = tranverse(board, tilesInBoard, coord);
+        lightResults[coord] = traverse(board, tilesInBoard, coord);
     }
 
     const sightResults: Record<string, Color[]> = {};

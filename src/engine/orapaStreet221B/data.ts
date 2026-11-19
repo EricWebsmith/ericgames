@@ -29,7 +29,7 @@ function createTriangleNodes(
                 name: id,
                 isBorder: false,
                 orientation,
-                links: {},
+                edges: {},
                 q: colOrder,
                 r: firstRowR[col] + row - 1,
             });
@@ -48,8 +48,8 @@ function connect(board: Board, from: string, direction: Direction, to: string): 
         throw new Error(`Missing destination node: ${to}`);
     }
 
-    source.links[direction] = to;
-    destination.links[getOppositeDirection(direction)] = from; // Connect in the opposite direction
+    source.edges[direction] = to;
+    destination.edges[getOppositeDirection(direction)] = from; // Connect in the opposite direction
 }
 
 function connectNodesWithinColumns(board: Board, colCounts: Record<string, number>): void {
@@ -155,7 +155,7 @@ export function getDefaultBoard(): Board {
             isBorder: true,
             q: -1,
             r: -1,
-            links: {},
+            edges: {},
         });
     }
 
@@ -279,7 +279,7 @@ export function getHexBoard(): Board {
             isBorder: true,
             q: -1,
             r: -1,
-            links: {},
+            edges: {},
         });
     }
 
