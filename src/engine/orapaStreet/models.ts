@@ -40,14 +40,18 @@ export interface Node {
      */
     edges: { [key in Direction]?: string }; // Links to other nodes (triangles or borders)
 
+    neighbors: string[];
+
     q: number; // Column index (0-based) -1 if border
     r: number; // Row index (0-based) -1 if border
 }
 
 export interface Board {
     spaces: Record<string, Node>;
+    spacesByQr: Record<number, Record<number, Node>>;
 }
 
+// #region tiles
 
 export const Color = {
     Red: "red",
@@ -65,6 +69,11 @@ export interface LightResult {
 }
 
 export type Reflect = [number, number];
+
+export interface Offset {
+    dq: number;
+    dr: number;
+}
 
 
 export class Tile {
@@ -170,3 +179,5 @@ export interface ParentTile {
     optional: boolean;
     subTiles: Tile[];
 }
+
+// endregion

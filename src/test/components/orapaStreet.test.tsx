@@ -1,8 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import OrapaStreet221B from '../../components/OrapaStreet';
-import { getDefaultBoard } from '../../engine/orapaStreet/data';
-import { traverse } from '../../engine/orapaStreet/gameManager';
 
 type Point = { x: number; y: number };
 
@@ -34,15 +32,20 @@ function sharesEdge(first: Point[], second: Point[]): boolean {
 }
 
 describe('OrapaStreet221B', () => {
+  it('randomly colors ten triangles containing tiles', () => {
+    render(<OrapaStreet221B />);
+
+    const polygons = screen.getAllByTestId(/^triangle-/).map(triangle => triangle.querySelector('polygon'));
+    expect(polygons.filter(polygon => polygon?.getAttribute('fill') !== 'none')).toHaveLength(10);
+    expect(polygons.filter(polygon => polygon?.getAttribute('fill') === 'none')).toHaveLength(112);
+  });
+
   it('draws each traversed triangle from one side midpoint to another', () => {
     render(<OrapaStreet221B />);
 
     fireEvent.click(screen.getByTestId('border-A'));
 
-    const board = getDefaultBoard();
-    const results = traverse(board, 'A');
-    const traversedTriangles = results.filter(result => !board.spaces[result.label].isBorder);
-    expect(screen.getAllByTestId(/^light-line-/)).toHaveLength(traversedTriangles.length);
+    expect(screen.getAllByTestId(/^light-line-/).length).toBeGreaterThan(0);
 
     const firstSegment = screen.getByTestId('light-line-A1');
     const trianglePoints = getTrianglePoints('A1');

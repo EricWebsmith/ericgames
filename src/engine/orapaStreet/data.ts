@@ -1,9 +1,45 @@
-import { Color, Direction, Orientation, Tile, alternateOrientation, getOppositeDirection, type Board, type Node, type ParentTile } from './models';
+import { Color, Direction, Orientation, Tile, alternateOrientation, getOppositeDirection, type Board, type Node, type Offset, type ParentTile } from './models';
 
+const LEFT_TRIANGLE_OFFSETS: Offset[] = [
+    { dq: -1, dr: -1 },
+    { dq: -1, dr: 0 },
+    { dq: -1, dr: 1 },
 
+    { dq: 0, dr: -2 },
+    { dq: 0, dr: -1 },
+    { dq: 0, dr: 1 },
+    { dq: 0, dr: 2 },
+
+    { dq: 1, dr: -2 },
+    { dq: 1, dr: -1 },
+    { dq: 1, dr: 0 },
+    { dq: 1, dr: 1 },
+    { dq: 1, dr: 2 },
+];
+
+const RIGHT_TRIANGLE_OFFSETS: Offset[] = [
+    { dq: -1, dr: -2 },
+    { dq: -1, dr: -1 },
+    { dq: -1, dr: 0 },
+    { dq: -1, dr: 1 },
+    { dq: -1, dr: 2 },
+
+    { dq: 0, dr: -2 },
+    { dq: 0, dr: -1 },
+    { dq: 0, dr: 1 },
+    { dq: 0, dr: 2 },
+
+    { dq: 1, dr: -1 },
+    { dq: 1, dr: 0 },
+    { dq: 1, dr: 1 },
+];
 
 function addNode(board: Board, node: Node): void {
     board.spaces[node.name] = node;
+    if (!node.isBorder) {
+        board.spacesByQr[node.q] ??= {};
+        board.spacesByQr[node.q][node.r] = node;
+    }
 }
 
 function createTriangleNodes(
@@ -30,6 +66,7 @@ function createTriangleNodes(
                 isBorder: false,
                 orientation,
                 edges: {},
+                neighbors: [],
                 q: colOrder,
                 r: firstRowR[col] + row - 1,
             });
@@ -91,6 +128,18 @@ function connectColumns(board: Board, colCounts: Record<string, number>, leftCol
     }
 }
 
+function resolveNeighbors(board: Board): void {
+    for (const node of Object.values(board.spaces)) {
+        const neighborOffsets = node.orientation === Orientation.PointyLeft ? LEFT_TRIANGLE_OFFSETS : RIGHT_TRIANGLE_OFFSETS;
+        for (const offset of neighborOffsets) {
+            const neighborNode = board.spacesByQr[node.q + offset.dq]?.[node.r + offset.dr] ?? null;
+            if (neighborNode) {
+                node.neighbors.push(neighborNode.name);
+            }
+        }
+    }
+}
+
 export function getDefaultBoard(): Board {
     const colCounts: Record<string, number> = {
         "A": 15,
@@ -122,7 +171,7 @@ export function getDefaultBoard(): Board {
         "G": 3,
     };
 
-    const board: Board = { spaces: {} };
+    const board: Board = { spaces: {}, spacesByQr: {} };
 
     createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
 
@@ -153,9 +202,10 @@ export function getDefaultBoard(): Board {
         addNode(board, {
             name,
             isBorder: true,
-            q: -1,
-            r: -1,
+            q: -999,
+            r: -999,
             edges: {},
+            neighbors: [],
         });
     }
 
@@ -204,6 +254,7 @@ export function getDefaultBoard(): Board {
         connect(board, `${row * 2}`, Direction.Clock10, `G${row}`);
     }
 
+    resolveNeighbors(board);
     return board;
 }
 
@@ -249,7 +300,7 @@ export function getHexBoard(): Board {
         "J": 4,
     };
 
-    const board: Board = { spaces: {} };
+    const board: Board = { spaces: {}, spacesByQr: {} };
 
     createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
 
@@ -277,9 +328,10 @@ export function getHexBoard(): Board {
         addNode(board, {
             name,
             isBorder: true,
-            q: -1,
-            r: -1,
+            q: -999,
+            r: -999,
             edges: {},
+            neighbors: [],
         });
     }
 
@@ -344,6 +396,7 @@ export function getHexBoard(): Board {
         connect(board, `${40 - row + 2}`, Direction.Clock8, `J${row}`);
     }
 
+    resolveNeighbors(board);
     return board;
 }
 

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet/data';
 import { getTilesInBoard, traverse } from '../engine/orapaStreet/gameManager';
-import { Orientation, type Board, type Node } from '../engine/orapaStreet/models';
+import { Orientation, type Board, type Color, type Node } from '../engine/orapaStreet/models';
+import { GEM_FILL } from './shared/colors';
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -12,6 +13,12 @@ const ROW_GAP = TRIANGLE_SIDE / 2;
 type Point = { x: number; y: number; };
 type Bounds = { top: number; bottom: number; left: number; right: number; };
 type BoardType = 'default' | 'hex';
+
+function getTileColor(colors: Color[]): string {
+  if (colors.length === 0) return 'none';
+  if (colors.includes('blue') && colors.includes('white')) return '#66ccee';
+  return GEM_FILL[colors[0]] ?? '#aaaaaa';
+}
 
 function getTriangleBounds(node: Node): Bounds {
   const left = node.q * TRIANGLE_WIDTH;
@@ -247,6 +254,10 @@ export default function OrapaStreet221B() {
   const board = useMemo(() => boardType === 'default' ? getDefaultBoard() : getHexBoard(), [boardType]);
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
   const borderNodes = useMemo(() => getBorderNodes(board), [board]);
+  const tilesInBoard = useMemo(
+    () => getTilesInBoard(board),
+    [triangleNodes],
+  );
   const boardOffset = useMemo(() => getBoardOffset(triangleNodes), [triangleNodes]);
   const borderNodePositions = useMemo(
     () => getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
@@ -260,7 +271,6 @@ export default function OrapaStreet221B() {
       return [];
     }
 
-    const tilesInBoard = getTilesInBoard();
     const results = traverse(board, tilesInBoard, selectedBorder);
     console.log(results);
     return results.flatMap((result, index) => {
@@ -285,7 +295,7 @@ export default function OrapaStreet221B() {
         end: getConnectionMidpoint(board, triangle.name, nextLabel, borderNodePositions, boardOffset),
       }];
     });
-  }, [selectedBorder, board, borderNodePositions, boardOffset]);
+  }, [selectedBorder, board, tilesInBoard, borderNodePositions, boardOffset]);
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
@@ -340,7 +350,7 @@ export default function OrapaStreet221B() {
           const labelPosition = getTriangleLabelPosition(bounds, node.orientation);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
-          const fill = isSelected ? '#ffd166' : isNeighbor ? '#547b91' : node.orientation === Orientation.PointyLeft ? '#174a56' : '#253c65';
+          const fill = getTileColor(tilesInBoard[node.name]?.tile.colors ?? []);
           return (
             <g
               key={node.name}

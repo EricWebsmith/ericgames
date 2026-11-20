@@ -1,4 +1,4 @@
-import { Color, Direction, Tile, TileInBoard, type Board, type LightResult } from './models';
+import { Color, Direction, Orientation, Tile, TileInBoard, type Board, type LightResult } from './models';
 
 
 /**
@@ -84,27 +84,57 @@ export function getLightResult(
     return results[results.length - 1];
 }
 
-export function getTilesInBoard(): Record<string, TileInBoard> {
-    return {
-        "C6": new TileInBoard( {
+export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
+    const positions = Object.values(board.spaces)
+        .filter(node => !node.isBorder)
+        .map(node => node.name);
+    const shuffledPositions = [...positions];
+    for (let index = shuffledPositions.length - 1; index > 0; index--) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [shuffledPositions[index], shuffledPositions[randomIndex]] = [
+            shuffledPositions[randomIndex],
+            shuffledPositions[index],
+        ];
+    }
+
+    const rightRotatedReflect = {
+        0: 2,
+        2: 0,
+        4: 6,
+        6: 4,
+        8: 10,
+        10: 8,
+    };
+
+
+    const leftRotatedReflect = {
+        0: 10,
+        10: 0,
+        8: 6,
+        6: 8,
+        2: 4,
+        4: 2,
+    };
+
+    const tileColors = [Color.Red, Color.Blue, Color.Yellow, Color.White];
+
+    return Object.fromEntries(shuffledPositions.slice(0, 10).map(position => {
+        const color = tileColors[Math.floor(Math.random() * tileColors.length)];
+        return [
+            position,
+            new TileInBoard({
             tile: new Tile({
-                colors: [Color.Blue],
-                parentName: "Blue",
+                colors: [color],
+                parentName: `${color[0].toUpperCase()}${color.slice(1)}`,
                 coordinate: { 0: 1, 1: 1 },
                 reflect: [[0, 2], [2, 0], [4, 6], [6, 4], [8, 10], [10, 8]],
 
             }),
-            coordinate: "C6",
-            rotated_reflect: {
-                0:2,
-                2:0,
-                4:6,
-                6:4,
-                8:10,
-                10:8,
-            },
+            coordinate: position,
+            rotated_reflect: board.spaces[position].orientation === Orientation.PointyLeft? leftRotatedReflect: rightRotatedReflect,
             rotatedLateReflect: {},
             rotate_angle: 0,
-        })
-    };
+            }),
+        ];
+    }));
 }
