@@ -1,10 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { getDefaultBoard, getHexBoard } from '../../../engine/orapaStreet/data';
 import { getLightResult } from '../../../engine/orapaStreet/gameManager';
+import { Color, Tile, TileInBoard } from '../../../engine/orapaStreet/models';
 
 const alpha = String.fromCharCode(945); // α
 const beta = String.fromCharCode(946); // β
 
+describe('traverse colors', () => {
+    it('returns the distinct colors encountered along the path', () => {
+        const board = getDefaultBoard();
+        const redTile = new Tile({
+            colors: [Color.Red],
+            parentName: 'Red',
+            coordinate: { 0: 0, 1: 0 },
+            reflect: [],
+        });
+        const result = getLightResult(
+            board,
+            { A1: new TileInBoard({ tile: redTile, coordinate: 'A1' }) },
+            'A',
+        );
+
+        expect(result.colors).toEqual([Color.Red]);
+    });
+});
 
 describe('traverse default board (empty board)', () => {
     it.each([

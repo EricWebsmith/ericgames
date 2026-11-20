@@ -47,7 +47,7 @@ describe('OrapaStreet221B', () => {
 
     expect(screen.getAllByTestId(/^light-line-/).length).toBeGreaterThan(0);
 
-    const firstSegment = screen.getByTestId('light-line-A1');
+    const firstSegment = screen.getAllByTestId(/^light-line-/)[0];
     const trianglePoints = getTrianglePoints('A1');
     const sideMidpoints = trianglePoints.map((start, index) => {
       const end = trianglePoints[(index + 1) % trianglePoints.length];
@@ -72,12 +72,10 @@ describe('OrapaStreet221B', () => {
   it('draws a perpendicular extension from a border node to a second circle', () => {
     render(<OrapaStreet221B />);
 
-    const borderCircle = screen.getByTestId('border-A').querySelector('circle');
+    const borderCircle = screen.getByTestId('border-A');
     const sideLine = screen.getByTestId('border-link-line-A');
     const extensionLine = screen.getByTestId('border-extension-line-A');
     const extensionCircle = screen.getByTestId('border-extension-circle-A');
-    if (!borderCircle) throw new Error('Missing border circle');
-
     expect(extensionLine.getAttribute('x1')).toBe(borderCircle.getAttribute('cx'));
     expect(extensionLine.getAttribute('y1')).toBe(borderCircle.getAttribute('cy'));
     expect(extensionLine.getAttribute('x2')).toBe(extensionCircle.getAttribute('cx'));

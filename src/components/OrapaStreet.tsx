@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet/data';
-import { getTilesInBoard, traverse } from '../engine/orapaStreet/gameManager';
+import { getLightResult, getTilesInBoard, traverse } from '../engine/orapaStreet/gameManager';
 import { Orientation, type Board, type Color, type Node } from '../engine/orapaStreet/models';
 import { GEM_FILL } from './shared/colors';
+import ResultCircle from './shared/ResultCircle';
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -256,12 +257,19 @@ export default function OrapaStreet221B() {
   const borderNodes = useMemo(() => getBorderNodes(board), [board]);
   const tilesInBoard = useMemo(
     () => getTilesInBoard(board),
-    [triangleNodes],
+    [board],
   );
   const boardOffset = useMemo(() => getBoardOffset(triangleNodes), [triangleNodes]);
   const borderNodePositions = useMemo(
     () => getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
     [board, triangleNodes, borderNodes, boardOffset],
+  );
+  const resultColorsByBorder = useMemo(
+    () => new Map(borderNodes.map(node => [
+      node.name,
+      getLightResult(board, tilesInBoard, node.name).colors,
+    ])),
+    [board, borderNodes, tilesInBoard],
   );
   const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
@@ -272,7 +280,6 @@ export default function OrapaStreet221B() {
     }
 
     const results = traverse(board, tilesInBoard, selectedBorder);
-    console.log(results);
     return results.flatMap((result, index) => {
       const triangle = board.spaces[result.label];
       if (!triangle) {
@@ -287,7 +294,6 @@ export default function OrapaStreet221B() {
       if (!previousLabel || !nextLabel) {
         throw new Error(`Incomplete light path at triangle: ${triangle.name}`);
       }
-      console.log(triangle.name, result.direction);
       return [{
         triangleName: triangle.name,
         direction: result.direction,
@@ -446,11 +452,15 @@ export default function OrapaStreet221B() {
 
         {borderNodes.map(node => {
           const position = borderNodePositions.get(node.name);
+          const resultColors = resultColorsByBorder.get(node.name);
           if (!position) {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
+          if (!resultColors) {
+            throw new Error(`Missing result colors for border node: ${node.name}`);
+          }
           return (
-            <g key={node.name} data-testid={`border-${node.name}`} aria-label={`Border node ${node.name}`}>
+            <g key={node.name} aria-label={`Border node ${node.name}`}>
               <circle
                 cx={position.center.x}
                 cy={position.center.y}
@@ -474,15 +484,12 @@ export default function OrapaStreet221B() {
                 }}
                 style={{ cursor: 'pointer' }}
               />
-              <circle
-                data-testid={`border-extension-circle-${node.name}`}
+              <ResultCircle
+                testId={`border-extension-circle-${node.name}`}
                 cx={position.outerCenter.x}
                 cy={position.outerCenter.y}
                 r={7}
-                fill="#08111f"
-                stroke="#a9bfd5"
-                strokeDasharray="3 2"
-                strokeWidth={1.5}
+                colors={resultColors}
               />
               <text
                 x={position.center.x}

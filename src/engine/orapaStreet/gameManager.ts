@@ -33,6 +33,7 @@ export function traverse(
 
     const results: LightResult[] = [];
     const labels: string[] = [startLabel];
+    const colors = new Set<Color>();
     const startNode = board.spaces[startLabel];
     // Border nodes have exactly one edge: the direction into the grid.
     const travelDir = Number(Object.keys(startNode.edges)[0]) as Direction;
@@ -57,6 +58,9 @@ export function traverse(
 
         if (label in tilesInBoard) {
             const tileInBoard = tilesInBoard[label];
+            for (const color of tileInBoard.tile.colors) {
+                colors.add(color);
+            }
             if (inDir in tileInBoard.rotated_reflect) {
                 outDir = tileInBoard.rotated_reflect[inDir] as Direction;
             }
@@ -67,7 +71,7 @@ export function traverse(
             {
                 label,
                 direction: outDir,
-                colors: [],
+                colors: [...colors],
             }
         );
     }
