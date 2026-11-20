@@ -1,5 +1,5 @@
-import type { Color } from '../../engine/orapaStreet/models';
-import { GEM_FILL } from './colors';
+import type { Color } from "../../engine/orapaStreet/models";
+import { GEM_FILL } from "./colors";
 
 interface ResultCircleProps {
   cx: number;
@@ -9,7 +9,13 @@ interface ResultCircleProps {
   colors: Color[];
 }
 
-function getSectorPath(cx: number, cy: number, r: number, startAngle: number, endAngle: number): string {
+function getSectorPath(
+  cx: number,
+  cy: number,
+  r: number,
+  startAngle: number,
+  endAngle: number,
+): string {
   const startRadians = (startAngle * Math.PI) / 180;
   const endRadians = (endAngle * Math.PI) / 180;
   const startX = cx + r * Math.cos(startRadians);
@@ -20,7 +26,13 @@ function getSectorPath(cx: number, cy: number, r: number, startAngle: number, en
   return `M ${cx} ${cy} L ${startX} ${startY} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY} Z`;
 }
 
-export default function ResultCircle({ cx, cy, r, testId, colors }: ResultCircleProps) {
+export default function ResultCircle({
+  cx,
+  cy,
+  r,
+  testId,
+  colors,
+}: ResultCircleProps) {
   const uniqueColors = [...new Set(colors)];
   uniqueColors.sort(); // Sort it so the gamer does not know which color is met first.
   const sectorAngle = uniqueColors.length > 0 ? 360 / uniqueColors.length : 0;
@@ -36,21 +48,22 @@ export default function ResultCircle({ cx, cy, r, testId, colors }: ResultCircle
         cx={cx}
         cy={cy}
         r={r}
-        fill='none'
+        fill="none"
         stroke="#a9bfd5"
         strokeDasharray="3 2"
         strokeWidth={1.5}
       />
-      {uniqueColors.length > 1 && uniqueColors.map((color, index) => {
-        const startAngle = -90 + index * sectorAngle;
-        return (
-          <path
-            key={color}
-            d={getSectorPath(cx, cy, r, startAngle, startAngle + sectorAngle)}
-            fill={GEM_FILL[color]}
-          />
-        );
-      })}
+      {uniqueColors.length > 1 &&
+        uniqueColors.map((color, index) => {
+          const startAngle = -90 + index * sectorAngle;
+          return (
+            <path
+              key={color}
+              d={getSectorPath(cx, cy, r, startAngle, startAngle + sectorAngle)}
+              fill={GEM_FILL[color]}
+            />
+          );
+        })}
     </>
   );
 }

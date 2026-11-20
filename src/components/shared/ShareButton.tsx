@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ShareButton() {
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ export default function ShareButton() {
 
   return (
     <button className="btn-reset" onClick={handleShare}>
-      {linkCopied ? t('shared.linkCopied') : t('shared.shareGame')}
+      {linkCopied ? t("shared.linkCopied") : t("shared.shareGame")}
     </button>
   );
 }

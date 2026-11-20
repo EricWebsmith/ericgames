@@ -1,9 +1,18 @@
-import { useMemo, useState } from 'react';
-import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet/data';
-import { getLightResult, getTilesInBoard, traverse } from '../engine/orapaStreet/gameManager';
-import { Orientation, type Board, type Color, type Node } from '../engine/orapaStreet/models';
-import { GEM_FILL } from './shared/colors';
-import ResultCircle from './shared/ResultCircle';
+import { useMemo, useState } from "react";
+import { getDefaultBoard, getHexBoard } from "../engine/orapaStreet/data";
+import {
+  getLightResult,
+  getTilesInBoard,
+  traverse,
+} from "../engine/orapaStreet/gameManager";
+import {
+  Orientation,
+  type Board,
+  type Color,
+  type Node,
+} from "../engine/orapaStreet/models";
+import { GEM_FILL } from "./shared/colors";
+import ResultCircle from "./shared/ResultCircle";
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -11,14 +20,14 @@ const TRIANGLE_SIDE = 36;
 const TRIANGLE_WIDTH = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
 const ROW_GAP = TRIANGLE_SIDE / 2;
 
-type Point = { x: number; y: number; };
-type Bounds = { top: number; bottom: number; left: number; right: number; };
-type BoardType = 'default' | 'hex';
+type Point = { x: number; y: number };
+type Bounds = { top: number; bottom: number; left: number; right: number };
+type BoardType = "default" | "hex";
 
 function getTileColor(colors: Color[]): string {
-  if (colors.length === 0) return 'none';
-  if (colors.includes('blue') && colors.includes('white')) return '#66ccee';
-  return GEM_FILL[colors[0]] ?? '#aaaaaa';
+  if (colors.length === 0) return "none";
+  if (colors.includes("blue") && colors.includes("white")) return "#66ccee";
+  return GEM_FILL[colors[0]] ?? "#aaaaaa";
 }
 
 function getTriangleBounds(node: Node): Bounds {
@@ -33,11 +42,11 @@ function getTriangleBounds(node: Node): Bounds {
 }
 
 function getTriangleNodes(board: Board): Node[] {
-  return Object.values(board.spaces).filter(node => !node.isBorder);
+  return Object.values(board.spaces).filter((node) => !node.isBorder);
 }
 
 function getBorderNodes(board: Board): Node[] {
-  return Object.values(board.spaces).filter(node => node.isBorder);
+  return Object.values(board.spaces).filter((node) => node.isBorder);
 }
 
 function getTriangleVertices(node: Node): Point[] {
@@ -45,29 +54,32 @@ function getTriangleVertices(node: Node): Point[] {
   const middleY = (bounds.top + bounds.bottom) / 2;
   return node.orientation === Orientation.PointyLeft
     ? [
-      { x: bounds.left, y: middleY },
-      { x: bounds.right, y: bounds.top },
-      { x: bounds.right, y: bounds.bottom },
-    ]
+        { x: bounds.left, y: middleY },
+        { x: bounds.right, y: bounds.top },
+        { x: bounds.right, y: bounds.bottom },
+      ]
     : [
-      { x: bounds.right, y: middleY },
-      { x: bounds.left, y: bounds.top },
-      { x: bounds.left, y: bounds.bottom },
-    ];
+        { x: bounds.right, y: middleY },
+        { x: bounds.left, y: bounds.top },
+        { x: bounds.left, y: bounds.bottom },
+      ];
 }
 
-type Edge = { start: Point; end: Point; };
+type Edge = { start: Point; end: Point };
 
 function getTriangleEdges(node: Node): Edge[] {
   const vertices = getTriangleVertices(node);
-  return vertices.map((start, index) => ({ start, end: vertices[(index + 1) % vertices.length] }));
+  return vertices.map((start, index) => ({
+    start,
+    end: vertices[(index + 1) % vertices.length],
+  }));
 }
 
 function getEdgeKey(edge: Edge): string {
   return [edge.start, edge.end]
-    .map(point => `${point.x.toFixed(3)},${point.y.toFixed(3)}`)
+    .map((point) => `${point.x.toFixed(3)},${point.y.toFixed(3)}`)
     .sort()
-    .join('|');
+    .join("|");
 }
 
 function getConnectionMidpoint(
@@ -80,7 +92,9 @@ function getConnectionMidpoint(
   const first = board.spaces[firstName];
   const second = board.spaces[secondName];
   if (!first || !second) {
-    throw new Error(`Missing node in light path: ${firstName} or ${secondName}`);
+    throw new Error(
+      `Missing node in light path: ${firstName} or ${secondName}`,
+    );
   }
 
   if (first.isBorder || second.isBorder) {
@@ -93,9 +107,13 @@ function getConnectionMidpoint(
   }
 
   const secondEdgeKeys = new Set(getTriangleEdges(second).map(getEdgeKey));
-  const sharedEdge = getTriangleEdges(first).find(edge => secondEdgeKeys.has(getEdgeKey(edge)));
+  const sharedEdge = getTriangleEdges(first).find((edge) =>
+    secondEdgeKeys.has(getEdgeKey(edge)),
+  );
   if (!sharedEdge) {
-    throw new Error(`Missing shared edge between triangles: ${firstName} and ${secondName}`);
+    throw new Error(
+      `Missing shared edge between triangles: ${firstName} and ${secondName}`,
+    );
   }
   return {
     x: (sharedEdge.start.x + sharedEdge.end.x) / 2 + boardOffset.x,
@@ -106,10 +124,10 @@ function getConnectionMidpoint(
 function getBoardOffset(triangleNodes: Node[]): Point {
   const triangleBounds = triangleNodes.map(getTriangleBounds);
   const boardBounds: Bounds = {
-    left: Math.min(...triangleBounds.map(bounds => bounds.left)),
-    right: Math.max(...triangleBounds.map(bounds => bounds.right)),
-    top: Math.min(...triangleBounds.map(bounds => bounds.top)),
-    bottom: Math.max(...triangleBounds.map(bounds => bounds.bottom)),
+    left: Math.min(...triangleBounds.map((bounds) => bounds.left)),
+    right: Math.max(...triangleBounds.map((bounds) => bounds.right)),
+    top: Math.min(...triangleBounds.map((bounds) => bounds.top)),
+    bottom: Math.max(...triangleBounds.map((bounds) => bounds.bottom)),
   };
   return {
     x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
@@ -117,11 +135,23 @@ function getBoardOffset(triangleNodes: Node[]): Point {
   };
 }
 
-type BorderNodePosition = { sideMidpoint: Point; center: Point; outerCenter: Point; };
+type BorderNodePosition = {
+  sideMidpoint: Point;
+  center: Point;
+  outerCenter: Point;
+};
 
-function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes: Node[], boardOffset: Point): Map<string, BorderNodePosition> {
-  const allEdges = triangleNodes.flatMap(triangle =>
-    getTriangleEdges(triangle).map(edge => ({ triangleName: triangle.name, ...edge })),
+function getBorderNodePositions(
+  board: Board,
+  triangleNodes: Node[],
+  borderNodes: Node[],
+  boardOffset: Point,
+): Map<string, BorderNodePosition> {
+  const allEdges = triangleNodes.flatMap((triangle) =>
+    getTriangleEdges(triangle).map((edge) => ({
+      triangleName: triangle.name,
+      ...edge,
+    })),
   );
   const edgeCounts = new Map<string, number>();
   for (const edge of allEdges) {
@@ -138,22 +168,33 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
     }
   }
 
-  const bordersByTriangle = new Map<string, Array<{ node: Node; direction: Point; }>>();
+  const bordersByTriangle = new Map<
+    string,
+    Array<{ node: Node; direction: Point }>
+  >();
   for (const border of borderNodes) {
     const link = Object.entries(border.edges)[0];
     if (!link) {
-      throw new Error(`Missing linked triangle for border node: ${border.name}`);
+      throw new Error(
+        `Missing linked triangle for border node: ${border.name}`,
+      );
     }
     const [borderToTriangleDirection, triangleName] = link;
     const triangle = board.spaces[triangleName];
     const openEdges = openEdgesByTriangle.get(triangleName);
     if (!triangle || triangle.isBorder || !openEdges?.length) {
-      throw new Error(`Missing exposed triangle edge for border node: ${border.name}`);
+      throw new Error(
+        `Missing exposed triangle edge for border node: ${border.name}`,
+      );
     }
 
-    const angle = ((Number(borderToTriangleDirection) + 6) % 12) * Math.PI / 6;
+    const angle =
+      (((Number(borderToTriangleDirection) + 6) % 12) * Math.PI) / 6;
     const borders = bordersByTriangle.get(triangleName) ?? [];
-    borders.push({ node: border, direction: { x: Math.sin(angle), y: -Math.cos(angle) } });
+    borders.push({
+      node: border,
+      direction: { x: Math.sin(angle), y: -Math.cos(angle) },
+    });
     bordersByTriangle.set(triangleName, borders);
   }
 
@@ -162,29 +203,46 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
     const triangle = board.spaces[triangleName];
     const openEdges = openEdgesByTriangle.get(triangleName);
     if (!triangle || !openEdges?.length) {
-      throw new Error(`Missing exposed triangle edge for triangle: ${triangleName}`);
+      throw new Error(
+        `Missing exposed triangle edge for triangle: ${triangleName}`,
+      );
     }
 
-    const center = getTriangleLabelPosition(getTriangleBounds(triangle), triangle.orientation);
-    const assignments = new Map<string, { edge: Edge; borders: typeof borders; }>();
+    const center = getTriangleLabelPosition(
+      getTriangleBounds(triangle),
+      triangle.orientation,
+    );
+    const assignments = new Map<
+      string,
+      { edge: Edge; borders: typeof borders }
+    >();
     for (const border of borders) {
-      const rankedEdges = openEdges.map(edge => {
-        const key = getEdgeKey(edge);
-        const midpoint = {
-          x: (edge.start.x + edge.end.x) / 2,
-          y: (edge.start.y + edge.end.y) / 2,
-        };
-        const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
-        const length = Math.hypot(normal.x, normal.y);
-        const alignment = (normal.x * border.direction.x + normal.y * border.direction.y) / length;
-        return { edge, key, alignment };
-      }).sort((first, second) => second.alignment - first.alignment);
+      const rankedEdges = openEdges
+        .map((edge) => {
+          const key = getEdgeKey(edge);
+          const midpoint = {
+            x: (edge.start.x + edge.end.x) / 2,
+            y: (edge.start.y + edge.end.y) / 2,
+          };
+          const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
+          const length = Math.hypot(normal.x, normal.y);
+          const alignment =
+            (normal.x * border.direction.x + normal.y * border.direction.y) /
+            length;
+          return { edge, key, alignment };
+        })
+        .sort((first, second) => second.alignment - first.alignment);
 
       const match = rankedEdges[0];
       if (!match) {
-        throw new Error(`Missing exposed triangle edge for border node: ${border.node.name}`);
+        throw new Error(
+          `Missing exposed triangle edge for border node: ${border.node.name}`,
+        );
       }
-      const assignment = assignments.get(match.key) ?? { edge: match.edge, borders: [] };
+      const assignment = assignments.get(match.key) ?? {
+        edge: match.edge,
+        borders: [],
+      };
       assignment.borders.push(border);
       assignments.set(match.key, assignment);
     }
@@ -197,7 +255,8 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
       const outward = { x: midpoint.x - center.x, y: midpoint.y - center.y };
       const outwardLength = Math.hypot(outward.x, outward.y);
       edgeBorders.forEach(({ node, direction }) => {
-        const distance = Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
+        const distance =
+          Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
         const borderCenter = {
           x: midpoint.x + direction.x * distance,
           y: midpoint.y + direction.y * distance,
@@ -212,8 +271,14 @@ function getBorderNodePositions(board: Board, triangleNodes: Node[], borderNodes
             y: borderCenter.y + boardOffset.y,
           },
           outerCenter: {
-            x: borderCenter.x + outward.x / outwardLength * distance + boardOffset.x,
-            y: borderCenter.y + outward.y / outwardLength * distance + boardOffset.y,
+            x:
+              borderCenter.x +
+              (outward.x / outwardLength) * distance +
+              boardOffset.x,
+            y:
+              borderCenter.y +
+              (outward.y / outwardLength) * distance +
+              boardOffset.y,
           },
         });
       });
@@ -232,46 +297,64 @@ function getTriangleViewBounds(node: Node, boardOffset: Point): Bounds {
   };
 }
 
-function getTrianglePoints(bounds: Bounds, orientation: Node['orientation']): string {
+function getTrianglePoints(
+  bounds: Bounds,
+  orientation: Node["orientation"],
+): string {
   const middleY = (bounds.top + bounds.bottom) / 2;
   return orientation === Orientation.PointyLeft
     ? `${bounds.left},${middleY} ${bounds.right},${bounds.top} ${bounds.right},${bounds.bottom}`
     : `${bounds.right},${middleY} ${bounds.left},${bounds.top} ${bounds.left},${bounds.bottom}`;
 }
 
-function getTriangleLabelPosition(bounds: Bounds, orientation: Node['orientation']): Point {
+function getTriangleLabelPosition(
+  bounds: Bounds,
+  orientation: Node["orientation"],
+): Point {
   const width = bounds.right - bounds.left;
   return {
-    x: bounds.left + width * (orientation === Orientation.PointyLeft ? 2 / 3 : 1 / 3),
+    x:
+      bounds.left +
+      width * (orientation === Orientation.PointyLeft ? 2 / 3 : 1 / 3),
     y: (bounds.top + bounds.bottom) / 2,
   };
 }
 
 export default function OrapaStreet221B() {
-  const [boardType, setBoardType] = useState<BoardType>('default');
+  const [boardType, setBoardType] = useState<BoardType>("default");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [selectedBorder, setSelectedBorder] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
-  const board = useMemo(() => boardType === 'default' ? getDefaultBoard() : getHexBoard(), [boardType]);
+  const board = useMemo(
+    () => (boardType === "default" ? getDefaultBoard() : getHexBoard()),
+    [boardType],
+  );
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
   const borderNodes = useMemo(() => getBorderNodes(board), [board]);
-  const tilesInBoard = useMemo(
-    () => getTilesInBoard(board),
-    [board],
+  const tilesInBoard = useMemo(() => getTilesInBoard(board), [board]);
+  const boardOffset = useMemo(
+    () => getBoardOffset(triangleNodes),
+    [triangleNodes],
   );
-  const boardOffset = useMemo(() => getBoardOffset(triangleNodes), [triangleNodes]);
   const borderNodePositions = useMemo(
-    () => getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
+    () =>
+      getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
     [board, triangleNodes, borderNodes, boardOffset],
   );
   const resultColorsByBorder = useMemo(
-    () => new Map(borderNodes.map(node => [
-      node.name,
-      getLightResult(board, tilesInBoard, node.name).colors,
-    ])),
+    () =>
+      new Map(
+        borderNodes.map((node) => [
+          node.name,
+          getLightResult(board, tilesInBoard, node.name).colors,
+        ]),
+      ),
     [board, borderNodes, tilesInBoard],
   );
-  const nodesByName = useMemo(() => new Map(triangleNodes.map(node => [node.name, node])), [triangleNodes]);
+  const nodesByName = useMemo(
+    () => new Map(triangleNodes.map((node) => [node.name, node])),
+    [triangleNodes],
+  );
   const selected = selectedNode ? nodesByName.get(selectedNode) : undefined;
   const selectedNeighbors = new Set(Object.values(selected?.edges ?? {}));
   const lightSegments = useMemo(() => {
@@ -289,34 +372,60 @@ export default function OrapaStreet221B() {
         return [];
       }
 
-      const previousLabel = index === 0 ? selectedBorder : results[index - 1]?.label;
+      const previousLabel =
+        index === 0 ? selectedBorder : results[index - 1]?.label;
       const nextLabel = results[index + 1]?.label;
       if (!previousLabel || !nextLabel) {
         throw new Error(`Incomplete light path at triangle: ${triangle.name}`);
       }
-      return [{
-        triangleName: triangle.name,
-        direction: result.direction,
-        start: getConnectionMidpoint(board, previousLabel, triangle.name, borderNodePositions, boardOffset),
-        end: getConnectionMidpoint(board, triangle.name, nextLabel, borderNodePositions, boardOffset),
-      }];
+      return [
+        {
+          triangleName: triangle.name,
+          direction: result.direction,
+          start: getConnectionMidpoint(
+            board,
+            previousLabel,
+            triangle.name,
+            borderNodePositions,
+            boardOffset,
+          ),
+          end: getConnectionMidpoint(
+            board,
+            triangle.name,
+            nextLabel,
+            borderNodePositions,
+            boardOffset,
+          ),
+        },
+      ];
     });
   }, [selectedBorder, board, tilesInBoard, borderNodePositions, boardOffset]);
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
       <h2 className="game-title">Orapa Street 221B</h2>
-      <p className="status-message">Select a triangle to inspect its links, or click a border to trace the light path.</p>
+      <p className="status-message">
+        Select a triangle to inspect its links, or click a border to trace the
+        light path.
+      </p>
 
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
         <label htmlFor="orapa-street-board-type">Board</label>
         <select
           id="orapa-street-board-type"
           className="lang-switcher"
           value={boardType}
-          onChange={event => {
+          onChange={(event) => {
             const nextBoardType = event.target.value;
-            if (nextBoardType === 'default' || nextBoardType === 'hex') {
+            if (nextBoardType === "default" || nextBoardType === "hex") {
               setBoardType(nextBoardType);
               setSelectedNode(null);
               setSelectedBorder(null);
@@ -326,8 +435,12 @@ export default function OrapaStreet221B() {
           <option value="default">Default board</option>
           <option value="hex">Hex board</option>
         </select>
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <input type="checkbox" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} />
+        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={showLabels}
+            onChange={(event) => setShowLabels(event.target.checked)}
+          />
           Show labels
         </label>
         <button
@@ -345,15 +458,22 @@ export default function OrapaStreet221B() {
       <svg
         viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
         className="game-svg"
-        style={{ width: 'min(100%, 760px)', background: '#08111f', border: '1px solid #263b56' }}
+        style={{
+          width: "min(100%, 760px)",
+          background: "#08111f",
+          border: "1px solid #263b56",
+        }}
         role="img"
         aria-label="Orapa Street 221B triangular board"
       >
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
 
-        {triangleNodes.map(node => {
+        {triangleNodes.map((node) => {
           const bounds = getTriangleViewBounds(node, boardOffset);
-          const labelPosition = getTriangleLabelPosition(bounds, node.orientation);
+          const labelPosition = getTriangleLabelPosition(
+            bounds,
+            node.orientation,
+          );
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
           const fill = getTileColor(tilesInBoard[node.name]?.tile.colors ?? []);
@@ -368,33 +488,38 @@ export default function OrapaStreet221B() {
                 setSelectedBorder(null);
                 setSelectedNode(node.name);
               }}
-              onKeyDown={event => {
-                if (event.key === 'Enter' || event.key === ' ') {
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
                   setSelectedBorder(null);
                   setSelectedNode(node.name);
                 }
               }}
-              style={{ cursor: 'pointer', outline: 'none' }}
+              style={{ cursor: "pointer", outline: "none" }}
             >
               <polygon
                 points={getTrianglePoints(bounds, node.orientation)}
                 fill={fill}
-                stroke={isSelected ? '#fff1be' : isNeighbor ? '#9bd7e8' : '#7ba4bd'}
+                stroke={
+                  isSelected ? "#fff1be" : isNeighbor ? "#9bd7e8" : "#7ba4bd"
+                }
                 strokeWidth={isSelected ? 2.5 : 1.25}
               >
                 <title>{`${node.name} · q: ${node.q}, r: ${node.r} · ${node.orientation} · ${Object.keys(node.edges).length} links`}</title>
               </polygon>
               {showLabels && (
                 <text
-                  x={labelPosition.x - (node.orientation === Orientation.PointyLeft ? 2 : -2)}
+                  x={
+                    labelPosition.x -
+                    (node.orientation === Orientation.PointyLeft ? 2 : -2)
+                  }
                   y={labelPosition.y}
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fill="#f2f7ff"
                   fontSize={8}
                   fontWeight={700}
-                  style={{ pointerEvents: 'none', userSelect: 'none' }}
+                  style={{ pointerEvents: "none", userSelect: "none" }}
                 >
                   {node.name}
                 </text>
@@ -403,7 +528,7 @@ export default function OrapaStreet221B() {
           );
         })}
 
-        {borderNodes.map(node => {
+        {borderNodes.map((node) => {
           const position = borderNodePositions.get(node.name);
           if (!position) {
             throw new Error(`Missing position for border node: ${node.name}`);
@@ -434,7 +559,7 @@ export default function OrapaStreet221B() {
           );
         })}
 
-        {lightSegments.map(segment => (
+        {lightSegments.map((segment) => (
           <line
             key={`light-line-${segment.triangleName}-${segment.direction}`}
             data-testid={`light-line-${segment.triangleName}-${segment.direction}`}
@@ -450,14 +575,16 @@ export default function OrapaStreet221B() {
           />
         ))}
 
-        {borderNodes.map(node => {
+        {borderNodes.map((node) => {
           const position = borderNodePositions.get(node.name);
           const resultColors = resultColorsByBorder.get(node.name);
           if (!position) {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
           if (!resultColors) {
-            throw new Error(`Missing result colors for border node: ${node.name}`);
+            throw new Error(
+              `Missing result colors for border node: ${node.name}`,
+            );
           }
           return (
             <g key={node.name} aria-label={`Border node ${node.name}`}>
@@ -475,14 +602,14 @@ export default function OrapaStreet221B() {
                   setSelectedNode(null);
                   setSelectedBorder(node.name);
                 }}
-                onKeyDown={event => {
-                  if (event.key === 'Enter' || event.key === ' ') {
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     setSelectedNode(null);
                     setSelectedBorder(node.name);
                   }
                 }}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               />
               <ResultCircle
                 testId={`border-extension-circle-${node.name}`}
@@ -499,7 +626,7 @@ export default function OrapaStreet221B() {
                 fill="#f2f7ff"
                 fontSize={7}
                 fontWeight={700}
-                style={{ pointerEvents: 'none', userSelect: 'none' }}
+                style={{ pointerEvents: "none", userSelect: "none" }}
               >
                 {node.name}
               </text>
@@ -508,9 +635,13 @@ export default function OrapaStreet221B() {
         })}
       </svg>
 
-      <p className="status-message" aria-live="polite" style={{ textAlign: 'center' }}>
+      <p
+        className="status-message"
+        aria-live="polite"
+        style={{ textAlign: "center" }}
+      >
         {selected
-          ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.edges).join(', ') || 'none'}`
+          ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.edges).join(", ") || "none"}`
           : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
       </p>
     </section>
