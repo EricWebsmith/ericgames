@@ -1,4 +1,8 @@
-import { Color, Direction, Orientation, Tile, alternateOrientation, getOppositeDirection, type Board, type Node, type Offset, type ParentTile } from './models';
+import {
+    Color,
+    Direction,
+    Orientation, Tile, alternateOrientation, getOppositeDirection, type Board, type Node, type Offset, type ParentTile, type Reflect
+} from './models';
 
 const LEFT_TRIANGLE_OFFSETS: Offset[] = [
     { dq: -1, dr: -1 },
@@ -400,16 +404,83 @@ export function getHexBoard(): Board {
     return board;
 }
 
+// # region red tiles
+
+const leftΔReflect: Reflect[] = [[0, 10], [10, 0], [2, 4], [4, 2], [6, 8], [8, 6]];
+const rightΔReflect: Reflect[] = [[0, 2], [2, 0], [6, 4], [4, 6], [10, 8], [8, 10]];
+
+const redTile1: ParentTile = {
+    name: "Red1",
+    flipable: true,
+    subTiles: [
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: leftΔReflect, parentName: 'Red1' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: leftΔReflect, parentName: 'Red1' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: leftΔReflect, parentName: 'Red1' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 4 }, reflect: [[2, 4], [4, 2]], parentName: 'Red1' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 4 }, reflect: [[8, 10], [10, 8]], parentName: 'Red1' }),
+    ]
+};
+
+
+const redTile2: ParentTile = {
+    name: "Red2",
+    flipable: false,
+    subTiles: [
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 4 }, reflect: [[2, 4], [4, 2]], parentName: 'Red2' }),
+
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 1 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 1, 1: 0 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 1 }, reflect: leftΔReflect, parentName: 'Red2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 4 }, reflect: [[8, 10], [10, 8]], parentName: 'Red2' }),
+    ]
+};
+
+
+const redTile3: ParentTile = {
+    name: "Red3",
+    flipable: false,
+    subTiles: [
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: leftΔReflect, parentName: 'Red3' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: leftΔReflect, parentName: 'Red3' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: leftΔReflect, parentName: 'Red3' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 3 }, reflect: leftΔReflect, parentName: 'Red3' }),
+    ]
+};
+
+
+const whiteTile1: ParentTile = {
+    name: "White1",
+    flipable: false,
+    subTiles: [
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: leftΔReflect, parentName: 'White1' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: leftΔReflect, parentName: 'White1' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: leftΔReflect, parentName: 'White1' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 2 }, reflect: leftΔReflect, parentName: 'White1' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 1, 1: 3 }, reflect: leftΔReflect, parentName: 'White1' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 4 }, reflect: leftΔReflect, parentName: 'White1' }),
+    ]
+};
+
+const whiteTile2: ParentTile = {
+    name: "White2",
+    flipable: false,
+    subTiles: [
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: leftΔReflect, parentName: 'White2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: leftΔReflect, parentName: 'White2' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: leftΔReflect, parentName: 'White2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 2 }, reflect: leftΔReflect, parentName: 'White2' }),
+        new Tile({ orientation: Orientation.PointyLeft, colors: [Color.Blue], coordinate: { 0: 1, 1: 3 }, reflect: leftΔReflect, parentName: 'White2' }),
+        new Tile({ orientation: Orientation.PointyRight, colors: [Color.Blue], coordinate: { 0: 1, 1: 4 }, reflect: leftΔReflect, parentName: 'White2' }),
+    ]
+};
+
+
+
+// # endregion
+
 export function getTiles(): ParentTile[] {
-    return [
-        // Blue tile – irregular 6-cell shape
-        {
-            name: 'Blue', optional: false, subTiles: [
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 0 }, reflect: [[0, 10], [10, 0], [2, 4], [4, 2]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 1 }, reflect: [[10, 8], [8, 10]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 2 }, reflect: [[2, 4], [4, 2]], parentName: 'Blue' }),
-                new Tile({ colors: [Color.Blue], coordinate: { 0: 0, 1: 3 }, reflect: [[10, 8], [8, 10], [6, 4], [4, 6],], parentName: 'Blue' }),
-            ]
-        },
-    ];
+    return [redTile1, redTile2, redTile3];
 }

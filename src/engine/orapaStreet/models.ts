@@ -79,14 +79,10 @@ export interface Offset {
 export class Tile {
     colors: Color[];
     parentName: string;
-    coordinate: Record<number, number>;
+    label: Record<number, number>;
     reflect: Reflect[];
-
-    opacity: number = 100;
-    absorbLight: boolean = false;
+    orientation: Orientation = Orientation.PointyLeft;
     belt: number = -1;
-    connectBorder: boolean = false;
-    blackHole: boolean = false;
     lateReflect: Reflect[] = [];
 
 
@@ -95,24 +91,19 @@ export class Tile {
         parentName: string;
         coordinate: Record<number, number>;
         reflect: Reflect[];
+        orientation: Orientation;
         opacity?: number;
         absorbLight?: boolean;
         belt?: number;
         connectBorder?: boolean;
-        blackHole?: boolean;
         lateReflect?: Reflect[];
     }) {
-        const { reflect, opacity = 100, absorbLight = false, belt = -1, connectBorder = false, blackHole = false, lateReflect = [] } = data;
         this.colors = data.colors;
         this.parentName = data.parentName;
-        this.coordinate = data.coordinate;
-        this.reflect = reflect;
-        this.opacity = opacity;
-        this.absorbLight = absorbLight;
-        this.belt = belt;
-        this.connectBorder = connectBorder;
-        this.blackHole = blackHole;
-        this.lateReflect = lateReflect;
+        this.label = data.coordinate;
+        this.reflect = data.reflect;
+        this.lateReflect = data.lateReflect??[];
+        this.belt = data.belt??-1;
     }
 }
 
@@ -176,7 +167,7 @@ export class TileInBoard implements ITileInBoard {
 /** This interface represents a parent tile, which can have multiple child tiles. */
 export interface ParentTile {
     name: string;
-    optional: boolean;
+    flipable: boolean;
     subTiles: Tile[];
 }
 
