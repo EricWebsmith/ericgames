@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet221B/data';
-import { traverse } from '../engine/orapaStreet221B/gameManager';
-import { Orientation, type Board, type Node } from '../engine/orapaStreet221B/models';
+import { getDefaultBoard, getHexBoard } from '../engine/orapaStreet/data';
+import { getTilesInBoard, traverse } from '../engine/orapaStreet/gameManager';
+import { Orientation, type Board, type Node } from '../engine/orapaStreet/models';
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -260,7 +260,9 @@ export default function OrapaStreet221B() {
       return [];
     }
 
-    const results = traverse(board, selectedBorder);
+    const tilesInBoard = getTilesInBoard();
+    const results = traverse(board, tilesInBoard, selectedBorder);
+    console.log(results);
     return results.flatMap((result, index) => {
       const triangle = board.spaces[result.label];
       if (!triangle) {
@@ -275,8 +277,10 @@ export default function OrapaStreet221B() {
       if (!previousLabel || !nextLabel) {
         throw new Error(`Incomplete light path at triangle: ${triangle.name}`);
       }
+      console.log(triangle.name, result.direction);
       return [{
         triangleName: triangle.name,
+        direction: result.direction,
         start: getConnectionMidpoint(board, previousLabel, triangle.name, borderNodePositions, boardOffset),
         end: getConnectionMidpoint(board, triangle.name, nextLabel, borderNodePositions, boardOffset),
       }];
@@ -416,8 +420,8 @@ export default function OrapaStreet221B() {
 
         {lightSegments.map(segment => (
           <line
-            key={`light-line-${segment.triangleName}`}
-            data-testid={`light-line-${segment.triangleName}`}
+            key={`light-line-${segment.triangleName}-${segment.direction}`}
+            data-testid={`light-line-${segment.triangleName}-${segment.direction}`}
             x1={segment.start.x}
             y1={segment.start.y}
             x2={segment.end.x}
@@ -490,7 +494,7 @@ export default function OrapaStreet221B() {
       <p className="status-message" aria-live="polite" style={{ textAlign: 'center' }}>
         {selected
           ? `${selected.name} · ${selected.orientation} · linked to: ${Object.values(selected.edges).join(', ') || 'none'}`
-            : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
+          : `${triangleNodes.length} triangles · click or keyboard-select a triangle to inspect its neighbors`}
       </p>
     </section>
   );

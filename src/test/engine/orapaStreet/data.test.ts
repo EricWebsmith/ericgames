@@ -1,5 +1,5 @@
-import { getDefaultBoard, getHexBoard } from '../../../engine/orapaStreet221B/data';
-import type { Board } from '../../../engine/orapaStreet221B/models';
+import { getDefaultBoard, getHexBoard } from '../../../engine/orapaStreet/data';
+import type { Board } from '../../../engine/orapaStreet/models';
 
 describe('getBoard', () => {
     it('should pass smoke test', () => {

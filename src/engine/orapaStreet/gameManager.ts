@@ -1,4 +1,4 @@
-import { Direction, type Board, type LightResult } from './models';
+import { Color, Direction, Tile, TileInBoard, type Board, type LightResult } from './models';
 
 
 /**
@@ -26,7 +26,7 @@ import { Direction, type Board, type LightResult } from './models';
  */
 export function traverse(
     board: Board,
-    // Add tiles later
+    tilesInBoard: Record<string, TileInBoard>,
     startLabel: string,
 ): LightResult[] {
     // Before traverse, add virtual tiles
@@ -53,11 +53,20 @@ export function traverse(
     for (let step = 0; step < MAX_STEPS; step++) {
         const currentNode = board.spaces[label];
         if (currentNode.isBorder) break;
+        const inDir = (outDir + 6) % 12 as Direction;
+
+        if (label in tilesInBoard) {
+            const tileInBoard = tilesInBoard[label];
+            if (inDir in tileInBoard.rotated_reflect) {
+                outDir = tileInBoard.rotated_reflect[inDir] as Direction;
+            }
+        }
+
         label = currentNode.edges[outDir] ?? "";
         results.push(
             {
                 label,
-                direction: travelDir,
+                direction: outDir,
                 colors: [],
             }
         );
@@ -68,10 +77,34 @@ export function traverse(
 
 export function getLightResult(
     board: Board,
-    //
+    tilesInBoard: Record<string, TileInBoard>,
     startLabel: string,
-)
-{
-    const results = traverse(board, startLabel);
+) {
+    const results = traverse(board, tilesInBoard, startLabel);
     return results[results.length - 1];
+}
+
+export function getTilesInBoard(): Record<string, TileInBoard> {
+    return {
+        "C6": new TileInBoard( {
+            tile: new Tile({
+                colors: [Color.Blue],
+                parentName: "Blue",
+                coordinate: { 0: 1, 1: 1 },
+                reflect: [[0, 2], [2, 0], [4, 6], [6, 4], [8, 10], [10, 8]],
+
+            }),
+            coordinate: "C6",
+            rotated_reflect: {
+                0:2,
+                2:0,
+                4:6,
+                6:4,
+                8:10,
+                10:8,
+            },
+            rotatedLateReflect: {},
+            rotate_angle: 0,
+        })
+    };
 }

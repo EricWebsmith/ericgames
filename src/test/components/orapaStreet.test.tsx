@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import OrapaStreet221B from '../../components/OrapaStreet221B';
-import { getDefaultBoard } from '../../engine/orapaStreet221B/data';
-import { traverse } from '../../engine/orapaStreet221B/gameManager';
+import OrapaStreet221B from '../../components/OrapaStreet';
+import { getDefaultBoard } from '../../engine/orapaStreet/data';
+import { traverse } from '../../engine/orapaStreet/gameManager';
 
 type Point = { x: number; y: number };
 

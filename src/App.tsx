@@ -4,10 +4,10 @@ import './App.css';
 import Arclight from './components/Arclight';
 import OrapaMine from './components/OrapaMine';
 import OrapaSpace from './components/OrapaSpace';
-import OrapaStreet221B from './components/OrapaStreet221B';
+import OrapaStreet221B from './components/OrapaStreet';
 import RicochetRobots from './components/RicochetRobots';
-import LanguageSwitcher from './components/shared/LanguageSwitcher';
 import RotatingRoads from './components/RotatingRoads';
+import LanguageSwitcher from './components/shared/LanguageSwitcher';
 
 function Home() {
   const { t } = useTranslation();

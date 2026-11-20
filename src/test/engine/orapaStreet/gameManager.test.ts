@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getDefaultBoard, getHexBoard } from '../../../engine/orapaStreet221B/data';
-import { getLightResult } from '../../../engine/orapaStreet221B/gameManager';
+import { getDefaultBoard, getHexBoard } from '../../../engine/orapaStreet/data';
+import { getLightResult } from '../../../engine/orapaStreet/gameManager';
 
 const alpha = String.fromCharCode(945); // α
 const beta = String.fromCharCode(946); // β
@@ -66,7 +66,7 @@ describe('traverse default board (empty board)', () => {
         ['28', '13'],
     ])('start %s → end %s', (startCoordinate, expectedEnd) => {
         const board = getDefaultBoard();
-        const result = getLightResult(board, startCoordinate);
+        const result = getLightResult(board, {}, startCoordinate);
         expect(result.label).toBe(expectedEnd);
         expect(result.colors).toEqual([]);
     });
@@ -137,7 +137,7 @@ describe('traverse hex board (empty board)', () => {
         ['40', '11'],
     ])('start %s → end %s', (startCoordinate, expectedEnd) => {
         const board = getHexBoard();
-        const result = getLightResult(board, startCoordinate);
+        const result = getLightResult(board, {}, startCoordinate);
         expect(result.label).toBe(expectedEnd);
         expect(result.colors).toEqual([]);
     });

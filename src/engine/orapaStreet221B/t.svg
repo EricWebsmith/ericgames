@@ -1,7 +1,0 @@
-      <svg
-        width={SVG_W}
-        height={SVG_H}
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-        className="game-svg"
-        aria-label={t('rotatingRoads.boardAriaLabel')}
-      >
