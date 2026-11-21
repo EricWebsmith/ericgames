@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getDefaultBoard, getHexBoard } from "../../../engine/orapaStreet/data";
-import { getLightResult } from "../../../engine/orapaStreet/gameManager";
+import {
+  getDefaultBoard,
+  getHexBoard,
+  getTiles,
+} from "../../../engine/orapaStreet/data";
+import { getLightResult, putTile } from "../../../engine/orapaStreet/gameManager";
 
 const alpha = String.fromCharCode(945); // α
 const beta = String.fromCharCode(946); // β
@@ -138,5 +142,15 @@ describe("traverse hex board (empty board)", () => {
     const result = getLightResult(board, {}, startCoordinate);
     expect(result.label).toBe(expectedEnd);
     expect(result.colors).toEqual([]);
+  });
+});
+
+describe("putTile", () => {
+  it("places tile offsets after a 120-degree axial rotation", () => {
+    const board = getDefaultBoard();
+    const redTile = getTiles(4, () => 0)[0];
+    const tiles = putTile(board, redTile, "D10", 4);
+
+    expect(Object.keys(tiles)).toEqual(["D10", "C10", "B9", "A8"]);
   });
 });

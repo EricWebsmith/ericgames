@@ -16,6 +16,14 @@ function getTrianglePoints(name: string): Point[] {
   });
 }
 
+function getTriangleCenter(name: string): Point {
+  const points = getTrianglePoints(name);
+  return {
+    x: points.reduce((sum, point) => sum + point.x, 0) / points.length,
+    y: points.reduce((sum, point) => sum + point.y, 0) / points.length,
+  };
+}
+
 function pointsMatch(first: Point, second: Point): boolean {
   return (
     Math.abs(first.x - second.x) < 0.001 && Math.abs(first.y - second.y) < 0.001
@@ -175,6 +183,9 @@ describe("OrapaStreet221B", () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByTestId("triangle-J11")).toBeInTheDocument();
+    expect(sharesEdge(getTrianglePoints("A1"), getTrianglePoints("A2"))).toBe(
+      true,
+    );
   });
 
   it("uses q/r positions to place C1 and D1 edge-to-edge", () => {
@@ -193,13 +204,42 @@ describe("OrapaStreet221B", () => {
     );
   });
 
-  it("aligns same-orientation triangles in a column", () => {
+  it("projects q upright and r down-right with a 120-degree angle", () => {
     render(<OrapaStreet221B />);
 
-    const first = getTrianglePoints("A1");
-    const third = getTrianglePoints("A3");
-    expect(third.map((point) => point.x)).toEqual(
-      first.map((point) => point.x),
+    const origin = getTriangleCenter("A1");
+    const qNeighbor = getTriangleCenter("B2");
+    const rNeighbor = getTriangleCenter("A2");
+    const qAxis = {
+      x: qNeighbor.x - origin.x,
+      y: qNeighbor.y - origin.y,
+    };
+    const rAxis = {
+      x: rNeighbor.x - origin.x,
+      y: rNeighbor.y - origin.y,
+    };
+
+    expect(qAxis.x).toBeCloseTo(0);
+    expect(qAxis.y).toBeLessThan(0);
+    expect(rAxis.x).toBeGreaterThan(0);
+    expect(rAxis.y).toBeGreaterThan(0);
+    expect(
+      (qAxis.x * rAxis.x + qAxis.y * rAxis.y) /
+        (Math.hypot(qAxis.x, qAxis.y) * Math.hypot(rAxis.x, rAxis.y)),
+    ).toBeCloseTo(-0.5);
+  });
+
+  it("keeps each triangle equilateral in the projected layout", () => {
+    render(<OrapaStreet221B />);
+
+    const points = getTrianglePoints("A1");
+    const sideLengths = points.map((start, index) => {
+      const end = points[(index + 1) % points.length];
+      return Math.hypot(end.x - start.x, end.y - start.y);
+    });
+
+    expect(Math.max(...sideLengths) - Math.min(...sideLengths)).toBeLessThan(
+      0.001,
     );
   });
 

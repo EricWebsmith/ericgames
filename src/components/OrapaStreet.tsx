@@ -27,7 +27,6 @@ const RESULT_CIRCLE_RADIUS = 7;
 const CIRCLE_LINE_INSET = 8.5;
 
 type Point = { x: number; y: number };
-type Bounds = { top: number; bottom: number; left: number; right: number };
 type BoardType = "default" | "hex";
 
 const QUERY_PARAM_SEED = "s";
@@ -84,17 +83,6 @@ function getTileColor(colors: Color[]): string {
   return GEM_FILL[colors[0]] ?? "#aaaaaa";
 }
 
-function getTriangleBounds(node: Node): Bounds {
-  const left = node.q * TRIANGLE_WIDTH;
-  const top = node.r * ROW_GAP;
-  return {
-    top,
-    bottom: top + TRIANGLE_SIDE,
-    left,
-    right: left + TRIANGLE_WIDTH,
-  };
-}
-
 function getTriangleNodes(board: Board): Node[] {
   return Object.values(board.spaces).filter((node) => !node.isBorder);
 }
@@ -104,9 +92,16 @@ function getBorderNodes(board: Board): Node[] {
 }
 
 function getTriangleVertices(node: Node): Point[] {
-  const bounds = getTriangleBounds(node);
+  const left = node.q * TRIANGLE_WIDTH;
+  const top = node.r * ROW_GAP;
+  const bounds = {
+    left,
+    right: left + TRIANGLE_WIDTH,
+    top,
+    bottom: top + TRIANGLE_SIDE,
+  };
   const middleY = (bounds.top + bounds.bottom) / 2;
-  return node.orientation === Orient.PointyLeft
+  const vertices = node.orientation === Orient.PointyLeft
     ? [
         { x: bounds.left, y: middleY },
         { x: bounds.right, y: bounds.top },
@@ -117,6 +112,15 @@ function getTriangleVertices(node: Node): Point[] {
         { x: bounds.left, y: bounds.top },
         { x: bounds.left, y: bounds.bottom },
       ];
+  return vertices.map(rotateBoardPoint90);
+}
+
+function rotateBoardPoint90(point: Point): Point {
+  return { x: point.y, y: -point.x };
+}
+
+function rotateBoardVector90(vector: Point): Point {
+  return { x: vector.y, y: -vector.x };
 }
 
 type Edge = { start: Point; end: Point };
@@ -176,12 +180,12 @@ function getConnectionMidpoint(
 }
 
 function getBoardOffset(triangleNodes: Node[]): Point {
-  const triangleBounds = triangleNodes.map(getTriangleBounds);
-  const boardBounds: Bounds = {
-    left: Math.min(...triangleBounds.map((bounds) => bounds.left)),
-    right: Math.max(...triangleBounds.map((bounds) => bounds.right)),
-    top: Math.min(...triangleBounds.map((bounds) => bounds.top)),
-    bottom: Math.max(...triangleBounds.map((bounds) => bounds.bottom)),
+  const vertices = triangleNodes.flatMap(getTriangleVertices);
+  const boardBounds = {
+    left: Math.min(...vertices.map((point) => point.x)),
+    right: Math.max(...vertices.map((point) => point.x)),
+    top: Math.min(...vertices.map((point) => point.y)),
+    bottom: Math.max(...vertices.map((point) => point.y)),
   };
   return {
     x: SVG_WIDTH / 2 - (boardBounds.left + boardBounds.right) / 2,
@@ -244,10 +248,18 @@ function getBorderNodePositions(
 
     const angle =
       (((Number(borderToTriangleDirection) + 6) % 12) * Math.PI) / 6;
+    const direction = rotateBoardVector90({
+      x: Math.sin(angle),
+      y: -Math.cos(angle),
+    });
+    const directionLength = Math.hypot(direction.x, direction.y);
     const borders = bordersByTriangle.get(triangleName) ?? [];
     borders.push({
       node: border,
-      direction: { x: Math.sin(angle), y: -Math.cos(angle) },
+      direction: {
+        x: direction.x / directionLength,
+        y: direction.y / directionLength,
+      },
     });
     bordersByTriangle.set(triangleName, borders);
   }
@@ -262,10 +274,7 @@ function getBorderNodePositions(
       );
     }
 
-    const center = getTriangleLabelPosition(
-      getTriangleBounds(triangle),
-      triangle.orientation,
-    );
+    const center = getTriangleLabelPosition(triangle);
     const assignments = new Map<
       string,
       { edge: Edge; borders: typeof borders }
@@ -306,14 +315,25 @@ function getBorderNodePositions(
         x: (edge.start.x + edge.end.x) / 2,
         y: (edge.start.y + edge.end.y) / 2,
       };
-      const outward = { x: midpoint.x - center.x, y: midpoint.y - center.y };
+      const edgeVector = {
+        x: edge.end.x - edge.start.x,
+        y: edge.end.y - edge.start.y,
+      };
+      let outward = { x: -edgeVector.y, y: edgeVector.x };
+      if (
+        outward.x * (midpoint.x - center.x) +
+          outward.y * (midpoint.y - center.y) <
+        0
+      ) {
+        outward = { x: -outward.x, y: -outward.y };
+      }
       const outwardLength = Math.hypot(outward.x, outward.y);
-      edgeBorders.forEach(({ node, direction }) => {
+      edgeBorders.forEach(({ node }) => {
         const distance =
           Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
         const borderCenter = {
-          x: midpoint.x + direction.x * distance,
-          y: midpoint.y + direction.y * distance,
+          x: midpoint.x + (outward.x / outwardLength) * distance,
+          y: midpoint.y + (outward.y / outwardLength) * distance,
         };
         positions.set(node.name, {
           sideMidpoint: {
@@ -341,35 +361,27 @@ function getBorderNodePositions(
   return positions;
 }
 
-function getTriangleViewBounds(node: Node, boardOffset: Point): Bounds {
-  const bounds = getTriangleBounds(node);
-  return {
-    top: bounds.top + boardOffset.y,
-    bottom: bounds.bottom + boardOffset.y,
-    left: bounds.left + boardOffset.x,
-    right: bounds.right + boardOffset.x,
-  };
-}
-
-function getTrianglePoints(
-  bounds: Bounds,
-  orientation: Node["orientation"],
-): string {
-  const middleY = (bounds.top + bounds.bottom) / 2;
-  return orientation === Orient.PointyLeft
-    ? `${bounds.left},${middleY} ${bounds.right},${bounds.top} ${bounds.right},${bounds.bottom}`
-    : `${bounds.right},${middleY} ${bounds.left},${bounds.top} ${bounds.left},${bounds.bottom}`;
+function getTrianglePoints(node: Node, boardOffset: Point): string {
+  return getTriangleVertices(node)
+    .map(
+      (point) =>
+        `${point.x + boardOffset.x},${point.y + boardOffset.y}`,
+    )
+    .join(" ");
 }
 
 function getTriangleLabelPosition(
-  bounds: Bounds,
-  orientation: Node["orientation"],
+  node: Node,
+  boardOffset: Point = { x: 0, y: 0 },
 ): Point {
-  const width = bounds.right - bounds.left;
+  const vertices = getTriangleVertices(node);
   return {
     x:
-      bounds.left + width * (orientation === Orient.PointyLeft ? 2 / 3 : 1 / 3),
-    y: (bounds.top + bounds.bottom) / 2,
+      vertices.reduce((sum, point) => sum + point.x, 0) / vertices.length +
+      boardOffset.x,
+    y:
+      vertices.reduce((sum, point) => sum + point.y, 0) / vertices.length +
+      boardOffset.y,
   };
 }
 
@@ -586,11 +598,7 @@ export default function OrapaStreet221B() {
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
 
         {triangleNodes.map((node) => {
-          const bounds = getTriangleViewBounds(node, boardOffset);
-          const labelPosition = getTriangleLabelPosition(
-            bounds,
-            node.orientation,
-          );
+          const labelPosition = getTriangleLabelPosition(node, boardOffset);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
           const fill = getTileColor(tilesInBoard[node.name]?.tile.colors ?? []);
@@ -615,14 +623,16 @@ export default function OrapaStreet221B() {
               style={{ cursor: "pointer", outline: "none" }}
             >
               <polygon
-                points={getTrianglePoints(bounds, node.orientation)}
+                points={getTrianglePoints(node, boardOffset)}
                 fill={fill}
                 stroke={
                   isSelected ? "#fff1be" : isNeighbor ? "#9bd7e8" : "#7ba4bd"
                 }
                 strokeWidth={isSelected ? 2.5 : 1.25}
               >
-                <title>{`${node.name} · q: ${node.q}, r: ${node.r} · ${node.orientation} · ${Object.keys(node.edges).length} links`}</title>
+                <title>
+                  {`${node.name} · q: ${node.q}, r: ${node.r}, s: ${node.s} · ${node.orientation} · ${Object.keys(node.edges).length} links`}
+                </title>
               </polygon>
               {showLabels && (
                 <text
@@ -638,7 +648,7 @@ export default function OrapaStreet221B() {
                   fontWeight={700}
                   style={{ pointerEvents: "none", userSelect: "none" }}
                 >
-                  {`(${node.q - 5}, ${node.r - 9})`}
+                  {node.name}
                 </text>
               )}
             </g>

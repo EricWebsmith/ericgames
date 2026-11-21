@@ -6,11 +6,16 @@ import {
   alternateOrientation,
   getOppositeDirection,
   type Board,
+  type CubeCoord,
   type Node,
   type Offset,
   type ParentTile,
   type Reflect,
 } from "./models";
+
+function cubeCoord(q: number, r: number): CubeCoord {
+  return { q, r, s: -q - r };
+}
 
 const LEFT_LINE_TILE_NEIGHBORS: Offset[] = [
   { dq: 0, dr: -2 },
@@ -108,6 +113,7 @@ function createTriangleNodes(
         neighbors: [],
         q: colOrder,
         r: firstRowR[col] + row - 1,
+        s: -colOrder - (firstRowR[col] + row - 1),
       });
     }
     colOrder++;
@@ -263,6 +269,7 @@ export function getDefaultBoard(): Board {
       isOccupied:false,
       q: -999,
       r: -999,
+      s: 1998,
       edges: {},
       neighbors: [],
     });
@@ -388,6 +395,7 @@ export function getHexBoard(): Board {
       isBorder: true,
       q: -999,
       r: -999,
+      s: 1998,
       edges: {},
       neighbors: [],
     });
@@ -489,7 +497,7 @@ const rightLineTileReflect: Reflect[] = [
 function leftTile(
   parentName: string,
   colors: Color[],
-  coordinate: Record<number, number>,
+  coordinate: CubeCoord,
 ): Tile {
   return new Tile({
     orient: Orient.PointyLeft,
@@ -503,7 +511,7 @@ function leftTile(
 function leftLineTile(
   parentName: string,
   colors: Color[],
-  coordinate: Record<number, number>,
+  coordinate: CubeCoord,
 ): Tile {
   return new Tile({
     orient: Orient.PointyLeft,
@@ -518,7 +526,7 @@ function leftLineTile(
 function rightTile(
   parentName: string,
   colors: Color[],
-  coordinate: Record<number, number>,
+  coordinate: CubeCoord,
 ): Tile {
   return new Tile({
     orient: Orient.PointyRight,
@@ -532,7 +540,7 @@ function rightTile(
 function rightLineTile(
   parentName: string,
   colors: Color[],
-  coordinate: Record<number, number>,
+  coordinate: CubeCoord,
 ): Tile {
   return new Tile({
     orient: Orient.PointyRight,
@@ -549,11 +557,11 @@ const red1: ParentTile = {
   flipable: true,
   hasLineTile: true,
   subTiles: [
-    leftTile("Red1", [Color.Red], { 0: 0, 1: 0 }),
-    rightTile("Red1", [Color.Red], { 0: 0, 1: 1 }),
-    leftTile("Red1", [Color.Red], { 0: 0, 1: 2 }),
-    leftLineTile("Red1", [Color.Red], { 0: 0, 1: 4 }),
-    rightLineTile("Red1", [Color.Red], { 0: 1, 1: 4 }),
+    leftTile("Red1", [Color.Red], cubeCoord(0, 0)),
+    rightTile("Red1", [Color.Red], cubeCoord(0, 1)),
+    leftTile("Red1", [Color.Red], cubeCoord(0, 2)),
+    leftLineTile("Red1", [Color.Red], cubeCoord(0, 4)),
+    rightLineTile("Red1", [Color.Red], cubeCoord(1, 4)),
   ],
 };
 
@@ -562,14 +570,14 @@ const red2: ParentTile = {
   flipable: false,
   hasLineTile: true,
   subTiles: [
-    leftTile("Red2", [Color.Red], { 0: 0, 1: 0 }),
-    rightTile("Red2", [Color.Red], { 0: 0, 1: 1 }),
-    leftTile("Red2", [Color.Red], { 0: 0, 1: 2 }),
-    leftLineTile("Red2", [Color.Red], { 0: 0, 1: 4 }),
-    rightTile("Red2", [Color.Red], { 0: 1, 1: 0 }),
-    leftTile("Red2", [Color.Red], { 0: 1, 1: 1 }),
-    rightTile("Red2", [Color.Red], { 0: 1, 1: 2 }),
-    rightLineTile("Red2", [Color.Red], { 0: 1, 1: 4 }),
+    leftTile("Red2", [Color.Red], cubeCoord(0, 0)),
+    rightTile("Red2", [Color.Red], cubeCoord(0, 1)),
+    leftTile("Red2", [Color.Red], cubeCoord(0, 2)),
+    leftLineTile("Red2", [Color.Red], cubeCoord(0, 4)),
+    rightTile("Red2", [Color.Red], cubeCoord(1, 0)),
+    leftTile("Red2", [Color.Red], cubeCoord(1, 1)),
+    rightTile("Red2", [Color.Red], cubeCoord(1, 2)),
+    rightLineTile("Red2", [Color.Red], cubeCoord(1, 4)),
   ],
 };
 
@@ -578,10 +586,10 @@ const red3: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    rightTile("Red3-1", [Color.Red], { 0: 0, 1: 0 }),
-    leftTile("Red3-2", [Color.Red], { 0: 0, 1: 1 }),
-    rightTile("Red3-3", [Color.Red], { 0: 0, 1: 2 }),
-    leftTile("Red3-4", [Color.Red], { 0: 0, 1: 3 }),
+    rightTile("Red3-1", [Color.Red], cubeCoord(0, 0)),
+    leftTile("Red3-2", [Color.Red], cubeCoord(0, 1)),
+    rightTile("Red3-3", [Color.Red], cubeCoord(0, 2)),
+    leftTile("Red3-4", [Color.Red], cubeCoord(0, 3)),
   ],
 };
 
@@ -590,12 +598,12 @@ const white1: ParentTile = {
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    leftTile("White1", [Color.White], { 0: 0, 1: 0 }),
-    rightTile("White1", [Color.White], { 0: 0, 1: 1 }),
-    leftTile("White1", [Color.White], { 0: 0, 1: 2 }),
-    rightTile("White1", [Color.White], { 0: 1, 1: 2 }),
-    leftTile("White1", [Color.White], { 0: 1, 1: 3 }),
-    rightTile("White1", [Color.White], { 0: 1, 1: 4 }),
+    leftTile("White1", [Color.White], cubeCoord(0, 0)),
+    rightTile("White1", [Color.White], cubeCoord(0, 1)),
+    leftTile("White1", [Color.White], cubeCoord(0, 2)),
+    rightTile("White1", [Color.White], cubeCoord(1, 2)),
+    leftTile("White1", [Color.White], cubeCoord(1, 3)),
+    rightTile("White1", [Color.White], cubeCoord(1, 4)),
   ],
 };
 
@@ -604,11 +612,11 @@ const white2: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    rightTile("White2", [Color.White], { 0: 0, 1: 0 }),
-    leftTile("White2", [Color.White], { 0: 0, 1: 1 }),
-    rightTile("White2", [Color.White], { 0: 0, 1: 2 }),
-    leftTile("White2", [Color.White], { 0: 0, 1: 3 }),
-    rightTile("White2", [Color.White], { 0: 0, 1: 4 }),
+    rightTile("White2", [Color.White], cubeCoord(0, 0)),
+    leftTile("White2", [Color.White], cubeCoord(0, 1)),
+    rightTile("White2", [Color.White], cubeCoord(0, 2)),
+    leftTile("White2", [Color.White], cubeCoord(0, 3)),
+    rightTile("White2", [Color.White], cubeCoord(0, 4)),
   ],
 };
 
@@ -617,12 +625,12 @@ const white3: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    leftTile("White3", [Color.White], { 0: 0, 1: 0 }),
-    rightTile("White3", [Color.White], { 0: 0, 1: 1 }),
-    leftTile("White3", [Color.White], { 0: 0, 1: 2 }),
-    rightTile("White3", [Color.White], { 0: 1, 1: 0 }),
-    leftTile("White3", [Color.White], { 0: 1, 1: 1 }),
-    rightTile("White3", [Color.White], { 0: 1, 1: 2 }),
+    leftTile("White3", [Color.White], cubeCoord(0, 0)),
+    rightTile("White3", [Color.White], cubeCoord(0, 1)),
+    leftTile("White3", [Color.White], cubeCoord(0, 2)),
+    rightTile("White3", [Color.White], cubeCoord(1, 0)),
+    leftTile("White3", [Color.White], cubeCoord(1, 1)),
+    rightTile("White3", [Color.White], cubeCoord(1, 2)),
   ],
 };
 
@@ -631,10 +639,10 @@ const white4: ParentTile = {
   flipable: true,
   hasLineTile: true,
   subTiles: [
-    leftLineTile("White4", [Color.White], { 0: 0, 1: 0 }),
-    leftTile("White4", [Color.White], { 0: 0, 1: 2 }),
-    leftTile("White4", [Color.White], { 0: 0, 1: 3 }),
-    rightLineTile("White4", [Color.White], { 0: 0, 1: 0 }),
+    leftLineTile("White4", [Color.White], cubeCoord(0, 0)),
+    leftTile("White4", [Color.White], cubeCoord(0, 2)),
+    leftTile("White4", [Color.White], cubeCoord(0, 3)),
+    rightLineTile("White4", [Color.White], cubeCoord(0, 0)),
   ],
 };
 
@@ -643,11 +651,11 @@ const blue1: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    rightTile("blue1", [Color.Blue], { 0: 0, 1: 0 }),
-    leftTile("blue1", [Color.Blue], { 0: 0, 1: 1 }),
-    rightTile("blue1", [Color.Blue], { 0: 0, 1: 2 }),
+    rightTile("blue1", [Color.Blue], cubeCoord(0, 0)),
+    leftTile("blue1", [Color.Blue], cubeCoord(0, 1)),
+    rightTile("blue1", [Color.Blue], cubeCoord(0, 2)),
 
-    rightTile("blue1", [Color.Blue], { 0: -1, 1: 1 }),
+    rightTile("blue1", [Color.Blue], cubeCoord(-1, 1)),
   ],
 };
 
@@ -656,10 +664,10 @@ const blue2: ParentTile = {
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    rightTile("blue2-1", [Color.Blue], { 0: 0, 1: 0 }),
-    leftTile("blue2-2", [Color.Blue], { 0: 0, 1: 1 }),
-    rightTile("blue2-3", [Color.Blue], { 0: 0, 1: 2 }),
-    leftTile("blue2-4", [Color.Blue], { 0: 0, 1: 3 }),
+    rightTile("blue2-1", [Color.Blue], cubeCoord(0, 0)),
+    leftTile("blue2-2", [Color.Blue], cubeCoord(0, 1)),
+    rightTile("blue2-3", [Color.Blue], cubeCoord(0, 2)),
+    leftTile("blue2-4", [Color.Blue], cubeCoord(0, 3)),
   ],
 };
 
@@ -668,13 +676,13 @@ const blue3: ParentTile = {
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    rightTile("blue2", [Color.Blue], { 0: 0, 1: 0 }),
-    leftTile("blue2", [Color.Blue], { 0: 0, 1: 1 }),
+    rightTile("blue2", [Color.Blue], cubeCoord(0, 0)),
+    leftTile("blue2", [Color.Blue], cubeCoord(0, 1)),
 
-    leftTile("blue2", [Color.Blue], { 0: 1, 1: 0 }),
-    rightTile("blue2", [Color.Blue], { 0: 1, 1: 1 }),
-    leftTile("blue2", [Color.Blue], { 0: 1, 1: 2 }),
-    rightTile("blue2", [Color.Blue], { 0: 1, 1: 3 }),
+    leftTile("blue2", [Color.Blue], cubeCoord(1, 0)),
+    rightTile("blue2", [Color.Blue], cubeCoord(1, 1)),
+    leftTile("blue2", [Color.Blue], cubeCoord(1, 2)),
+    rightTile("blue2", [Color.Blue], cubeCoord(1, 3)),
   ],
 };
 
@@ -683,12 +691,12 @@ const yellow1: ParentTile = {
   flipable: true,
   hasLineTile: true,
   subTiles: [
-    leftTile("yellow1", [Color.Yellow], { 0: 0, 1: 4 }),
+    leftTile("yellow1", [Color.Yellow], cubeCoord(0, 4)),
 
-    rightTile("yellow1", [Color.Yellow], { 0: 1, 1: 0 }),
-    leftTile("yellow1", [Color.Yellow], { 0: 1, 1: 1 }),
-    rightTile("yellow1", [Color.Yellow], { 0: 1, 1: 2 }),
-    rightLineTile("yellow1", [Color.Yellow], { 0: 0, 1: 4 }),
+    rightTile("yellow1", [Color.Yellow], cubeCoord(1, 0)),
+    leftTile("yellow1", [Color.Yellow], cubeCoord(1, 1)),
+    rightTile("yellow1", [Color.Yellow], cubeCoord(1, 2)),
+    rightLineTile("yellow1", [Color.Yellow], cubeCoord(0, 4)),
   ],
 };
 
@@ -697,10 +705,10 @@ const yellow2: ParentTile = {
   flipable: false,
   hasLineTile: true,
   subTiles: [
-    leftLineTile("yellow2", [Color.Yellow], { 0: 0, 1: 0 }),
-    leftLineTile("yellow2", [Color.Yellow], { 0: 0, 1: 2 }),
-    rightLineTile("yellow2", [Color.Yellow], { 0: 1, 1: 0 }),
-    rightTile("yellow2", [Color.Yellow], { 0: 1, 1: 2 }),
+    leftLineTile("yellow2", [Color.Yellow], cubeCoord(0, 0)),
+    leftLineTile("yellow2", [Color.Yellow], cubeCoord(0, 2)),
+    rightLineTile("yellow2", [Color.Yellow], cubeCoord(1, 0)),
+    rightTile("yellow2", [Color.Yellow], cubeCoord(1, 2)),
   ],
 };
 
@@ -709,9 +717,9 @@ const yellow3: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    rightTile("yellow3", [Color.Yellow], { 0: 0, 1: 0 }),
-    leftTile("yellow3", [Color.Yellow], { 0: 0, 1: 1 }),
-    rightTile("yellow3", [Color.Yellow], { 0: 0, 1: 2 }),
+    rightTile("yellow3", [Color.Yellow], cubeCoord(0, 0)),
+    leftTile("yellow3", [Color.Yellow], cubeCoord(0, 1)),
+    rightTile("yellow3", [Color.Yellow], cubeCoord(0, 2)),
   ],
 };
 

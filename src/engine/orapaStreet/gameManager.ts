@@ -7,8 +7,7 @@ import {
   type ParentTile,
   type Puzzle,
 } from "./models";
-import { leftRotateCoord,  rightRotateCoord, type RotationDegree } from "./triangleUtils";
-
+import { rightRotateCoord, type RotationDegree } from "./triangleUtils";
 
 export function traverse(
   board: Board,
@@ -80,7 +79,7 @@ export function putTile(
   board: Board,
   tile: ParentTile,
   anchorLabel: string,
-  rotateAngle: number = 0,
+  rotateAngle: 0 | 4 | 8 = 0,
 ): Record<string, TileInBoard> {
   const anchorNode = board.spaces[anchorLabel];
   if (!anchorNode) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
@@ -89,15 +88,20 @@ export function putTile(
 
   for (const subTile of tile.subTiles) {
     const offsets = rightRotateCoord(
-      subTile.coordinate[0],
-      subTile.coordinate[1],
-      rotateAngle * 30 as RotationDegree,
+      subTile.coordinate,
+      (rotateAngle * 30) as RotationDegree,
     );
 
     const q = anchorNode.q + offsets.q;
     const r = anchorNode.r + offsets.r;
+    const s = anchorNode.s + offsets.s;
 
     const nodeToPut = board.spacesByQr[q]?.[r];
+    if (!nodeToPut || nodeToPut.s !== s) {
+      throw new Error(
+        `Tile ${tile.name} extends outside the board from ${anchorLabel}`,
+      );
+    }
 
     const tib = new TileInBoard({
       tile: subTile,
@@ -141,6 +145,7 @@ function putTiles(
       }
       const anchorQ = anchorNode.q;
       const anchorR = anchorNode.r;
+      const anchorS = anchorNode.s;
 
       const rotateAngle = 4;
 
@@ -148,15 +153,15 @@ function putTiles(
       let valid = true;
       for (const subTile of parentTile.subTiles) {
         const newCoord = rightRotateCoord(
-          subTile.coordinate[0],
-          subTile.coordinate[1],
-          rotateAngle * 30 as RotationDegree,
+          subTile.coordinate,
+          (rotateAngle * 30) as RotationDegree,
         );
         const q = anchorQ + newCoord.q;
         const r = anchorR + newCoord.r;
+        const s = anchorS + newCoord.s;
 
         const nodeToPut = board.spacesByQr[q]?.[r];
-        if (!nodeToPut) {
+        if (!nodeToPut || nodeToPut.s !== s) {
           valid = false;
           break;
         }

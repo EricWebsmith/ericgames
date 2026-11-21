@@ -5,9 +5,11 @@ export const sampleBoard: Board = {
     A1: {
       name: "A1",
       isBorder: false,
+      isOccupied: false,
       orientation: Orient.PointyLeft,
       q: 0,
       r: 2,
+      s: -2,
       edges: {
         [Direction.Clock0]: "B",
         [Direction.Clock2]: "B2",
@@ -21,9 +23,11 @@ export const sampleBoard: Board = {
     A2: {
       name: "A2",
       isBorder: false,
+      isOccupied: false,
       orientation: Orient.PointyRight,
       q: 0,
       r: 3,
+      s: -3,
       edges: {
         [Direction.Clock0]: "A1",
         [Direction.Clock2]: "A1",
@@ -35,9 +39,11 @@ export const sampleBoard: Board = {
     B1: {
       name: "B1",
       isBorder: false,
+      isOccupied: false,
       orientation: Orient.PointyLeft,
       q: 1,
       r: 1,
+      s: -2,
       edges: {
         [Direction.Clock0]: "D",
         [Direction.Clock6]: "B2",
@@ -49,9 +55,11 @@ export const sampleBoard: Board = {
     B2: {
       name: "B2",
       isBorder: false,
+      isOccupied: false,
       orientation: Orient.PointyRight,
       q: 1,
       r: 2,
+      s: -3,
       edges: {
         [Direction.Clock0]: "B1",
         [Direction.Clock2]: "B1",
@@ -63,8 +71,10 @@ export const sampleBoard: Board = {
     "1": {
       name: "1",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock4]: "A2",
       },
@@ -73,8 +83,10 @@ export const sampleBoard: Board = {
     "3": {
       name: "3",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock2]: "A2",
       },
@@ -83,8 +95,10 @@ export const sampleBoard: Board = {
     A: {
       name: "A",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock4]: "A1",
       },
@@ -93,8 +107,10 @@ export const sampleBoard: Board = {
     B: {
       name: "B",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock6]: "A1",
       },
@@ -103,8 +119,10 @@ export const sampleBoard: Board = {
     C: {
       name: "C",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock4]: "B1",
       },
@@ -113,8 +131,10 @@ export const sampleBoard: Board = {
     D: {
       name: "D",
       isBorder: true,
+      isOccupied: false,
       q: -1,
       r: -1,
+      s: 2,
       edges: {
         [Direction.Clock6]: "B1",
       },

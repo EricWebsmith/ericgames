@@ -6,6 +6,7 @@ function expectResolvedNeighbors(board: Board): void {
     (node) => !node.isBorder,
   );
   for (const node of triangles) {
+    expect(node.q + node.r + node.s).toBe(0);
     expect(node.neighbors.length).toBeLessThanOrEqual(12);
     for (const neighborName of node.neighbors) {
       expect(board.spaces[neighborName]?.neighbors).toContain(node.name);

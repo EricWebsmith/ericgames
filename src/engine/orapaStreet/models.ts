@@ -20,6 +20,12 @@ export const Direction = {
 } as const;
 export type Direction = (typeof Direction)[keyof typeof Direction];
 
+export interface CubeCoord {
+  q: number;
+  r: number;
+  s: number;
+}
+
 /**
  * Returns the opposite 6-direction on the clock face.
  */
@@ -47,6 +53,7 @@ export interface Node {
 
   q: number; // Column index (0-based) -1 if border
   r: number; // Row index (0-based) -1 if border
+  s: number;
 }
 
 export interface Board {
@@ -87,7 +94,7 @@ export interface Offset {
 export class Tile {
   colors: Color[];
   parentName: string;
-  coordinate: Record<number, number>;
+  coordinate: CubeCoord;
   reflect: Reflect[];
   orient: Orient = Orient.PointyLeft;
   belt: number = -1;
@@ -97,7 +104,7 @@ export class Tile {
   constructor(data: {
     colors: Color[];
     parentName: string;
-    coordinate: Record<number, number>;
+    coordinate: CubeCoord;
     reflect: Reflect[];
     orient: Orient;
     opacity?: number;
