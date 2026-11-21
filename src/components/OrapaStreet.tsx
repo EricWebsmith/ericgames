@@ -638,7 +638,7 @@ export default function OrapaStreet221B() {
                   fontWeight={700}
                   style={{ pointerEvents: "none", userSelect: "none" }}
                 >
-                  {node.name}
+                  {`(${node.q - 5}, ${node.r - 9})`}
                 </text>
               )}
             </g>

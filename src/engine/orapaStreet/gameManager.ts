@@ -7,7 +7,7 @@ import {
   type ParentTile,
   type Puzzle,
 } from "./models";
-import { rotateCoord, type RotationDegree } from "./triangleUtils";
+import { leftRotateCoord,  rightRotateCoord, type RotationDegree } from "./triangleUtils";
 
 
 export function traverse(
@@ -88,7 +88,7 @@ export function putTile(
   const result: Record<string, TileInBoard> = {};
 
   for (const subTile of tile.subTiles) {
-    const offsets = rotateCoord(
+    const offsets = rightRotateCoord(
       subTile.coordinate[0],
       subTile.coordinate[1],
       rotateAngle * 30 as RotationDegree,
@@ -147,7 +147,7 @@ function putTiles(
       // Verify all subtile positions (after rotation) are in-bounds and free.
       let valid = true;
       for (const subTile of parentTile.subTiles) {
-        const newCoord = rotateCoord(
+        const newCoord = rightRotateCoord(
           subTile.coordinate[0],
           subTile.coordinate[1],
           rotateAngle * 30 as RotationDegree,

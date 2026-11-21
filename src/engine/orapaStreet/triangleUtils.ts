@@ -144,7 +144,7 @@ const rotate60Map: Record<number, Record<number, [number, number]>> = {
   },
 };
 
-const rotate120Map: Record<number, Record<number, [number, number]>> = {
+const rightRotate120Map: Record<number, Record<number, [number, number]>> = {
   "-5": {
     "-5": [6, -2],
     "-4": [6, -3],
@@ -225,11 +225,11 @@ const rotate120Map: Record<number, Record<number, [number, number]>> = {
   },
   "1": {
     "-5": [3, 4],
-    "-4": [2, 3],
-    "-3": [2, 2],
-    "-2": [1, 2],
+    "-4": [2, 4],
+    "-3": [2, 3],
+    "-2": [0, 3],
     "-1": [0, 2],
-    "0": [-1, -2],
+    "0": [-1, 2],
     "1": [-1, -1],
     "2": [-2, -1],
     "3": [-2, 0],
@@ -290,6 +290,154 @@ const rotate120Map: Record<number, Record<number, [number, number]>> = {
   },
 };
 
+
+const leftRotate120Map: Record<number, Record<number, [number, number]>> = {
+  "-5": {
+    "-5": [5, -5],
+    "-4": [5, -6],
+    "-3": [4, -6],
+    "-2": [4, -7],
+    "-1": [3, -7],
+    "0": [3, -8],
+    "1": [2, -8],
+    "2": [2, -9],
+    "3": [1, -9],
+    "4": [1, -10],
+    "5": [0, -10],
+  },
+  "-4": {
+    "-5": [5, -2],
+    "-4": [4, -2],
+    "-3": [4, -2],
+    "-2": [3, -3],
+    "-1": [3, -6],
+    "0": [2, -6],
+    "1": [2, -7],
+    "2": [1, -7],
+    "3": [1, -8],
+    "4": [0, -8],
+    "5": [0, -9],
+  },
+  "-3": {
+    "-5": [4, -2],
+    "-4": [4, -3],
+    "-3": [3, -3],
+    "-2": [3, -4],
+    "-1": [2, -4],
+    "0": [2, -5],
+    "1": [1, -5],
+    "2": [1, -6],
+    "3": [0, -6],
+    "4": [0, -7],
+    "5": [-1, -7],
+  },
+  "-2": {
+    "-5": [4, -1],
+    "-4": [3, -1],
+    "-3": [3, -2],
+    "-2": [2, -2],
+    "-1": [2, -3],
+    "0": [1, -3],
+    "1": [0, -4],
+    "2": [0, -4],
+    "3": [-1, -5],
+    "4": [-1, -5],
+    "5": [-2, -6],
+  },
+  "-1": {
+    "-5": [3, 1],
+    "-4": [3, 0],
+    "-3": [2, 0],
+    "-2": [2, -1],
+    "-1": [1, -1],
+    "0": [1, -2],
+    "1": [0, -2],
+    "2": [0, -3],
+    "3": [-1, -3],
+    "4": [-1, -4],
+    "5": [-2, -4],
+  },
+  "0": {
+    "-5": [3, 2],
+    "-4": [2, 2],
+    "-3": [2, 1],
+    "-2": [1, 1],
+    "-1": [1, 0],
+    "0": [0, 0],
+    "1": [0, -1],
+    "2": [-1, -1],
+    "3": [-1, -2],
+    "4": [-2, -2],
+    "5": [-2, -3],
+  },
+  "1": {
+    "-5": [2, 4],
+    "-4": [2, 3],
+    "-3": [1, 3],
+    "-2": [1, 2],
+    "-1": [0, 2],
+    "0": [0, 1],
+    "1": [-1, 1],
+    "2": [-1, 0],
+    "3": [-2, 0],
+    "4": [-2, -1],
+    "5": [-3, -1],
+  },
+  "2": {
+    "-5": [2, 5],
+    "-4": [1, 5],
+    "-3": [1, 4],
+    "-2": [0, 4],
+    "-1": [0, 3],
+    "0": [-1, 3],
+    "1": [-1, 2],
+    "2": [-2, 2],
+    "3": [-2, 1],
+    "4": [-3, 1],
+    "5": [-3, 0],
+  },
+  "3": {
+    "-5": [1, 7],
+    "-4": [1, 6],
+    "-3": [0, 6],
+    "-2": [0, 5],
+    "-1": [-1, 5],
+    "0": [-1, 4],
+    "1": [-2, 4],
+    "2": [-2, 3],
+    "3": [-3, 3],
+    "4": [-3, 2],
+    "5": [-4, 2],
+  },
+  "4": {
+    "-5": [1, 8],
+    "-4": [0, 8],
+    "-3": [0, 7],
+    "-2": [-1, 7],
+    "-1": [-1, 6],
+    "0": [-2, 6],
+    "1": [-2, 5],
+    "2": [-3, 5],
+    "3": [-3, 4],
+    "4": [-4, 4],
+    "5": [-4, 3],
+  },
+  "5": {
+    "-5": [0, 10],
+    "-4": [0, 9],
+    "-3": [-1, 9],
+    "-2": [-1, 8],
+    "-1": [-2, 8],
+    "0": [-2, 7],
+    "1": [-3, 7],
+    "2": [-3, 6],
+    "3": [-4, 6],
+    "4": [-4, 5],
+    "5": [-5, 5],
+  },
+};
+
+
 export interface Coord {
   q: number;
   r: number;
@@ -300,14 +448,21 @@ function getRotate60Coord(q: number, r: number): Coord {
   return { q: newQ, r: newR };
 }
 
-function getRotate120Coord(q: number, r: number): Coord {
-  const [newQ, newR] = rotate120Map[q]![r]!;
+function getLeftRotate120Coord(q: number, r: number): Coord {
+  const [newQ, newR] = leftRotate120Map[q]![r]!;
   return { q: newQ, r: newR };
 }
 
+function getRightRotate120Coord(q: number, r: number): Coord {
+  const [newQ, newR] = rightRotate120Map[q]![r]!;
+  return { q: newQ, r: newR };
+}
+
+
+
 export type RotationDegree = 0 | 60 | 120 | 180 | 240 | 300;
 
-export function rotateCoord(
+export function leftRotateCoord(
   q: number,
   r: number,
   degree: RotationDegree,
@@ -323,7 +478,7 @@ export function rotateCoord(
       return getRotate60Coord(current.q, current.r);
 
     case 120:
-      return getRotate120Coord(current.q, current.r);
+      return getLeftRotate120Coord(current.q, current.r);
 
     case 180:
       // 180° = 120° + 60° (or two 60° rotations)
@@ -332,13 +487,54 @@ export function rotateCoord(
 
     case 240:
       // 240° = 120° + 120° (two 120° rotations)
-      current = getRotate120Coord(current.q, current.r);
-      return getRotate120Coord(current.q, current.r);
+      current = getLeftRotate120Coord(current.q, current.r);
+      return getLeftRotate120Coord(current.q, current.r);
 
     case 300:
       // 300° = 120° + 120° + 60° (or five 60° rotations)
-      current = getRotate120Coord(current.q, current.r);
-      current = getRotate120Coord(current.q, current.r);
+      current = getLeftRotate120Coord(current.q, current.r);
+      current = getLeftRotate120Coord(current.q, current.r);
+      return getRotate60Coord(current.q, current.r);
+
+    default:
+      const exhaustiveCheck: never = degree;
+      throw new Error(`Unsupported rotation degree: ${exhaustiveCheck}`);
+  }
+}
+
+
+export function rightRotateCoord(
+  q: number,
+  r: number,
+  degree: RotationDegree,
+): Coord {
+  if (degree ===0) {
+    return {q, r};
+  }
+
+  let current = { q, r };
+
+  switch (degree) {
+    case 60:
+      return getRotate60Coord(current.q, current.r);
+
+    case 120:
+      return getRightRotate120Coord(current.q, current.r);
+
+    case 180:
+      // 180° = 120° + 60° (or two 60° rotations)
+      current = getRotate60Coord(current.q, current.r);
+      return getRotate60Coord(current.q, current.r);
+
+    case 240:
+      // 240° = 120° + 120° (two 120° rotations)
+      current = getRightRotate120Coord(current.q, current.r);
+      return getRightRotate120Coord(current.q, current.r);
+
+    case 300:
+      // 300° = 120° + 120° + 60° (or five 60° rotations)
+      current = getRightRotate120Coord(current.q, current.r);
+      current = getRightRotate120Coord(current.q, current.r);
       return getRotate60Coord(current.q, current.r);
 
     default:
