@@ -7,7 +7,7 @@ import {
   type ParentTile,
   type Puzzle,
 } from "./models";
-import { rotateCoord } from "./triangleUtils";
+import { rotateCoord, type RotationDegree } from "./triangleUtils";
 
 
 export function traverse(
@@ -80,6 +80,7 @@ export function putTile(
   board: Board,
   tile: ParentTile,
   anchorLabel: string,
+  rotateAngle: number = 0,
 ): Record<string, TileInBoard> {
   const anchorNode = board.spaces[anchorLabel];
   if (!anchorNode) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
@@ -90,7 +91,7 @@ export function putTile(
     const offsets = rotateCoord(
       subTile.coordinate[0],
       subTile.coordinate[1],
-      0,
+      rotateAngle * 30 as RotationDegree,
     );
 
     const q = anchorNode.q + offsets.q;
@@ -101,7 +102,7 @@ export function putTile(
     const tib = new TileInBoard({
       tile: subTile,
       label: nodeToPut.name,
-      rotate_angle: 0,
+      rotate_angle: rotateAngle,
     });
     tib.resolve_rotate();
     result[nodeToPut.name] = tib;
@@ -141,13 +142,15 @@ function putTiles(
       const anchorQ = anchorNode.q;
       const anchorR = anchorNode.r;
 
+      const rotateAngle = 4;
+
       // Verify all subtile positions (after rotation) are in-bounds and free.
       let valid = true;
       for (const subTile of parentTile.subTiles) {
         const newCoord = rotateCoord(
           subTile.coordinate[0],
           subTile.coordinate[1],
-          0,
+          rotateAngle * 30 as RotationDegree,
         );
         const q = anchorQ + newCoord.q;
         const r = anchorR + newCoord.r;
@@ -167,7 +170,7 @@ function putTiles(
       if (!valid) continue;
 
       // Check border connection
-      const newTiles = putTile(board, parentTile, anchorLabel);
+      const newTiles = putTile(board, parentTile, anchorLabel, rotateAngle);
 
       for (const [label, tib] of Object.entries(newTiles)) {
         tilesInBoard[label] = tib;

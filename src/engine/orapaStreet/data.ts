@@ -578,10 +578,10 @@ const red3: ParentTile = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    leftTile("Red3", [Color.Red], { 0: 0, 1: 0 }),
-    rightTile("Red3", [Color.Red], { 0: 0, 1: 1 }),
-    leftTile("Red3", [Color.Red], { 0: 0, 1: 2 }),
-    rightTile("Red3", [Color.Red], { 0: 0, 1: 3 }),
+    rightTile("Red3-1", [Color.Red], { 0: 0, 1: 0 }),
+    leftTile("Red3-2", [Color.Red], { 0: 0, 1: 1 }),
+    rightTile("Red3-3", [Color.Red], { 0: 0, 1: 2 }),
+    leftTile("Red3-4", [Color.Red], { 0: 0, 1: 3 }),
   ],
 };
 
@@ -657,9 +657,9 @@ const blue2: ParentTile = {
   hasLineTile: false,
   subTiles: [
     rightTile("blue2-1", [Color.Blue], { 0: 0, 1: 0 }),
-    leftTile("blue2", [Color.Blue], { 0: 0, 1: 1 }),
-    rightTile("blue2", [Color.Blue], { 0: 0, 1: 2 }),
-    leftTile("blue2", [Color.Blue], { 0: 0, 1: 3 }),
+    leftTile("blue2-2", [Color.Blue], { 0: 0, 1: 1 }),
+    rightTile("blue2-3", [Color.Blue], { 0: 0, 1: 2 }),
+    leftTile("blue2-4", [Color.Blue], { 0: 0, 1: 3 }),
   ],
 };
 
@@ -730,8 +730,8 @@ export function getTiles(
     white3,
     // white4,
     // blue1,
-    blue2,
-    // blue3,
+    // blue2,
+    blue3,
     // yellow1,
     // yellow2,
     yellow3,
