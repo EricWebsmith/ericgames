@@ -147,7 +147,7 @@ function putTiles(
       const anchorR = anchorNode.r;
       const anchorS = anchorNode.s;
 
-      const rotateAngle = 4;
+      const rotateAngle = 0;
 
       // Verify all subtile positions (after rotation) are in-bounds and free.
       let valid = true;

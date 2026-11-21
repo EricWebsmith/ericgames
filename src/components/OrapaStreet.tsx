@@ -275,42 +275,7 @@ function getBorderNodePositions(
     }
 
     const center = getTriangleLabelPosition(triangle);
-    const assignments = new Map<
-      string,
-      { edge: Edge; borders: typeof borders }
-    >();
-    for (const border of borders) {
-      const rankedEdges = openEdges
-        .map((edge) => {
-          const key = getEdgeKey(edge);
-          const midpoint = {
-            x: (edge.start.x + edge.end.x) / 2,
-            y: (edge.start.y + edge.end.y) / 2,
-          };
-          const normal = { x: midpoint.x - center.x, y: midpoint.y - center.y };
-          const length = Math.hypot(normal.x, normal.y);
-          const alignment =
-            (normal.x * border.direction.x + normal.y * border.direction.y) /
-            length;
-          return { edge, key, alignment };
-        })
-        .sort((first, second) => second.alignment - first.alignment);
-
-      const match = rankedEdges[0];
-      if (!match) {
-        throw new Error(
-          `Missing exposed triangle edge for border node: ${border.node.name}`,
-        );
-      }
-      const assignment = assignments.get(match.key) ?? {
-        edge: match.edge,
-        borders: [],
-      };
-      assignment.borders.push(border);
-      assignments.set(match.key, assignment);
-    }
-
-    for (const { edge, borders: edgeBorders } of assignments.values()) {
+    const getEdgeFrame = (edge: Edge) => {
       const midpoint = {
         x: (edge.start.x + edge.end.x) / 2,
         y: (edge.start.y + edge.end.y) / 2,
@@ -319,7 +284,12 @@ function getBorderNodePositions(
         x: edge.end.x - edge.start.x,
         y: edge.end.y - edge.start.y,
       };
-      let outward = { x: -edgeVector.y, y: edgeVector.x };
+      const edgeLength = Math.hypot(edgeVector.x, edgeVector.y);
+      const tangent = {
+        x: edgeVector.x / edgeLength,
+        y: edgeVector.y / edgeLength,
+      };
+      let outward = { x: -tangent.y, y: tangent.x };
       if (
         outward.x * (midpoint.x - center.x) +
           outward.y * (midpoint.y - center.y) <
@@ -327,13 +297,121 @@ function getBorderNodePositions(
       ) {
         outward = { x: -outward.x, y: -outward.y };
       }
-      const outwardLength = Math.hypot(outward.x, outward.y);
+      return { midpoint, tangent, outward, edgeLength };
+    };
+    const alignment = (
+      border: (typeof borders)[number],
+      edge: Edge,
+    ): number => {
+      const { outward } = getEdgeFrame(edge);
+      return outward.x * border.direction.x + outward.y * border.direction.y;
+    };
+
+    type BorderEdgeAssignment = {
+      border: (typeof borders)[number];
+      edge: Edge;
+    };
+    let bestScore = Number.NEGATIVE_INFINITY;
+    let bestUniqueEdgeCount = -1;
+    let bestAssignment: BorderEdgeAssignment[] = [];
+    // Prefer separate exposed edges when possible, then maximize directional alignment.
+    const assignBorders = (
+      borderIndex: number,
+      usedEdgeKeys: Set<string>,
+      current: BorderEdgeAssignment[],
+      score: number,
+      uniqueEdgeCount: number,
+    ): void => {
+      if (borderIndex === borders.length) {
+        if (
+          uniqueEdgeCount > bestUniqueEdgeCount ||
+          (uniqueEdgeCount === bestUniqueEdgeCount && score > bestScore)
+        ) {
+          bestUniqueEdgeCount = uniqueEdgeCount;
+          bestScore = score;
+          bestAssignment = current.slice();
+        }
+        return;
+      }
+
+      const border = borders[borderIndex];
+      for (const edge of openEdges) {
+        const key = getEdgeKey(edge);
+        const isNewEdge = !usedEdgeKeys.has(key);
+        usedEdgeKeys.add(key);
+        current.push({ border, edge });
+        assignBorders(
+          borderIndex + 1,
+          usedEdgeKeys,
+          current,
+          score + alignment(border, edge),
+          uniqueEdgeCount + Number(isNewEdge),
+        );
+        current.pop();
+        if (isNewEdge) usedEdgeKeys.delete(key);
+      }
+    };
+    assignBorders(0, new Set(), [], 0, 0);
+
+    const connectorDirections = new Map<string, Point>();
+    if (borders.length === 2) {
+      const [first, second] = bestAssignment;
+      if (!first || !second) {
+        throw new Error(
+          `Unable to position border nodes for triangle: ${triangleName}`,
+        );
+      }
+      const getConnector = (edge: Edge, angle: number): Point => {
+        const { tangent, outward } = getEdgeFrame(edge);
+        return {
+          x: tangent.x * Math.cos(angle) + outward.x * Math.sin(angle),
+          y: tangent.y * Math.cos(angle) + outward.y * Math.sin(angle),
+        };
+      };
+      const angle60 = Math.PI / 3;
+      const angle120 = (2 * Math.PI) / 3;
+      const firstAt60 = getConnector(first.edge, angle60);
+      const secondAt120 = getConnector(second.edge, angle120);
+      const firstAt120 = getConnector(first.edge, angle120);
+      const secondAt60 = getConnector(second.edge, angle60);
+      const score =
+        first.border.direction.x * firstAt60.x +
+        first.border.direction.y * firstAt60.y +
+        second.border.direction.x * secondAt120.x +
+        second.border.direction.y * secondAt120.y;
+      const alternateScore =
+        first.border.direction.x * firstAt120.x +
+        first.border.direction.y * firstAt120.y +
+        second.border.direction.x * secondAt60.x +
+        second.border.direction.y * secondAt60.y;
+      if (score >= alternateScore) {
+        connectorDirections.set(first.border.node.name, firstAt60);
+        connectorDirections.set(second.border.node.name, secondAt120);
+      } else {
+        connectorDirections.set(first.border.node.name, firstAt120);
+        connectorDirections.set(second.border.node.name, secondAt60);
+      }
+    }
+
+    const assignments = new Map<
+      string,
+      { edge: Edge; borders: typeof borders }
+    >();
+    for (const { border, edge } of bestAssignment) {
+      const key = getEdgeKey(edge);
+      const assignment = assignments.get(key) ?? { edge, borders: [] };
+      assignment.borders.push(border);
+      assignments.set(key, assignment);
+    }
+
+    for (const { edge, borders: edgeBorders } of assignments.values()) {
+      const { midpoint, outward, edgeLength } = getEdgeFrame(edge);
       edgeBorders.forEach(({ node }) => {
-        const distance =
-          Math.hypot(edge.end.x - edge.start.x, edge.end.y - edge.start.y) / 2;
+        const direction = connectorDirections.get(node.name) ?? outward;
+        const distance = edgeLength / 2;
         const borderCenter = {
-          x: midpoint.x + (outward.x / outwardLength) * distance,
-          y: midpoint.y + (outward.y / outwardLength) * distance,
+          x: midpoint.x + direction.x * distance,
+          y: midpoint.y + direction.y * distance,
         };
         positions.set(node.name, {
           sideMidpoint: {
@@ -345,14 +423,8 @@ function getBorderNodePositions(
             y: borderCenter.y + boardOffset.y,
           },
           outerCenter: {
-            x:
-              borderCenter.x +
-              (outward.x / outwardLength) * distance +
-              boardOffset.x,
-            y:
-              borderCenter.y +
-              (outward.y / outwardLength) * distance +
-              boardOffset.y,
+            x: borderCenter.x + outward.x * distance + boardOffset.x,
+            y: borderCenter.y + outward.y * distance + boardOffset.y,
           },
         });
       });

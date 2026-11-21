@@ -1,6 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import OrapaStreet221B from "../../components/OrapaStreet";
+import {
+  getDefaultBoard,
+  getHexBoard,
+} from "../../engine/orapaStreet/data";
 
 type Point = { x: number; y: number };
 
@@ -27,6 +31,25 @@ function getTriangleCenter(name: string): Point {
 function pointsMatch(first: Point, second: Point): boolean {
   return (
     Math.abs(first.x - second.x) < 0.001 && Math.abs(first.y - second.y) < 0.001
+  );
+}
+
+function liesOnSegment(point: Point, start: Point, end: Point): boolean {
+  const edge = { x: end.x - start.x, y: end.y - start.y };
+  const relative = { x: point.x - start.x, y: point.y - start.y };
+  const cross = edge.x * relative.y - edge.y * relative.x;
+  const projection = edge.x * relative.x + edge.y * relative.y;
+  const lengthSquared = edge.x * edge.x + edge.y * edge.y;
+  return (
+    Math.abs(cross) < 0.001 &&
+    projection >= -0.001 &&
+    projection <= lengthSquared + 0.001
+  );
+}
+
+function liesOnTriangleEdge(point: Point, vertices: Point[]): boolean {
+  return vertices.some((start, index) =>
+    liesOnSegment(point, start, vertices[(index + 1) % vertices.length]),
   );
 }
 
@@ -64,7 +87,7 @@ describe("OrapaStreet221B", () => {
     expect(colored.length + empty.length).toBe(122);
   });
 
-  it("draws each traversed triangle from one side midpoint to another", () => {
+  it("draws each traversed triangle from one side edge to another", () => {
     render(<OrapaStreet221B />);
 
     fireEvent.click(screen.getByTestId("border-A"));
@@ -73,10 +96,6 @@ describe("OrapaStreet221B", () => {
 
     const firstSegment = screen.getAllByTestId(/^light-line-/)[0];
     const trianglePoints = getTrianglePoints("A1");
-    const sideMidpoints = trianglePoints.map((start, index) => {
-      const end = trianglePoints[(index + 1) % trianglePoints.length];
-      return { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
-    });
     const start = {
       x: Number(firstSegment.getAttribute("x1")),
       y: Number(firstSegment.getAttribute("y1")),
@@ -85,61 +104,48 @@ describe("OrapaStreet221B", () => {
       x: Number(firstSegment.getAttribute("x2")),
       y: Number(firstSegment.getAttribute("y2")),
     };
-    expect(sideMidpoints.some((midpoint) => pointsMatch(start, midpoint))).toBe(
-      true,
-    );
-    expect(sideMidpoints.some((midpoint) => pointsMatch(end, midpoint))).toBe(
-      true,
-    );
-    expect(
-      sideMidpoints.some(
-        (midpoint) =>
-          pointsMatch(start, midpoint) && pointsMatch(end, midpoint),
-      ),
-    ).toBe(false);
+    expect(liesOnTriangleEdge(start, trianglePoints)).toBe(true);
+    expect(liesOnTriangleEdge(end, trianglePoints)).toBe(true);
+    expect(pointsMatch(start, end)).toBe(false);
 
     fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
     expect(screen.queryAllByTestId(/^light-line-/)).toHaveLength(0);
   });
 
-  it("draws a perpendicular extension from a border node to a second circle", () => {
+  it("connects two border nodes to a side midpoint at 60 and 120 degrees", () => {
+    const board = getDefaultBoard();
+    const borderNames = Object.values(board.spaces)
+      .filter(
+        (node) => node.isBorder && Object.values(node.edges).includes("A1"),
+      )
+      .map((node) => node.name);
+    expect(borderNames).toHaveLength(2);
+
     render(<OrapaStreet221B />);
 
-    const borderCircle = screen.getByTestId("border-A");
-    const sideLine = screen.getByTestId("border-link-line-A");
-    const extensionLine = screen.getByTestId("border-extension-line-A");
-    const extensionCircle = screen.getByTestId("border-extension-circle-A");
-    const borderCenter = {
-      x: Number(borderCircle.getAttribute("cx")),
-      y: Number(borderCircle.getAttribute("cy")),
-    };
-    const resultCenter = {
-      x: Number(extensionCircle.getAttribute("cx")),
-      y: Number(extensionCircle.getAttribute("cy")),
-    };
-    const lineStart = {
-      x: Number(extensionLine.getAttribute("x1")),
-      y: Number(extensionLine.getAttribute("y1")),
-    };
-    const lineEnd = {
-      x: Number(extensionLine.getAttribute("x2")),
-      y: Number(extensionLine.getAttribute("y2")),
-    };
-    expect(
-      Math.hypot(lineStart.x - borderCenter.x, lineStart.y - borderCenter.y),
-    ).toBeGreaterThanOrEqual(8);
-    expect(
-      Math.hypot(lineEnd.x - resultCenter.x, lineEnd.y - resultCenter.y),
-    ).toBeGreaterThanOrEqual(8);
-
-    const sideMidpoint = {
-      x: Number(sideLine.getAttribute("x1")),
-      y: Number(sideLine.getAttribute("y1")),
-    };
     const trianglePoints = getTrianglePoints("A1");
+    const connections = borderNames.map((name) => {
+      const sideLine = screen.getByTestId(`border-link-line-${name}`);
+      const borderCircle = screen.getByTestId(`border-${name}`);
+      return {
+        sidePoint: {
+          x: Number(sideLine.getAttribute("x1")),
+          y: Number(sideLine.getAttribute("y1")),
+        },
+        borderCenter: {
+          x: Number(borderCircle.getAttribute("cx")),
+          y: Number(borderCircle.getAttribute("cy")),
+        },
+      };
+    });
+    expect(pointsMatch(connections[0].sidePoint, connections[1].sidePoint)).toBe(
+      true,
+    );
+
+    const sidePoint = connections[0].sidePoint;
     const edgeIndex = trianglePoints.findIndex((start, index) => {
       const end = trianglePoints[(index + 1) % trianglePoints.length];
-      return pointsMatch(sideMidpoint, {
+      return pointsMatch(sidePoint, {
         x: (start.x + end.x) / 2,
         y: (start.y + end.y) / 2,
       });
@@ -148,6 +154,26 @@ describe("OrapaStreet221B", () => {
 
     const edgeStart = trianglePoints[edgeIndex];
     const edgeEnd = trianglePoints[(edgeIndex + 1) % trianglePoints.length];
+    const edge = { x: edgeEnd.x - edgeStart.x, y: edgeEnd.y - edgeStart.y };
+    const angles = connections
+      .map(({ borderCenter }) => {
+        const connector = {
+          x: borderCenter.x - sidePoint.x,
+          y: borderCenter.y - sidePoint.y,
+        };
+        return (
+          (edge.x * connector.x + edge.y * connector.y) /
+          (Math.hypot(edge.x, edge.y) *
+            Math.hypot(connector.x, connector.y))
+        );
+      })
+      .sort((first, second) => first - second);
+    expect(angles[0]).toBeCloseTo(-0.5);
+    expect(angles[1]).toBeCloseTo(0.5);
+
+    const extensionLine = screen.getByTestId(
+      `border-extension-line-${borderNames[0]}`,
+    );
     const extension = {
       x:
         Number(extensionLine.getAttribute("x2")) -
@@ -156,13 +182,57 @@ describe("OrapaStreet221B", () => {
         Number(extensionLine.getAttribute("y2")) -
         Number(extensionLine.getAttribute("y1")),
     };
-    expect(
-      Math.abs(
-        (edgeEnd.x - edgeStart.x) * extension.x +
-          (edgeEnd.y - edgeStart.y) * extension.y,
-      ),
-    ).toBeLessThan(0.001);
+    expect(Math.abs(edge.x * extension.x + edge.y * extension.y)).toBeLessThan(
+      0.001,
+    );
   });
+
+  it.each([
+    ["default", getDefaultBoard],
+    ["hex", getHexBoard],
+  ] as const)(
+    "displays both border nodes attached to one triangle on the %s board",
+    (boardType, getBoard) => {
+      const board = getBoard();
+      const bordersByTriangle = new Map<string, string[]>();
+      for (const border of Object.values(board.spaces).filter(
+        (node) => node.isBorder,
+      )) {
+        const triangleName = Object.values(border.edges)[0];
+        if (!triangleName) throw new Error(`Missing link for ${border.name}`);
+        const borders = bordersByTriangle.get(triangleName) ?? [];
+        borders.push(border.name);
+        bordersByTriangle.set(triangleName, borders);
+      }
+
+      const groupsWithMultipleBorders = [...bordersByTriangle].filter(
+        ([, borders]) => borders.length > 1,
+      );
+      expect(groupsWithMultipleBorders.length).toBeGreaterThan(0);
+
+      render(<OrapaStreet221B />);
+      if (boardType === "hex") {
+        fireEvent.change(screen.getByRole("combobox", { name: "Board" }), {
+          target: { value: "hex" },
+        });
+      }
+
+      for (const [, borderNames] of groupsWithMultipleBorders) {
+        const centers = borderNames.map((name) => {
+          const circle = screen.getByTestId(`border-${name}`);
+          return {
+            x: Number(circle.getAttribute("cx")),
+            y: Number(circle.getAttribute("cy")),
+          };
+        });
+        for (let first = 0; first < centers.length; first++) {
+          for (let second = first + 1; second < centers.length; second++) {
+            expect(pointsMatch(centers[first], centers[second])).toBe(false);
+          }
+        }
+      }
+    },
+  );
 
   it("switches between the default and hex boards", () => {
     render(<OrapaStreet221B />);
