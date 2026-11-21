@@ -114,6 +114,7 @@ export interface Node {
 
 export interface Board {
   spaces: Record<string, Node>;
+  restrictedAreas: string[];
 }
 
 export interface LightResult {

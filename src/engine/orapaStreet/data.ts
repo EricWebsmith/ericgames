@@ -235,7 +235,22 @@ export function getDefaultBoard(): Board {
     G: 3,
   };
 
-  const board: Board = { spaces: {}, spacesByQr: {} };
+  const board: Board = {
+    spaces: {},
+    spacesByQr: {},
+    restrictedArea: [
+      "C9",
+      "C10",
+      "C11",
+      "D9",
+      "D10",
+      "D11",
+      "D12",
+      "E9",
+      "E10",
+      "E11",
+    ],
+  };
 
   createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
 
@@ -364,7 +379,11 @@ export function getHexBoard(): Board {
     J: 4,
   };
 
-  const board: Board = { spaces: {}, spacesByQr: {} };
+  const board: Board = {
+    spaces: {},
+    spacesByQr: {},
+    restrictedArea: ["F9", "F10", "F11", "E9", "E10", "E11"],
+  };
 
   createTriangleNodes(board, colCounts, firstRowShapes, firstRowR);
 

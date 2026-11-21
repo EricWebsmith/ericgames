@@ -234,6 +234,33 @@ describe("OrapaStreet221B", () => {
     },
   );
 
+  it("stripes the restricted area on both board layouts", () => {
+    const restrictedFill = "url(#orapa-street-restricted-area)";
+    render(<OrapaStreet221B />);
+
+    expect(
+      screen.getByTestId("triangle-C9").querySelector("polygon"),
+    ).toHaveAttribute("fill", restrictedFill);
+    expect(
+      screen.getByTestId("triangle-D12").querySelector("polygon"),
+    ).toHaveAttribute("fill", restrictedFill);
+    expect(document.getElementById("orapa-street-restricted-area")).toBeTruthy();
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Board" }), {
+      target: { value: "hex" },
+    });
+
+    expect(
+      screen.getByTestId("triangle-F9").querySelector("polygon"),
+    ).toHaveAttribute("fill", restrictedFill);
+    expect(
+      screen.getByTestId("triangle-E11").querySelector("polygon"),
+    ).toHaveAttribute("fill", restrictedFill);
+    expect(
+      screen.getByTestId("triangle-C9").querySelector("polygon"),
+    ).not.toHaveAttribute("fill", restrictedFill);
+  });
+
   it("switches between the default and hex boards", () => {
     render(<OrapaStreet221B />);
 

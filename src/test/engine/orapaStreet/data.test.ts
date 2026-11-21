@@ -27,6 +27,18 @@ describe("getBoard", () => {
   it("should pass smoke test", () => {
     const board: Board = getDefaultBoard();
     expect(board).toHaveProperty("spaces");
+    expect(board.restrictedArea).toEqual([
+      "C9",
+      "C10",
+      "C11",
+      "D9",
+      "D10",
+      "D11",
+      "D12",
+      "E9",
+      "E10",
+      "E11",
+    ]);
     expect(Object.keys(board.spaces).length).toBe(178);
 
     const triangleNodes = Object.values(board.spaces).filter(
@@ -66,6 +78,14 @@ describe("getHexBoard", () => {
   it("should pass smoke test", () => {
     const board: Board = getHexBoard();
     expect(board).toHaveProperty("spaces");
+    expect(board.restrictedArea).toEqual([
+      "F9",
+      "F10",
+      "F11",
+      "E9",
+      "E10",
+      "E11",
+    ]);
     expect(Object.keys(board.spaces).length).toBe(210);
 
     const triangleNodes = Object.values(board.spaces).filter(

@@ -151,4 +151,5 @@ export const sampleBoard: Board = {
     }
     return index;
   },
+  restrictedArea: [],
 };

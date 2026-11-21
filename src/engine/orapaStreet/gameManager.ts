@@ -121,7 +121,7 @@ function putTiles(
   rng: () => number,
 ): Record<string, TileInBoard> {
   const tilesInBoard: Record<string, TileInBoard> = {};
-  const occupiedSpaces = new Set<string>();
+  const occupiedSpaces = new Set<string>(board.restrictedArea);
 
   // Mark all border nodes as unavailable.
   for (const [coord, node] of Object.entries(board.spaces)) {

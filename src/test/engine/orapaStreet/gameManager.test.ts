@@ -4,7 +4,11 @@ import {
   getHexBoard,
   getTiles,
 } from "../../../engine/orapaStreet/data";
-import { getLightResult, putTile } from "../../../engine/orapaStreet/gameManager";
+import {
+  getLightResult,
+  putTile,
+  setupWithSeed,
+} from "../../../engine/orapaStreet/gameManager";
 
 const alpha = String.fromCharCode(945); // α
 const beta = String.fromCharCode(946); // β
@@ -153,4 +157,23 @@ describe("putTile", () => {
 
     expect(Object.keys(tiles)).toEqual(["D10", "C10", "B9", "A8"]);
   });
+});
+
+describe("setupWithSeed", () => {
+  it.each([
+    ["default", getDefaultBoard],
+    ["hex", getHexBoard],
+  ] as const)(
+    "never places tiles in the %s board's restricted area",
+    (_, getBoard) => {
+      const board = getBoard();
+      const puzzle = setupWithSeed(board, getTiles(4, () => 0), 123);
+
+      expect(
+        puzzle.tiles.every((tile) =>
+          !board.restrictedArea.includes(tile.label),
+        ),
+      ).toBe(true);
+    },
+  );
 });

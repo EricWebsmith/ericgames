@@ -473,6 +473,10 @@ export default function OrapaStreet221B() {
     () => (boardType === "default" ? getDefaultBoard() : getHexBoard()),
     [boardType],
   );
+  const restrictedArea = useMemo(
+    () => new Set(board.restrictedArea),
+    [board],
+  );
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
   const borderNodes = useMemo(() => getBorderNodes(board), [board]);
   const tilesInBoard = useMemo(
@@ -667,20 +671,37 @@ export default function OrapaStreet221B() {
         role="img"
         aria-label="Orapa Street 221B triangular board"
       >
+        <defs>
+          <pattern
+            id="orapa-street-restricted-area"
+            width={8}
+            height={8}
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <rect width={8} height={8} fill="#263544" />
+            <path d="M 0 0 V 8" stroke="#91a9bc" strokeWidth={2} />
+          </pattern>
+        </defs>
         <rect width={SVG_WIDTH} height={SVG_HEIGHT} fill="#08111f" rx={10} />
 
         {triangleNodes.map((node) => {
           const labelPosition = getTriangleLabelPosition(node, boardOffset);
           const isSelected = selectedNode === node.name;
           const isNeighbor = selectedNeighbors.has(node.name);
-          const fill = getTileColor(tilesInBoard[node.name]?.tile.colors ?? []);
+          const isRestricted = restrictedArea.has(node.name);
+          const fill = isRestricted
+            ? "url(#orapa-street-restricted-area)"
+            : getTileColor(tilesInBoard[node.name]?.tile.colors ?? []);
           return (
             <g
               key={node.name}
               data-testid={`triangle-${node.name}`}
               role="button"
               tabIndex={0}
-              aria-label={`${node.name}, ${node.orientation}, ${Object.keys(node.edges).length} links`}
+              aria-label={`${node.name}, ${node.orientation}, ${
+                Object.keys(node.edges).length
+              } links${isRestricted ? ", restricted area" : ""}`}
               onClick={() => {
                 setSelectedBorder(null);
                 setSelectedNode(node.name);
@@ -703,7 +724,9 @@ export default function OrapaStreet221B() {
                 strokeWidth={isSelected ? 2.5 : 1.25}
               >
                 <title>
-                  {`${node.name} · q: ${node.q}, r: ${node.r}, s: ${node.s} · ${node.orientation} · ${Object.keys(node.edges).length} links`}
+                  {`${node.name} · q: ${node.q}, r: ${node.r}, s: ${node.s} · ${node.orientation} · ${
+                    Object.keys(node.edges).length
+                  } links${isRestricted ? " · restricted area" : ""}`}
                 </title>
               </polygon>
               {showLabels && (

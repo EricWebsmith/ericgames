@@ -59,6 +59,7 @@ export interface Node {
 export interface Board {
   spaces: Record<string, Node>;
   spacesByQr: Record<number, Record<number, Node>>;
+  restrictedArea: string[];
 }
 
 // #region tiles
