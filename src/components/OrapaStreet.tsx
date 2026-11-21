@@ -92,8 +92,8 @@ function getBorderNodes(board: Board): Node[] {
 }
 
 function getTriangleVertices(node: Node): Point[] {
-  const left = node.q * TRIANGLE_WIDTH;
-  const top = node.r * ROW_GAP;
+  const left = node.gridQ * TRIANGLE_WIDTH;
+  const top = node.gridR * ROW_GAP;
   const bounds = {
     left,
     right: left + TRIANGLE_WIDTH,

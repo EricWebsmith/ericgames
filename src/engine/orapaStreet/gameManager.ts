@@ -4,10 +4,49 @@ import {
   TileInBoard,
   type Board,
   type LightResult,
+  type Node,
   type ParentTile,
   type Puzzle,
 } from "./models";
 import { rightRotateCoord, type RotationDegree } from "./triangleUtils";
+
+function getTilePositions(
+  board: Board,
+  tile: ParentTile,
+  anchorNode: Node,
+  rotateAngle: 0 | 4 | 8,
+): Node[] | null {
+  const origin = tile.subTiles[0]?.coordinate;
+  if (!origin) throw new Error(`Tile ${tile.name} has no subtiles`);
+
+  const rotation = (rotateAngle * 30) as RotationDegree;
+  const positions: Node[] = [];
+
+  for (const subTile of tile.subTiles) {
+    const relativeCoordinate = {
+      q: subTile.coordinate.q - origin.q,
+      r: subTile.coordinate.r - origin.r,
+      s: subTile.coordinate.s - origin.s,
+    };
+    const offset = rightRotateCoord(relativeCoordinate, rotation);
+    const q = anchorNode.q + offset.q;
+    const r = anchorNode.r + offset.r;
+    const s = anchorNode.s + offset.s;
+    const node = board.spacesByQr[q]?.[r];
+
+    if (
+      !node ||
+      node.s !== s ||
+      node.orientation !== subTile.orient
+    ) {
+      return null;
+    }
+
+    positions.push(node);
+  }
+
+  return positions;
+}
 
 export function traverse(
   board: Board,
@@ -84,25 +123,17 @@ export function putTile(
   const anchorNode = board.spaces[anchorLabel];
   if (!anchorNode) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
 
+  const positions = getTilePositions(board, tile, anchorNode, rotateAngle);
+  if (!positions) {
+    throw new Error(
+      `Tile ${tile.name} extends outside the board or mismatches triangle orientation from ${anchorLabel}`,
+    );
+  }
+
   const result: Record<string, TileInBoard> = {};
 
-  for (const subTile of tile.subTiles) {
-    const offsets = rightRotateCoord(
-      subTile.coordinate,
-      (rotateAngle * 30) as RotationDegree,
-    );
-
-    const q = anchorNode.q + offsets.q;
-    const r = anchorNode.r + offsets.r;
-    const s = anchorNode.s + offsets.s;
-
-    const nodeToPut = board.spacesByQr[q]?.[r];
-    if (!nodeToPut || nodeToPut.s !== s) {
-      throw new Error(
-        `Tile ${tile.name} extends outside the board from ${anchorLabel}`,
-      );
-    }
-
+  for (const [index, subTile] of tile.subTiles.entries()) {
+    const nodeToPut = positions[index];
     const tib = new TileInBoard({
       tile: subTile,
       label: nodeToPut.name,
@@ -143,36 +174,19 @@ function putTiles(
       if (anchorNode.orientation != parentTile.subTiles[0].orient) {
         continue;
       }
-      const anchorQ = anchorNode.q;
-      const anchorR = anchorNode.r;
-      const anchorS = anchorNode.s;
-
       const rotateAngle = 0;
-
-      // Verify all subtile positions (after rotation) are in-bounds and free.
-      let valid = true;
-      for (const subTile of parentTile.subTiles) {
-        const newCoord = rightRotateCoord(
-          subTile.coordinate,
-          (rotateAngle * 30) as RotationDegree,
-        );
-        const q = anchorQ + newCoord.q;
-        const r = anchorR + newCoord.r;
-        const s = anchorS + newCoord.s;
-
-        const nodeToPut = board.spacesByQr[q]?.[r];
-        if (!nodeToPut || nodeToPut.s !== s) {
-          valid = false;
-          break;
-        }
-
-        if (occupiedSpaces.has(nodeToPut.name)) {
-          valid = false;
-          break;
-        }
+      const positions = getTilePositions(
+        board,
+        parentTile,
+        anchorNode,
+        rotateAngle,
+      );
+      if (
+        !positions ||
+        positions.some((node) => occupiedSpaces.has(node.name))
+      ) {
+        continue;
       }
-
-      if (!valid) continue;
 
       // Check border connection
       const newTiles = putTile(board, parentTile, anchorLabel, rotateAngle);

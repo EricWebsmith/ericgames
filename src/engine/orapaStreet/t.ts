@@ -10,6 +10,8 @@ export const sampleBoard: Board = {
       q: 0,
       r: 2,
       s: -2,
+      gridQ: 0,
+      gridR: 2,
       edges: {
         [Direction.Clock0]: "B",
         [Direction.Clock2]: "B2",
@@ -28,6 +30,8 @@ export const sampleBoard: Board = {
       q: 0,
       r: 3,
       s: -3,
+      gridQ: 0,
+      gridR: 3,
       edges: {
         [Direction.Clock0]: "A1",
         [Direction.Clock2]: "A1",
@@ -44,6 +48,8 @@ export const sampleBoard: Board = {
       q: 1,
       r: 1,
       s: -2,
+      gridQ: 1,
+      gridR: 1,
       edges: {
         [Direction.Clock0]: "D",
         [Direction.Clock6]: "B2",
@@ -60,6 +66,8 @@ export const sampleBoard: Board = {
       q: 1,
       r: 2,
       s: -3,
+      gridQ: 1,
+      gridR: 2,
       edges: {
         [Direction.Clock0]: "B1",
         [Direction.Clock2]: "B1",
@@ -75,6 +83,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock4]: "A2",
       },
@@ -87,6 +97,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock2]: "A2",
       },
@@ -99,6 +111,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock4]: "A1",
       },
@@ -111,6 +125,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock6]: "A1",
       },
@@ -123,6 +139,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock4]: "B1",
       },
@@ -135,6 +153,8 @@ export const sampleBoard: Board = {
       q: -1,
       r: -1,
       s: 2,
+      gridQ: -1,
+      gridR: -1,
       edges: {
         [Direction.Clock6]: "B1",
       },
@@ -147,6 +167,16 @@ export const sampleBoard: Board = {
       if (!node.isBorder) {
         index[node.q] ??= {};
         index[node.q][node.r] = node;
+      }
+    }
+    return index;
+  },
+  get spacesByGrid() {
+    const index: Record<number, Record<number, Node>> = {};
+    for (const node of Object.values(this.spaces)) {
+      if (!node.isBorder) {
+        index[node.gridQ] ??= {};
+        index[node.gridQ][node.gridR] = node;
       }
     }
     return index;

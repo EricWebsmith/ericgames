@@ -1,6 +1,17 @@
-import type { CubeCoord } from "./models";
+import { Orient, type CubeCoord, type Orient as Orientation } from "./models";
 
 export type RotationDegree = 0 | 120 | 240;
+
+export function getCubeCoord(
+  gridQ: number,
+  gridR: number,
+  orientation: Orientation,
+): CubeCoord {
+  const q = 6 * gridQ + (orientation === Orient.PointyLeft ? 4 : 2);
+  const r =
+    3 * (gridR - gridQ) + (orientation === Orient.PointyLeft ? 1 : 2);
+  return { q, r, s: -q - r };
+}
 
 function rotateClockwise120(coord: CubeCoord): CubeCoord {
   return { q: coord.s, r: coord.q, s: coord.r };

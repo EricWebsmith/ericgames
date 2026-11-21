@@ -51,14 +51,17 @@ export interface Node {
 
   neighbors: string[];
 
-  q: number; // Column index (0-based) -1 if border
-  r: number; // Row index (0-based) -1 if border
+  q: number;
+  r: number;
   s: number;
+  gridQ: number;
+  gridR: number;
 }
 
 export interface Board {
   spaces: Record<string, Node>;
   spacesByQr: Record<number, Record<number, Node>>;
+  spacesByGrid: Record<number, Record<number, Node>>;
   restrictedArea: string[];
 }
 
