@@ -498,8 +498,6 @@ export default function OrapaStreet221B() {
     }
   }, [seed, boardType]);
 
-console.log(puzzle.tiles);
-
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
       <h2 className="game-title">Orapa Street 221B</h2>
@@ -543,12 +541,10 @@ console.log(puzzle.tiles);
           onClick={() => {
             const nextSeed = Math.floor(Math.random() * 0xffffffff);
             const nextTiles = getTiles(4, seededRandom(nextSeed));
-            console.log(nextTiles);
             setSeed(nextSeed);
             setSeedInput(String(nextSeed));
             setTiles(nextTiles);
             setPuzzle(setupWithSeed(board, nextTiles, nextSeed));
-            // console.log(puzzle.tiles);
             setSelectedNode(null);
             setSelectedBorder(null);
           }}

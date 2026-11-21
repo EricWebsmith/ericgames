@@ -70,10 +70,7 @@ describe("getHexBoard", () => {
     const triangleNodes = Object.values(board.spaces).filter(
       (node) => !node.isBorder,
     );
-    console.log(Object.values(board.spacesByQr).flat());
-    // expect(Object.values(board.spacesByQr).flat()).toHaveLength(
-    //   triangleNodes.length,
-    // );
+
     for (const node of triangleNodes) {
       expect(board.spacesByQr[node.q]?.[node.r]).toBe(node);
     }

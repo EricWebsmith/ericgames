@@ -769,6 +769,5 @@ export function getTiles(
   }
 
   selected.push(...remaining.slice(0, tileCount - selected.length));
-  console.log(selected.map(c=>c.name));
   return selected;
 }
