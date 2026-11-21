@@ -308,8 +308,12 @@ function getRotate120Coord(q: number, r: number): Coord {
 export function rotateCoord(
   q: number,
   r: number,
-  degree: 60 | 120 | 180 | 240 | 300,
+  degree: 0 | 60 | 120 | 180 | 240 | 300,
 ): Coord {
+  if (degree ===0) {
+    return {q, r};
+  }
+
   let current = { q, r };
 
   switch (degree) {

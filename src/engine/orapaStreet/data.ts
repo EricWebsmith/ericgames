@@ -464,7 +464,10 @@ const leftΔReflect: Reflect[] = [
   [8, 6],
 ];
 
-const leftLineTileReflect: Reflect[] = [[2, 4], [4, 2]];
+const leftLineTileReflect: Reflect[] = [
+  [2, 4],
+  [4, 2],
+];
 
 const rightΔReflect: Reflect[] = [
   [0, 2],
@@ -475,7 +478,10 @@ const rightΔReflect: Reflect[] = [
   [8, 10],
 ];
 
-const rightLineTileReflect: Reflect[] = [[10, 8], [8, 10]];
+const rightLineTileReflect: Reflect[] = [
+  [10, 8],
+  [8, 10],
+];
 
 function leftTile(
   parentName: string,
@@ -696,7 +702,10 @@ const yellow3: ParentTile = {
 
 // # endregion
 
-export function getTiles(tileCount: number): ParentTile[] {
+export function getTiles(
+  tileCount: number,
+  random: () => number = Math.random,
+): ParentTile[] {
   const allTiles = [
     red1,
     red2,
@@ -732,12 +741,12 @@ export function getTiles(tileCount: number): ParentTile[] {
 
   const selected: ParentTile[] = [];
   for (const tiles of tilesByColor.values()) {
-    selected.push(tiles[Math.floor(Math.random() * tiles.length)]);
+    selected.push(tiles[Math.floor(random() * tiles.length)]);
   }
 
   const remaining = allTiles.filter((tile) => !selected.includes(tile));
   for (let index = remaining.length - 1; index > 0; index--) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const randomIndex = Math.floor(random() * (index + 1));
     [remaining[index], remaining[randomIndex]] = [
       remaining[randomIndex],
       remaining[index],

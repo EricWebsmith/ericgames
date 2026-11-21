@@ -28,6 +28,7 @@ export function getOppositeDirection(dir: Direction): Direction {
 }
 
 export interface Node {
+  isOccupied: false;
   /**
    * For triangles, the names are A1, B1, C2, etc.
    * For borders, the names are _1U, _2D, _AD, _BD, etc.
@@ -49,6 +50,8 @@ export interface Node {
 }
 
 export interface Board {
+  rows: number;
+  cols: number;
   spaces: Record<string, Node>;
   spacesByQr: Record<number, Record<number, Node>>;
 }
@@ -68,6 +71,12 @@ export interface LightResult {
   direction: Direction;
   label: string;
   colors: Color[];
+}
+
+export interface Puzzle {
+  id: number;
+  tiles: TileInBoard[];
+  light_results: Record<string, LightResult>;
 }
 
 export type Reflect = [number, number];
@@ -112,7 +121,7 @@ export class Tile {
 
 export interface ITileInBoard {
   tile: Tile;
-  coordinate: string;
+  label: string;
   rotated_reflect: Record<number, number>;
   rotate_angle: number; // 0 to 2
   rotatedLateReflect: Record<number, number>;
@@ -120,17 +129,16 @@ export interface ITileInBoard {
 
 export class TileInBoard implements ITileInBoard {
   tile: Tile;
-  coordinate: string;
+  label: string;
+  // to be removed
   rotated_reflect: Record<number, number> = {};
   rotatedLateReflect: Record<number, number> = {};
   rotate_angle: number;
   belt: number;
 
-  constructor(
-    data: Partial<ITileInBoard> & { tile: Tile; coordinate: string },
-  ) {
+  constructor(data: Partial<ITileInBoard> & { tile: Tile; label: string }) {
     this.tile = data.tile;
-    this.coordinate = data.coordinate;
+    this.label = data.label;
     this.rotate_angle = data.rotate_angle ?? 0;
     this.belt = data.tile.belt ?? -1;
     this.rotated_reflect = data.rotated_reflect ?? {};

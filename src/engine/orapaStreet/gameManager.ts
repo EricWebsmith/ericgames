@@ -6,7 +6,10 @@ import {
   TileInBoard,
   type Board,
   type LightResult,
+  type ParentTile,
+  type Puzzle,
 } from "./models";
+import { rotateCoord } from "./triangleUtils";
 
 /**
  * Traverse the board from a border node and return where the wave exits and
@@ -91,6 +94,12 @@ export function getLightResult(
   return results[results.length - 1];
 }
 
+export function getBorderLabels(board: Board): string[] {
+  return Object.values(board.spaces)
+    .filter((node) => node.isBorder)
+    .map((node) => node.name);
+}
+
 export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
   const positions = Object.values(board.spaces)
     .filter((node) => !node.isBorder)
@@ -144,7 +153,7 @@ export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
               [10, 8],
             ],
           }),
-          coordinate: position,
+          label: position,
           rotated_reflect:
             board.spaces[position].orientation === Orient.PointyLeft
               ? leftRotatedReflect
@@ -155,4 +164,165 @@ export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
       ];
     }),
   );
+}
+
+export function putTile(
+  board: Board,
+  tile: ParentTile,
+  anchorLabel: string,
+  rotateAngle: number = 0,
+): Record<string, TileInBoard> {
+  const rowLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const m = anchorLabel.match(/^([A-Z])(\d{1,2})$/);
+  if (!m) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
+  const anchorRow = rowLetters.indexOf(m[1]);
+  const anchorCol = parseInt(m[2], 10);
+
+  const result: Record<string, TileInBoard> = {};
+
+  for (const subTile of tile.subTiles) {
+    const offsets = rotateCoord(
+      subTile.coordinate[0],
+      subTile.coordinate[1],
+      rotateAngle as 60 | 120 | 180 | 240 | 300,
+    );
+
+    const q = anchorCol + offsets.q;
+    const r = anchorRow + offsets.r;
+
+    const nodeToPut = board.spacesByQr[q]?.[r];
+
+    const tib = new TileInBoard({
+      tile: subTile,
+      label: nodeToPut.name,
+      rotate_angle: rotateAngle,
+    });
+    tib.resolve_rotate();
+    result[nodeToPut.name] = tib;
+  }
+
+  return result;
+}
+
+function putTiles(
+  board: Board,
+  tiles: ParentTile[],
+  rng: () => number,
+): Record<string, TileInBoard> {
+  const tilesInBoard: Record<string, TileInBoard> = {};
+  const occupiedSpaces = new Set<string>();
+
+  // Mark all border nodes as unavailable.
+  for (const [coord, node] of Object.entries(board.spaces)) {
+    if (node.isBorder) occupiedSpaces.add(coord);
+  }
+
+  const internalCoords = Object.keys(board.spaces).filter(
+    (k) => !board.spaces[k].isBorder,
+  );
+  const randomChoice = (arr: string[]): string =>
+    arr[Math.floor(rng() * arr.length)];
+
+  for (const parentTile of tiles) {
+    let placed = false;
+
+    for (let attempt = 0; attempt < 1000 && !placed; attempt++) {
+      const anchorLabel = randomChoice(internalCoords);
+      const anchorNode = board.spaces[anchorLabel];
+      const anchorRow = anchorNode.q;
+      const anchorCol = anchorNode.r;
+
+      const rotateAngle = Math.floor(rng() * 6) * 60;
+
+      // Verify all subtile positions (after rotation) are in-bounds and free.
+      let valid = false;
+      for (const subTile of parentTile.subTiles) {
+        const newCoord = rotateCoord(
+          subTile.coordinate[0],
+          subTile.coordinate[1],
+          rotateAngle as 60 | 120 | 180 | 240 | 300,
+        );
+        const q = anchorCol + newCoord.q;
+        const r = anchorRow + newCoord.r;
+
+        const nodeToPut = board.spacesByQr[q]?.[r];
+        if (!nodeToPut) {
+          break;
+        }
+
+        if (occupiedSpaces.has(nodeToPut.name)) {
+          break;
+        }
+
+        valid = true;
+      }
+
+      if (!valid) continue;
+
+      // Check border connection
+      const newTiles = putTile(board, parentTile, anchorLabel, rotateAngle);
+
+      for (const [label, tib] of Object.entries(newTiles)) {
+        tilesInBoard[label] = tib;
+        occupiedSpaces.add(label);
+        for (const neighbor in board.spaces[label].neighbors) {
+          occupiedSpaces.add(neighbor);
+        }
+      }
+
+      placed = true;
+    }
+  }
+
+  return tilesInBoard;
+}
+
+/**
+ * Simple 32-bit LCG seeded random number generator.
+ * Returns a function that produces values in [0, 1).
+ */
+function seededRandom(seed: number): () => number {
+  let s = seed >>> 0;
+  return () => {
+    s = (Math.imul(1664525, s) + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+/** Create a random Orapa puzzle with a specific seed and pre-compute all wave results. */
+export function setupWithSeed(
+  board: Board,
+  tiles: ParentTile[],
+  seed: number,
+): Puzzle {
+  const rng = seededRandom(seed);
+  const tilesInBoard = putTiles(board, tiles, rng);
+  const borderLabels = Object.values(board.spaces)
+    .filter((node) => node.isBorder === true)
+    .map((node) => node.name);
+
+  const lightResults: Record<string, LightResult> = {};
+  for (const coord of borderLabels) {
+    lightResults[coord] = getLightResult(board, tilesInBoard, coord);
+  }
+
+  const sightResults: Record<string, Color[]> = {};
+  for (const node of Object.values(board.spaces)) {
+    if (node.isBorder) continue;
+    const coord = node.name;
+    sightResults[coord] =
+      coord in tilesInBoard ? tilesInBoard[coord].tile.colors : [];
+  }
+
+  return {
+    id: 0,
+    tiles: Object.values(tilesInBoard),
+    light_results: lightResults,
+  };
+}
+
+/** Create a random Orapa Street puzzle and pre-compute all wave results. */
+export function setup(board: Board, tiles: ParentTile[]): Puzzle {
+  const seed = Math.floor(Math.random() * 0xffffffff);
+  return setupWithSeed(board, tiles, seed);
 }
