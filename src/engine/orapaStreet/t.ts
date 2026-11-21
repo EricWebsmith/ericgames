@@ -1,11 +1,11 @@
-import { Direction, Orientation, type Board, type Node } from "./models";
+import { Direction, Orient, type Board, type Node } from "./models";
 
 export const sampleBoard: Board = {
   spaces: {
     A1: {
       name: "A1",
       isBorder: false,
-      orientation: Orientation.PointyLeft,
+      orientation: Orient.PointyLeft,
       q: 0,
       r: 2,
       edges: {
@@ -21,7 +21,7 @@ export const sampleBoard: Board = {
     A2: {
       name: "A2",
       isBorder: false,
-      orientation: Orientation.PointyRight,
+      orientation: Orient.PointyRight,
       q: 0,
       r: 3,
       edges: {
@@ -35,7 +35,7 @@ export const sampleBoard: Board = {
     B1: {
       name: "B1",
       isBorder: false,
-      orientation: Orientation.PointyLeft,
+      orientation: Orient.PointyLeft,
       q: 1,
       r: 1,
       edges: {
@@ -49,7 +49,7 @@ export const sampleBoard: Board = {
     B2: {
       name: "B2",
       isBorder: false,
-      orientation: Orientation.PointyRight,
+      orientation: Orient.PointyRight,
       q: 1,
       r: 2,
       edges: {

@@ -1,13 +1,13 @@
-export const Orientation = {
+export const Orient = {
   PointyLeft: "pointy-left",
   PointyRight: "pointy-right",
 } as const;
-export type Orientation = (typeof Orientation)[keyof typeof Orientation];
+export type Orient = (typeof Orient)[keyof typeof Orient];
 
-export function alternateOrientation(orientation: Orientation): Orientation {
-  return orientation === Orientation.PointyLeft
-    ? Orientation.PointyRight
-    : Orientation.PointyLeft;
+export function alternateOrientation(orientation: Orient): Orient {
+  return orientation === Orient.PointyLeft
+    ? Orient.PointyRight
+    : Orient.PointyLeft;
 }
 
 export const Direction = {
@@ -34,7 +34,7 @@ export interface Node {
    */
   name: string;
   isBorder: boolean; // True if this node is a border, false if it's a triangle
-  orientation?: Orientation; // Optional: only used if type is "triangle"
+  orientation?: Orient; // Optional: only used if type is "triangle"
 
   /**
    * For triangles, there are 6 links,
@@ -80,30 +80,33 @@ export interface Offset {
 export class Tile {
   colors: Color[];
   parentName: string;
-  label: Record<number, number>;
+  coordinate: Record<number, number>;
   reflect: Reflect[];
-  orientation: Orientation = Orientation.PointyLeft;
+  orient: Orient = Orient.PointyLeft;
   belt: number = -1;
   lateReflect: Reflect[] = [];
+  lineTile: boolean = false;
 
   constructor(data: {
     colors: Color[];
     parentName: string;
     coordinate: Record<number, number>;
     reflect: Reflect[];
-    orientation: Orientation;
+    orient: Orient;
     opacity?: number;
     absorbLight?: boolean;
     belt?: number;
     connectBorder?: boolean;
     lateReflect?: Reflect[];
+    lineTile?: boolean;
   }) {
     this.colors = data.colors;
     this.parentName = data.parentName;
-    this.label = data.coordinate;
+    this.coordinate = data.coordinate;
     this.reflect = data.reflect;
     this.lateReflect = data.lateReflect ?? [];
     this.belt = data.belt ?? -1;
+    this.lineTile = data.lineTile ?? false;
   }
 }
 

@@ -1,5 +1,5 @@
 import { getDefaultBoard, getHexBoard } from "../../../engine/orapaStreet/data";
-import { Orientation, type Board } from "../../../engine/orapaStreet/models";
+import { Orient, type Board } from "../../../engine/orapaStreet/models";
 
 function expectResolvedNeighbors(board: Board): void {
   const triangles = Object.values(board.spaces).filter(
@@ -12,7 +12,7 @@ function expectResolvedNeighbors(board: Board): void {
     }
   }
 
-  for (const orientation of [Orientation.PointyLeft, Orientation.PointyRight]) {
+  for (const orientation of [Orient.PointyLeft, Orient.PointyRight]) {
     expect(
       triangles.some(
         (node) =>

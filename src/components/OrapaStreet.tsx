@@ -6,7 +6,7 @@ import {
   traverse,
 } from "../engine/orapaStreet/gameManager";
 import {
-  Orientation,
+  Orient,
   type Board,
   type Color,
   type Node,
@@ -52,7 +52,7 @@ function getBorderNodes(board: Board): Node[] {
 function getTriangleVertices(node: Node): Point[] {
   const bounds = getTriangleBounds(node);
   const middleY = (bounds.top + bounds.bottom) / 2;
-  return node.orientation === Orientation.PointyLeft
+  return node.orientation === Orient.PointyLeft
     ? [
         { x: bounds.left, y: middleY },
         { x: bounds.right, y: bounds.top },
@@ -302,7 +302,7 @@ function getTrianglePoints(
   orientation: Node["orientation"],
 ): string {
   const middleY = (bounds.top + bounds.bottom) / 2;
-  return orientation === Orientation.PointyLeft
+  return orientation === Orient.PointyLeft
     ? `${bounds.left},${middleY} ${bounds.right},${bounds.top} ${bounds.right},${bounds.bottom}`
     : `${bounds.right},${middleY} ${bounds.left},${bounds.top} ${bounds.left},${bounds.bottom}`;
 }
@@ -314,8 +314,7 @@ function getTriangleLabelPosition(
   const width = bounds.right - bounds.left;
   return {
     x:
-      bounds.left +
-      width * (orientation === Orientation.PointyLeft ? 2 / 3 : 1 / 3),
+      bounds.left + width * (orientation === Orient.PointyLeft ? 2 / 3 : 1 / 3),
     y: (bounds.top + bounds.bottom) / 2,
   };
 }
@@ -511,7 +510,7 @@ export default function OrapaStreet221B() {
                 <text
                   x={
                     labelPosition.x -
-                    (node.orientation === Orientation.PointyLeft ? 2 : -2)
+                    (node.orientation === Orient.PointyLeft ? 2 : -2)
                   }
                   y={labelPosition.y}
                   textAnchor="middle"

@@ -1,7 +1,7 @@
 import {
   Color,
   Direction,
-  Orientation,
+  Orient,
   Tile,
   TileInBoard,
   type Board,
@@ -132,6 +132,7 @@ export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
         new TileInBoard({
           tile: new Tile({
             colors: [color],
+            orient: Orient.PointyLeft,
             parentName: `${color[0].toUpperCase()}${color.slice(1)}`,
             coordinate: { 0: 1, 1: 1 },
             reflect: [
@@ -145,7 +146,7 @@ export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
           }),
           coordinate: position,
           rotated_reflect:
-            board.spaces[position].orientation === Orientation.PointyLeft
+            board.spaces[position].orientation === Orient.PointyLeft
               ? leftRotatedReflect
               : rightRotatedReflect,
           rotatedLateReflect: {},
