@@ -22,6 +22,9 @@ const SVG_HEIGHT = 560;
 const TRIANGLE_SIDE = 36;
 const TRIANGLE_WIDTH = (Math.sqrt(3) * TRIANGLE_SIDE) / 2;
 const ROW_GAP = TRIANGLE_SIDE / 2;
+const BORDER_CIRCLE_RADIUS = 7;
+const RESULT_CIRCLE_RADIUS = 7;
+const CIRCLE_LINE_INSET = 8.5;
 
 type Point = { x: number; y: number };
 type Bounds = { top: number; bottom: number; left: number; right: number };
@@ -651,6 +654,13 @@ console.log(puzzle.tiles);
           if (!position) {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
+          const extensionDx = position.outerCenter.x - position.center.x;
+          const extensionDy = position.outerCenter.y - position.center.y;
+          const extensionLength = Math.hypot(extensionDx, extensionDy);
+          const extensionUnitX =
+            extensionLength > 0 ? extensionDx / extensionLength : 0;
+          const extensionUnitY =
+            extensionLength > 0 ? extensionDy / extensionLength : 0;
           return (
             <g key={`border-lines-${node.name}`}>
               <line
@@ -665,10 +675,14 @@ console.log(puzzle.tiles);
               />
               <line
                 data-testid={`border-extension-line-${node.name}`}
-                x1={position.center.x}
-                y1={position.center.y}
-                x2={position.outerCenter.x}
-                y2={position.outerCenter.y}
+                x1={position.center.x + extensionUnitX * CIRCLE_LINE_INSET}
+                y1={position.center.y + extensionUnitY * CIRCLE_LINE_INSET}
+                x2={
+                  position.outerCenter.x - extensionUnitX * CIRCLE_LINE_INSET
+                }
+                y2={
+                  position.outerCenter.y - extensionUnitY * CIRCLE_LINE_INSET
+                }
                 stroke="#a9bfd5"
                 strokeWidth={1}
                 pointerEvents="none"
@@ -708,7 +722,7 @@ console.log(puzzle.tiles);
               <circle
                 cx={position.center.x}
                 cy={position.center.y}
-                r={7}
+                r={BORDER_CIRCLE_RADIUS}
                 fill="#08111f"
                 stroke="#a9bfd5"
                 strokeDasharray="3 2"
@@ -732,7 +746,7 @@ console.log(puzzle.tiles);
                 testId={`border-extension-circle-${node.name}`}
                 cx={position.outerCenter.x}
                 cy={position.outerCenter.y}
-                r={7}
+                r={RESULT_CIRCLE_RADIUS}
                 colors={result.colors}
                 destination={result.destination}
               />

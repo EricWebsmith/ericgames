@@ -101,18 +101,28 @@ describe("OrapaStreet221B", () => {
     const sideLine = screen.getByTestId("border-link-line-A");
     const extensionLine = screen.getByTestId("border-extension-line-A");
     const extensionCircle = screen.getByTestId("border-extension-circle-A");
-    expect(extensionLine.getAttribute("x1")).toBe(
-      borderCircle.getAttribute("cx"),
-    );
-    expect(extensionLine.getAttribute("y1")).toBe(
-      borderCircle.getAttribute("cy"),
-    );
-    expect(extensionLine.getAttribute("x2")).toBe(
-      extensionCircle.getAttribute("cx"),
-    );
-    expect(extensionLine.getAttribute("y2")).toBe(
-      extensionCircle.getAttribute("cy"),
-    );
+    const borderCenter = {
+      x: Number(borderCircle.getAttribute("cx")),
+      y: Number(borderCircle.getAttribute("cy")),
+    };
+    const resultCenter = {
+      x: Number(extensionCircle.getAttribute("cx")),
+      y: Number(extensionCircle.getAttribute("cy")),
+    };
+    const lineStart = {
+      x: Number(extensionLine.getAttribute("x1")),
+      y: Number(extensionLine.getAttribute("y1")),
+    };
+    const lineEnd = {
+      x: Number(extensionLine.getAttribute("x2")),
+      y: Number(extensionLine.getAttribute("y2")),
+    };
+    expect(
+      Math.hypot(lineStart.x - borderCenter.x, lineStart.y - borderCenter.y),
+    ).toBeGreaterThanOrEqual(8);
+    expect(
+      Math.hypot(lineEnd.x - resultCenter.x, lineEnd.y - resultCenter.y),
+    ).toBeGreaterThanOrEqual(8);
 
     const sideMidpoint = {
       x: Number(sideLine.getAttribute("x1")),
