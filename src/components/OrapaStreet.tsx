@@ -1,18 +1,21 @@
-import { useMemo, useState } from "react";
-import { getDefaultBoard, getHexBoard } from "../engine/orapaStreet/data";
+import { useEffect, useMemo, useState } from "react";
 import {
-  getLightResult,
-  getTilesInBoard,
-  traverse,
-} from "../engine/orapaStreet/gameManager";
+  getDefaultBoard,
+  getHexBoard,
+  getTiles,
+} from "../engine/orapaStreet/data";
+import { setupWithSeed } from "../engine/orapaStreet/gameManager";
 import {
   Orient,
   type Board,
   type Color,
   type Node,
+  type ParentTile,
+  type Puzzle,
 } from "../engine/orapaStreet/models";
 import { GEM_FILL } from "./shared/colors";
 import ResultCircle from "./shared/ResultCircle";
+import ShareButton from "./shared/ShareButton";
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -23,6 +26,54 @@ const ROW_GAP = TRIANGLE_SIDE / 2;
 type Point = { x: number; y: number };
 type Bounds = { top: number; bottom: number; left: number; right: number };
 type BoardType = "default" | "hex";
+
+const QUERY_PARAM_SEED = "s";
+const QUERY_PARAM_BOARD_TYPE = "b";
+
+function seededRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (Math.imul(1664525, state) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+
+function getSearchParams(): URLSearchParams {
+  if (typeof window === "undefined") return new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+  if (window.location.hash.includes("?")) {
+    const hashQuery = window.location.hash.split("?")[1];
+    for (const [key, value] of new URLSearchParams(hashQuery)) {
+      params.set(key, value);
+    }
+  }
+  return params;
+}
+
+function getInitialState(): {
+  boardType: BoardType;
+  seed: number;
+  tiles: ParentTile[];
+  puzzle: Puzzle;
+} {
+  const params = getSearchParams();
+  const boardParam = params.get(QUERY_PARAM_BOARD_TYPE);
+  const boardType: BoardType =
+    boardParam === "hex" ? "hex" : "default";
+  const seedParam = params.get(QUERY_PARAM_SEED);
+  const seed =
+    seedParam !== null && /^\d+$/.test(seedParam)
+      ? parseInt(seedParam, 10)
+      : Math.floor(Math.random() * 0xffffffff);
+  const board = boardType === "default" ? getDefaultBoard() : getHexBoard();
+  const tiles = getTiles(4, seededRandom(seed));
+  return {
+    boardType,
+    seed,
+    tiles,
+    puzzle: setupWithSeed(board, tiles, seed),
+  };
+}
 
 function getTileColor(colors: Color[]): string {
   if (colors.length === 0) return "none";
@@ -320,7 +371,14 @@ function getTriangleLabelPosition(
 }
 
 export default function OrapaStreet221B() {
-  const [boardType, setBoardType] = useState<BoardType>("default");
+  const [initialState] = useState(getInitialState);
+  const [boardType, setBoardType] = useState<BoardType>(
+    initialState.boardType,
+  );
+  const [seed, setSeed] = useState(initialState.seed);
+  const [seedInput, setSeedInput] = useState(String(initialState.seed));
+  const [tiles, setTiles] = useState<ParentTile[]>(initialState.tiles);
+  const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [selectedBorder, setSelectedBorder] = useState<string | null>(null);
   const [showLabels, setShowLabels] = useState(true);
@@ -330,7 +388,13 @@ export default function OrapaStreet221B() {
   );
   const triangleNodes = useMemo(() => getTriangleNodes(board), [board]);
   const borderNodes = useMemo(() => getBorderNodes(board), [board]);
-  const tilesInBoard = useMemo(() => getTilesInBoard(board), [board]);
+  const tilesInBoard = useMemo(
+    () =>
+      Object.fromEntries(
+        puzzle.tiles.map((tileInBoard) => [tileInBoard.label, tileInBoard]),
+      ),
+    [puzzle.tiles],
+  );
   const boardOffset = useMemo(
     () => getBoardOffset(triangleNodes),
     [triangleNodes],
@@ -340,15 +404,22 @@ export default function OrapaStreet221B() {
       getBorderNodePositions(board, triangleNodes, borderNodes, boardOffset),
     [board, triangleNodes, borderNodes, boardOffset],
   );
-  const resultColorsByBorder = useMemo(
+  const resultByBorder = useMemo(
     () =>
       new Map(
-        borderNodes.map((node) => [
-          node.name,
-          getLightResult(board, tilesInBoard, node.name).colors,
-        ]),
+        borderNodes.map((node) => {
+          const results = puzzle.light_results[node.name] ?? [];
+          const exitResult = results[results.length - 1];
+          if (!exitResult) {
+            throw new Error(`Missing light result for border node: ${node.name}`);
+          }
+          return [
+            node.name,
+            { destination: exitResult.label, colors: exitResult.colors },
+          ];
+        }),
       ),
-    [board, borderNodes, tilesInBoard],
+    [board, borderNodes, puzzle.light_results],
   );
   const nodesByName = useMemo(
     () => new Map(triangleNodes.map((node) => [node.name, node])),
@@ -361,7 +432,7 @@ export default function OrapaStreet221B() {
       return [];
     }
 
-    const results = traverse(board, tilesInBoard, selectedBorder);
+    const results = puzzle.light_results[selectedBorder] ?? [];
     return results.flatMap((result, index) => {
       const triangle = board.spaces[result.label];
       if (!triangle) {
@@ -398,7 +469,33 @@ export default function OrapaStreet221B() {
         },
       ];
     });
-  }, [selectedBorder, board, tilesInBoard, borderNodePositions, boardOffset]);
+  }, [
+    selectedBorder,
+    board,
+    puzzle.light_results,
+    borderNodePositions,
+    boardOffset,
+  ]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = getSearchParams();
+    params.set(QUERY_PARAM_SEED, String(seed));
+    params.set(QUERY_PARAM_BOARD_TYPE, boardType);
+    const search = params.toString();
+    const querySuffix = search ? `?${search}` : "";
+    const hashPath = window.location.hash.split("?")[0];
+    const hasHashPathRoute = hashPath.startsWith("#/");
+    const nextUrl = hasHashPathRoute
+      ? `${window.location.pathname}${hashPath}${querySuffix}`
+      : `${window.location.pathname}${querySuffix}${hashPath}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentUrl !== nextUrl) {
+      window.history.replaceState(null, "", nextUrl);
+    }
+  }, [seed, boardType]);
+
+console.log(puzzle.tiles);
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
@@ -428,12 +525,34 @@ export default function OrapaStreet221B() {
               setBoardType(nextBoardType);
               setSelectedNode(null);
               setSelectedBorder(null);
+              const nextBoard =
+                nextBoardType === "default" ? getDefaultBoard() : getHexBoard();
+              setPuzzle(setupWithSeed(nextBoard, tiles, seed));
             }
           }}
         >
           <option value="default">Default board</option>
           <option value="hex">Hex board</option>
         </select>
+        <label htmlFor="orapa-street-seed">Seed</label>
+        <button
+          className="btn-reset"
+          onClick={() => {
+            const nextSeed = Math.floor(Math.random() * 0xffffffff);
+            const nextTiles = getTiles(4, seededRandom(nextSeed));
+            console.log(nextTiles);
+            setSeed(nextSeed);
+            setSeedInput(String(nextSeed));
+            setTiles(nextTiles);
+            setPuzzle(setupWithSeed(board, nextTiles, nextSeed));
+            // console.log(puzzle.tiles);
+            setSelectedNode(null);
+            setSelectedBorder(null);
+          }}
+        >
+          New puzzle
+        </button>
+        <ShareButton />
         <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
           <input
             type="checkbox"
@@ -575,15 +694,14 @@ export default function OrapaStreet221B() {
         ))}
 
         {borderNodes.map((node) => {
+          
           const position = borderNodePositions.get(node.name);
-          const resultColors = resultColorsByBorder.get(node.name);
+          const result = resultByBorder.get(node.name);
           if (!position) {
             throw new Error(`Missing position for border node: ${node.name}`);
           }
-          if (!resultColors) {
-            throw new Error(
-              `Missing result colors for border node: ${node.name}`,
-            );
+          if (!result) {
+            throw new Error(`Missing result for border node: ${node.name}`);
           }
           return (
             <g key={node.name} aria-label={`Border node ${node.name}`}>
@@ -615,7 +733,8 @@ export default function OrapaStreet221B() {
                 cx={position.outerCenter.x}
                 cy={position.outerCenter.y}
                 r={7}
-                colors={resultColors}
+                colors={result.colors}
+                destination={result.destination}
               />
               <text
                 x={position.center.x}

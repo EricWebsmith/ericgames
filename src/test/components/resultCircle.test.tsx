@@ -26,6 +26,7 @@ describe("ResultCircle", () => {
           r={7}
           testId="result-circle"
           colors={colors}
+          destination="A"
         />
       </svg>,
     );
@@ -41,5 +42,8 @@ describe("ResultCircle", () => {
     expect(
       container.querySelector('[data-testid="result-circle"]'),
     ).toHaveAttribute("fill", "none");
+    expect(container.querySelector("text")).toHaveTextContent("A");
+    expect(container.querySelector("text")).toHaveAttribute("x", "10");
+    expect(container.querySelector("text")).toHaveAttribute("y", "10");
   });
 });

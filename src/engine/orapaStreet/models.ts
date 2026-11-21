@@ -50,8 +50,6 @@ export interface Node {
 }
 
 export interface Board {
-  rows: number;
-  cols: number;
   spaces: Record<string, Node>;
   spacesByQr: Record<number, Record<number, Node>>;
 }
@@ -76,7 +74,7 @@ export interface LightResult {
 export interface Puzzle {
   id: number;
   tiles: TileInBoard[];
-  light_results: Record<string, LightResult>;
+  light_results: Record<string, LightResult[]>;
 }
 
 export type Reflect = [number, number];
@@ -116,6 +114,7 @@ export class Tile {
     this.lateReflect = data.lateReflect ?? [];
     this.belt = data.belt ?? -1;
     this.lineTile = data.lineTile ?? false;
+    this.orient = data.orient;
   }
 }
 
@@ -124,7 +123,6 @@ export interface ITileInBoard {
   label: string;
   rotated_reflect: Record<number, number>;
   rotate_angle: number; // 0 to 2
-  rotatedLateReflect: Record<number, number>;
 }
 
 export class TileInBoard implements ITileInBoard {
@@ -132,7 +130,6 @@ export class TileInBoard implements ITileInBoard {
   label: string;
   // to be removed
   rotated_reflect: Record<number, number> = {};
-  rotatedLateReflect: Record<number, number> = {};
   rotate_angle: number;
   belt: number;
 
@@ -142,7 +139,6 @@ export class TileInBoard implements ITileInBoard {
     this.rotate_angle = data.rotate_angle ?? 0;
     this.belt = data.tile.belt ?? -1;
     this.rotated_reflect = data.rotated_reflect ?? {};
-    this.rotatedLateReflect = data.rotatedLateReflect ?? {};
   }
 
   /**
@@ -154,21 +150,14 @@ export class TileInBoard implements ITileInBoard {
     this.rotated_reflect = {};
 
     for (const [in_dir, out_dir] of this.tile.reflect) {
-      const rotatedInDir = (in_dir + this.rotate_angle) % 4;
-      const rotatedOutDir = (out_dir + this.rotate_angle) % 4;
+      const rotatedInDir = (in_dir + this.rotate_angle) % 12;
+      const rotatedOutDir = (out_dir + this.rotate_angle) % 12;
 
       this.rotated_reflect[rotatedInDir] = rotatedOutDir;
     }
 
-    for (const [in_dir, out_dir] of this.tile.lateReflect) {
-      const rotatedInDir = (in_dir + this.rotate_angle) % 4;
-      const rotatedOutDir = (out_dir + this.rotate_angle) % 4;
-
-      this.rotatedLateReflect[rotatedInDir] = rotatedOutDir;
-    }
-
     if (this.belt !== -1) {
-      this.belt = (this.belt + this.rotate_angle) % 4;
+      this.belt = (this.belt + this.rotate_angle) % 12;
     }
 
     return this;
@@ -179,6 +168,7 @@ export class TileInBoard implements ITileInBoard {
 export interface ParentTile {
   name: string;
   flipable: boolean;
+  hasLineTile: boolean;
   subTiles: Tile[];
 }
 

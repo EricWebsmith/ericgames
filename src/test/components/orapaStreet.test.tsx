@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import OrapaStreet221B from "../../components/OrapaStreet";
 
 type Point = { x: number; y: number };
@@ -36,18 +36,24 @@ function sharesEdge(first: Point[], second: Point[]): boolean {
 }
 
 describe("OrapaStreet221B", () => {
-  it("randomly colors ten triangles containing tiles", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", "/");
+  });
+
+  it("randomly colors triangles containing tiles", () => {
     render(<OrapaStreet221B />);
 
     const polygons = screen
       .getAllByTestId(/^triangle-/)
       .map((triangle) => triangle.querySelector("polygon"));
-    expect(
-      polygons.filter((polygon) => polygon?.getAttribute("fill") !== "none"),
-    ).toHaveLength(10);
-    expect(
-      polygons.filter((polygon) => polygon?.getAttribute("fill") === "none"),
-    ).toHaveLength(112);
+    const colored = polygons.filter(
+      (polygon) => polygon?.getAttribute("fill") !== "none",
+    );
+    const empty = polygons.filter(
+      (polygon) => polygon?.getAttribute("fill") === "none",
+    );
+    expect(colored.length).toBeGreaterThan(0);
+    expect(colored.length + empty.length).toBe(122);
   });
 
   it("draws each traversed triangle from one side midpoint to another", () => {

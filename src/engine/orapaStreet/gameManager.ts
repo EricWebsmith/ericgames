@@ -1,8 +1,6 @@
 import {
   Color,
   Direction,
-  Orient,
-  Tile,
   TileInBoard,
   type Board,
   type LightResult,
@@ -11,29 +9,7 @@ import {
 } from "./models";
 import { rotateCoord } from "./triangleUtils";
 
-/**
- * Traverse the board from a border node and return where the wave exits and
- * what colours it collected.
- *
- * OrapaMine rules differ from Arclight:
- *   - The grid is rectangular (square cells), so there are 4 directions:
- *       0 = West, 1 = North, 2 = East, 3 = South
- *   - Directions on an arc represent *faces* of a cell, not travel directions.
- *     arc [a, b] means: wave entering through face a exits through face b (and
- *     vice-versa, the mapping is bidirectional).
- *   - If the wave hits a gem but no arc matches its entry face, it is reflected
- *     straight back (travel direction reverses by 180°).
- *   - A gem with arcs: [] is a black gem and absorbs the wave entirely.
- *
- * Entry face vs. travel direction:
- *   travel_dir 0 (West)  → entry face 2 (East),  i.e. (travel_dir + 2) % 4
- *   travel_dir 1 (North) → entry face 3 (South)
- *   travel_dir 2 (East)  → entry face 0 (West)
- *   travel_dir 3 (South) → entry face 1 (North)
- *
- * After redirecting via an arc, the new travel direction equals the exit face
- * (face 1 = North face → travel North, etc.).
- */
+
 export function traverse(
   board: Board,
   tilesInBoard: Record<string, TileInBoard>,
@@ -100,83 +76,13 @@ export function getBorderLabels(board: Board): string[] {
     .map((node) => node.name);
 }
 
-export function getTilesInBoard(board: Board): Record<string, TileInBoard> {
-  const positions = Object.values(board.spaces)
-    .filter((node) => !node.isBorder)
-    .map((node) => node.name);
-  const shuffledPositions = [...positions];
-  for (let index = shuffledPositions.length - 1; index > 0; index--) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [shuffledPositions[index], shuffledPositions[randomIndex]] = [
-      shuffledPositions[randomIndex],
-      shuffledPositions[index],
-    ];
-  }
-
-  const rightRotatedReflect = {
-    0: 2,
-    2: 0,
-    4: 6,
-    6: 4,
-    8: 10,
-    10: 8,
-  };
-
-  const leftRotatedReflect = {
-    0: 10,
-    10: 0,
-    8: 6,
-    6: 8,
-    2: 4,
-    4: 2,
-  };
-
-  const tileColors = [Color.Red, Color.Blue, Color.Yellow, Color.White];
-
-  return Object.fromEntries(
-    shuffledPositions.slice(0, 10).map((position) => {
-      const color = tileColors[Math.floor(Math.random() * tileColors.length)];
-      return [
-        position,
-        new TileInBoard({
-          tile: new Tile({
-            colors: [color],
-            orient: Orient.PointyLeft,
-            parentName: `${color[0].toUpperCase()}${color.slice(1)}`,
-            coordinate: { 0: 1, 1: 1 },
-            reflect: [
-              [0, 2],
-              [2, 0],
-              [4, 6],
-              [6, 4],
-              [8, 10],
-              [10, 8],
-            ],
-          }),
-          label: position,
-          rotated_reflect:
-            board.spaces[position].orientation === Orient.PointyLeft
-              ? leftRotatedReflect
-              : rightRotatedReflect,
-          rotatedLateReflect: {},
-          rotate_angle: 0,
-        }),
-      ];
-    }),
-  );
-}
-
 export function putTile(
   board: Board,
   tile: ParentTile,
   anchorLabel: string,
-  rotateAngle: number = 0,
 ): Record<string, TileInBoard> {
-  const rowLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const m = anchorLabel.match(/^([A-Z])(\d{1,2})$/);
-  if (!m) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
-  const anchorRow = rowLetters.indexOf(m[1]);
-  const anchorCol = parseInt(m[2], 10);
+  const anchorNode = board.spaces[anchorLabel];
+  if (!anchorNode) throw new Error(`Invalid anchor coordinate: ${anchorLabel}`);
 
   const result: Record<string, TileInBoard> = {};
 
@@ -184,18 +90,18 @@ export function putTile(
     const offsets = rotateCoord(
       subTile.coordinate[0],
       subTile.coordinate[1],
-      rotateAngle as 60 | 120 | 180 | 240 | 300,
+      0,
     );
 
-    const q = anchorCol + offsets.q;
-    const r = anchorRow + offsets.r;
+    const q = anchorNode.q + offsets.q;
+    const r = anchorNode.r + offsets.r;
 
     const nodeToPut = board.spacesByQr[q]?.[r];
 
     const tib = new TileInBoard({
       tile: subTile,
       label: nodeToPut.name,
-      rotate_angle: rotateAngle,
+      rotate_angle: 0,
     });
     tib.resolve_rotate();
     result[nodeToPut.name] = tib;
@@ -229,43 +135,44 @@ function putTiles(
     for (let attempt = 0; attempt < 1000 && !placed; attempt++) {
       const anchorLabel = randomChoice(internalCoords);
       const anchorNode = board.spaces[anchorLabel];
-      const anchorRow = anchorNode.q;
-      const anchorCol = anchorNode.r;
-
-      const rotateAngle = Math.floor(rng() * 6) * 60;
+      if (anchorNode.orientation != parentTile.subTiles[0].orient) {
+        continue;
+      }
+      const anchorQ = anchorNode.q;
+      const anchorR = anchorNode.r;
 
       // Verify all subtile positions (after rotation) are in-bounds and free.
-      let valid = false;
+      let valid = true;
       for (const subTile of parentTile.subTiles) {
         const newCoord = rotateCoord(
           subTile.coordinate[0],
           subTile.coordinate[1],
-          rotateAngle as 60 | 120 | 180 | 240 | 300,
+          0,
         );
-        const q = anchorCol + newCoord.q;
-        const r = anchorRow + newCoord.r;
+        const q = anchorQ + newCoord.q;
+        const r = anchorR + newCoord.r;
 
         const nodeToPut = board.spacesByQr[q]?.[r];
         if (!nodeToPut) {
+          valid = false;
           break;
         }
 
         if (occupiedSpaces.has(nodeToPut.name)) {
+          valid = false;
           break;
         }
-
-        valid = true;
       }
 
       if (!valid) continue;
 
       // Check border connection
-      const newTiles = putTile(board, parentTile, anchorLabel, rotateAngle);
+      const newTiles = putTile(board, parentTile, anchorLabel);
 
       for (const [label, tib] of Object.entries(newTiles)) {
         tilesInBoard[label] = tib;
         occupiedSpaces.add(label);
-        for (const neighbor in board.spaces[label].neighbors) {
+        for (const neighbor of board.spaces[label].neighbors) {
           occupiedSpaces.add(neighbor);
         }
       }
@@ -301,9 +208,9 @@ export function setupWithSeed(
     .filter((node) => node.isBorder === true)
     .map((node) => node.name);
 
-  const lightResults: Record<string, LightResult> = {};
+  const lightResults: Record<string, LightResult[]> = {};
   for (const coord of borderLabels) {
-    lightResults[coord] = getLightResult(board, tilesInBoard, coord);
+    lightResults[coord] = traverse(board, tilesInBoard, coord);
   }
 
   const sightResults: Record<string, Color[]> = {};

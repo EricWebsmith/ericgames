@@ -102,6 +102,7 @@ function createTriangleNodes(
       addNode(board, {
         name: id,
         isBorder: false,
+        isOccupied: false,
         orientation,
         edges: {},
         neighbors: [],
@@ -259,6 +260,7 @@ export function getDefaultBoard(): Board {
     addNode(board, {
       name,
       isBorder: true,
+      isOccupied:false,
       q: -999,
       r: -999,
       edges: {},
@@ -382,6 +384,7 @@ export function getHexBoard(): Board {
   for (const name of borderNames) {
     addNode(board, {
       name,
+      isOccupied: false,
       isBorder: true,
       q: -999,
       r: -999,
@@ -544,6 +547,7 @@ function rightLineTile(
 const red1: ParentTile = {
   name: "Red1",
   flipable: true,
+  hasLineTile: true,
   subTiles: [
     leftTile("Red1", [Color.Red], { 0: 0, 1: 0 }),
     rightTile("Red1", [Color.Red], { 0: 0, 1: 1 }),
@@ -556,14 +560,15 @@ const red1: ParentTile = {
 const red2: ParentTile = {
   name: "Red2",
   flipable: false,
+  hasLineTile: true,
   subTiles: [
     leftTile("Red2", [Color.Red], { 0: 0, 1: 0 }),
     rightTile("Red2", [Color.Red], { 0: 0, 1: 1 }),
     leftTile("Red2", [Color.Red], { 0: 0, 1: 2 }),
     leftLineTile("Red2", [Color.Red], { 0: 0, 1: 4 }),
-    rightTile("Red2", [Color.Red], { 0: 1, 1: 1 }),
-    leftTile("Red2", [Color.Red], { 0: 1, 1: 0 }),
-    rightTile("Red2", [Color.Red], { 0: 1, 1: 1 }),
+    rightTile("Red2", [Color.Red], { 0: 1, 1: 0 }),
+    leftTile("Red2", [Color.Red], { 0: 1, 1: 1 }),
+    rightTile("Red2", [Color.Red], { 0: 1, 1: 2 }),
     rightLineTile("Red2", [Color.Red], { 0: 1, 1: 4 }),
   ],
 };
@@ -571,6 +576,7 @@ const red2: ParentTile = {
 const red3: ParentTile = {
   name: "Red3",
   flipable: false,
+  hasLineTile: false,
   subTiles: [
     leftTile("Red3", [Color.Red], { 0: 0, 1: 0 }),
     rightTile("Red3", [Color.Red], { 0: 0, 1: 1 }),
@@ -582,6 +588,7 @@ const red3: ParentTile = {
 const white1: ParentTile = {
   name: "White1",
   flipable: true,
+  hasLineTile: false,
   subTiles: [
     leftTile("White1", [Color.White], { 0: 0, 1: 0 }),
     rightTile("White1", [Color.White], { 0: 0, 1: 1 }),
@@ -595,19 +602,20 @@ const white1: ParentTile = {
 const white2: ParentTile = {
   name: "White2",
   flipable: false,
+  hasLineTile: false,
   subTiles: [
-    leftTile("White2", [Color.White], { 0: 0, 1: 0 }),
-    rightTile("White2", [Color.White], { 0: 0, 1: 1 }),
-    leftTile("White2", [Color.White], { 0: 0, 1: 2 }),
-    rightTile("White2", [Color.White], { 0: 1, 1: 2 }),
-    leftTile("White2", [Color.White], { 0: 1, 1: 3 }),
-    rightTile("White2", [Color.White], { 0: 1, 1: 4 }),
+    rightTile("White2", [Color.White], { 0: 0, 1: 0 }),
+    leftTile("White2", [Color.White], { 0: 0, 1: 1 }),
+    rightTile("White2", [Color.White], { 0: 0, 1: 2 }),
+    leftTile("White2", [Color.White], { 0: 0, 1: 3 }),
+    rightTile("White2", [Color.White], { 0: 0, 1: 4 }),
   ],
 };
 
 const white3: ParentTile = {
   name: "White3",
   flipable: false,
+  hasLineTile: false,
   subTiles: [
     leftTile("White3", [Color.White], { 0: 0, 1: 0 }),
     rightTile("White3", [Color.White], { 0: 0, 1: 1 }),
@@ -621,6 +629,7 @@ const white3: ParentTile = {
 const white4: ParentTile = {
   name: "White4",
   flipable: true,
+  hasLineTile: true,
   subTiles: [
     leftLineTile("White4", [Color.White], { 0: 0, 1: 0 }),
     leftTile("White4", [Color.White], { 0: 0, 1: 2 }),
@@ -632,20 +641,22 @@ const white4: ParentTile = {
 const blue1: ParentTile = {
   name: "blue1",
   flipable: false,
+  hasLineTile: false,
   subTiles: [
     rightTile("blue1", [Color.Blue], { 0: 0, 1: 0 }),
     leftTile("blue1", [Color.Blue], { 0: 0, 1: 1 }),
     rightTile("blue1", [Color.Blue], { 0: 0, 1: 2 }),
 
-    rightTile("blue1", [Color.Blue], { 0: 1, 1: 1 }),
+    rightTile("blue1", [Color.Blue], { 0: -1, 1: 1 }),
   ],
 };
 
 const blue2: ParentTile = {
   name: "blue2",
   flipable: true,
+  hasLineTile: false,
   subTiles: [
-    rightTile("blue2", [Color.Blue], { 0: 0, 1: 0 }),
+    rightTile("blue2-1", [Color.Blue], { 0: 0, 1: 0 }),
     leftTile("blue2", [Color.Blue], { 0: 0, 1: 1 }),
     rightTile("blue2", [Color.Blue], { 0: 0, 1: 2 }),
     leftTile("blue2", [Color.Blue], { 0: 0, 1: 3 }),
@@ -655,6 +666,7 @@ const blue2: ParentTile = {
 const blue3: ParentTile = {
   name: "blue3",
   flipable: true,
+  hasLineTile: false,
   subTiles: [
     rightTile("blue2", [Color.Blue], { 0: 0, 1: 0 }),
     leftTile("blue2", [Color.Blue], { 0: 0, 1: 1 }),
@@ -669,6 +681,7 @@ const blue3: ParentTile = {
 const yellow1: ParentTile = {
   name: "yellow1",
   flipable: true,
+  hasLineTile: true,
   subTiles: [
     leftTile("yellow1", [Color.Yellow], { 0: 0, 1: 4 }),
 
@@ -682,6 +695,7 @@ const yellow1: ParentTile = {
 const yellow2: ParentTile = {
   name: "yellow2",
   flipable: false,
+  hasLineTile: true,
   subTiles: [
     leftLineTile("yellow2", [Color.Yellow], { 0: 0, 1: 0 }),
     leftLineTile("yellow2", [Color.Yellow], { 0: 0, 1: 2 }),
@@ -693,6 +707,7 @@ const yellow2: ParentTile = {
 const yellow3: ParentTile = {
   name: "yellow3",
   flipable: false,
+  hasLineTile: false,
   subTiles: [
     rightTile("yellow3", [Color.Yellow], { 0: 0, 1: 0 }),
     leftTile("yellow3", [Color.Yellow], { 0: 0, 1: 1 }),
@@ -707,18 +722,18 @@ export function getTiles(
   random: () => number = Math.random,
 ): ParentTile[] {
   const allTiles = [
-    red1,
-    red2,
+    // red1,
+    // red2,
     red3,
-    white1,
-    white2,
+    // white1,
+    // white2,
     white3,
-    white4,
-    blue1,
+    // white4,
+    // blue1,
     blue2,
-    blue3,
-    yellow1,
-    yellow2,
+    // blue3,
+    // yellow1,
+    // yellow2,
     yellow3,
   ];
 
@@ -754,5 +769,6 @@ export function getTiles(
   }
 
   selected.push(...remaining.slice(0, tileCount - selected.length));
+  console.log(selected.map(c=>c.name));
   return selected;
 }

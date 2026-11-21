@@ -7,6 +7,7 @@ interface ResultCircleProps {
   r: number;
   testId: string;
   colors: Color[];
+  destination: string;
 }
 
 function getSectorPath(
@@ -32,6 +33,7 @@ export default function ResultCircle({
   r,
   testId,
   colors,
+  destination,
 }: ResultCircleProps) {
   const uniqueColors = [...new Set(colors)];
   uniqueColors.sort(); // Sort it so the gamer does not know which color is met first.
@@ -64,6 +66,18 @@ export default function ResultCircle({
             />
           );
         })}
+      <text
+        x={cx}
+        y={cy}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="#f2f7ff"
+        fontSize={7}
+        fontWeight={700}
+        style={{ pointerEvents: "none", userSelect: "none" }}
+      >
+        {destination}
+      </text>
     </>
   );
 }
