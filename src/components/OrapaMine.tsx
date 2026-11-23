@@ -1,25 +1,33 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { setupWithSeed } from '../engine/orapa/gameManager';
-import { defaultTileOptions, getBoard, getTiles, type TileOptions } from '../engine/orapa/mineData';
-import { type Color, type Puzzle } from '../engine/orapa/models';
-import BorderCircle from './shared/BorderCircle';
-import ShareButton from './shared/ShareButton';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { setupWithSeed } from "../engine/orapa/gameManager";
+import {
+  defaultTileOptions,
+  getBoard,
+  getTiles,
+  type TileOptions,
+} from "../engine/orapa/mineData";
+import { type Color, type Puzzle } from "../engine/orapa/models";
+import BorderCircle from "./shared/BorderCircle";
+import BoardFrame from "./shared/BoardFrame";
+import ShareButton from "./shared/ShareButton";
+import { getBoardView } from "./shared/boardView";
+import { useBoardViewControls } from "./shared/useBoardViewControls";
 
 // ─── Layout constants ──────────────────────────────────────────────
 const COLS = 10;
 const ROWS = 8;
-const CELL = 46;   // cell size in px
-const BD_R = 12;   // border circle radius
+const CELL = 46; // cell size in px
+const BD_R = 12; // border circle radius
 const BD_OFF = 28; // distance from grid edge to border circle centre
-const GX = 64;     // x of left edge of grid
-const GY = 64;     // y of top edge of grid
-const SVG_W = GX + COLS * CELL + GX;  // 64 + 460 + 64 = 588
-const SVG_H = GY + ROWS * CELL + GY;  // 64 + 368 + 64 = 496
+const GX = 64; // x of left edge of grid
+const GY = 64; // y of top edge of grid
+const SVG_W = GX + COLS * CELL + GX; // 64 + 460 + 64 = 588
+const SVG_H = GY + ROWS * CELL + GY; // 64 + 368 + 64 = 496
 
 // ─── Row/column helpers ────────────────────────────────────────────
 // Engine format: row letter A–H (A = top row), column number 1–10.
-const ROW_LETTERS = 'ABCDEFGH';
+const ROW_LETTERS = "ABCDEFGH";
 
 function cellLabel(col: number, row: number): string {
   return `${ROW_LETTERS[row - 1]}${col}`;
@@ -31,19 +39,19 @@ function cellTL(col: number, row: number) {
 
 // ─── Gem colors ────────────────────────────────────────────────────
 const GEM_FILL: Record<string, string> = {
-  red: '#ff5555',
-  blue: '#5577ff',
-  yellow: '#ccaa00',
-  white: '#e0e0e0',
+  red: "#ff5555",
+  blue: "#5577ff",
+  yellow: "#ccaa00",
+  white: "#e0e0e0",
 };
 
-const DEFAULT_GEM_COLOR = '#aaaaaa';
+const DEFAULT_GEM_COLOR = "#aaaaaa";
 
 function getGemColor(colors: string[]): string {
-  if (colors.length === 0) return '';
+  if (colors.length === 0) return "";
   if (colors.length === 1) return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
   const s = new Set(colors);
-  if (s.has('blue') && s.has('white')) return '#66ccee'; // light blue
+  if (s.has("blue") && s.has("white")) return "#66ccee"; // light blue
   return GEM_FILL[colors[0]] ?? DEFAULT_GEM_COLOR;
 }
 
@@ -53,36 +61,66 @@ function getGemColor(colors: string[]): string {
 //   Left   (A–H):   letters, left of rows A–H (A = top)
 //   Bottom (I–R):   letters, below columns 1–10  (I = col 1, R = col 10)
 //   Right  (11–18): numbers, right of rows A–H  (11 = row A)
-type Side = 'top' | 'left' | 'bottom' | 'right';
-interface BorderInfo { label: string; side: Side; idx: number; }
+type Side = "top" | "left" | "bottom" | "right";
+interface BorderInfo {
+  label: string;
+  side: Side;
+  idx: number;
+}
 
 const ALL_BORDERS: BorderInfo[] = [
   // Top: 1–10, above columns 1–10 (idx 0–9)
-  ...Array.from({ length: 10 }, (_, i) => ({ label: String(i + 1), side: 'top' as Side, idx: i })),
+  ...Array.from({ length: 10 }, (_, i) => ({
+    label: String(i + 1),
+    side: "top" as Side,
+    idx: i,
+  })),
   // Left: A–H, left of rows 1–8 (idx 0–7)
-  ...'ABCDEFGH'.split('').map((c, i) => ({ label: c, side: 'left' as Side, idx: i })),
+  ..."ABCDEFGH"
+    .split("")
+    .map((c, i) => ({ label: c, side: "left" as Side, idx: i })),
   // Bottom: I–R, below columns 1–10 (idx 0–9)
-  ...'IJKLMNOPQR'.split('').map((c, i) => ({ label: c, side: 'bottom' as Side, idx: i })),
+  ..."IJKLMNOPQR"
+    .split("")
+    .map((c, i) => ({ label: c, side: "bottom" as Side, idx: i })),
   // Right: 11–18, right of rows 1–8 (idx 0–7)
-  ...Array.from({ length: 8 }, (_, i) => ({ label: String(11 + i), side: 'right' as Side, idx: i })),
+  ...Array.from({ length: 8 }, (_, i) => ({
+    label: String(11 + i),
+    side: "right" as Side,
+    idx: i,
+  })),
 ];
 
 // ─── Pixel helpers ─────────────────────────────────────────────────
-function borderPx(b: BorderInfo): { x: number; y: number; } {
+function borderPx(b: BorderInfo): { x: number; y: number } {
   switch (b.side) {
-    case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF };
-    case 'left': return { x: GX - BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
-    case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF };
-    case 'right': return { x: GX + COLS * CELL + BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
+    case "top":
+      return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF };
+    case "left":
+      return { x: GX - BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
+    case "bottom":
+      return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF };
+    case "right":
+      return { x: GX + COLS * CELL + BD_OFF, y: GY + b.idx * CELL + CELL / 2 };
   }
 }
 
-function notePx(b: BorderInfo): { x: number; y: number; } {
+function notePx(b: BorderInfo): { x: number; y: number } {
   switch (b.side) {
-    case 'top': return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
-    case 'left': return { x: GX - BD_OFF - BD_R - 8, y: GY + b.idx * CELL + CELL / 2 };
-    case 'bottom': return { x: GX + b.idx * CELL + CELL / 2, y: GY + ROWS * CELL + BD_OFF + BD_R + 8 };
-    case 'right': return { x: GX + COLS * CELL + BD_OFF + BD_R + 8, y: GY + b.idx * CELL + CELL / 2 };
+    case "top":
+      return { x: GX + b.idx * CELL + CELL / 2, y: GY - BD_OFF - BD_R - 8 };
+    case "left":
+      return { x: GX - BD_OFF - BD_R - 8, y: GY + b.idx * CELL + CELL / 2 };
+    case "bottom":
+      return {
+        x: GX + b.idx * CELL + CELL / 2,
+        y: GY + ROWS * CELL + BD_OFF + BD_R + 8,
+      };
+    case "right":
+      return {
+        x: GX + COLS * CELL + BD_OFF + BD_R + 8,
+        y: GY + b.idx * CELL + CELL / 2,
+      };
   }
 }
 
@@ -95,12 +133,18 @@ function notePx(b: BorderInfo): { x: number; y: number; } {
 //   Shared corners: 0∩1=NW, 1∩2=NE, 2∩3=SE, 0∩3=SW
 //
 // We use 1-px inset corners to match the background <rect> geometry.
-function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]): string | null {
+function getTrianglePoints(
+  cellX: number,
+  cellY: number,
+  arc: [number, number],
+): string | null {
   const [a, b] = arc;
-  const key = [Math.min(a, b), Math.max(a, b)].join(',');
+  const key = [Math.min(a, b), Math.max(a, b)].join(",");
 
-  const x0 = cellX + 1, y0 = cellY + 1;        // NW inset
-  const x1 = cellX + CELL - 1, y1 = cellY + CELL - 1; // SE inset
+  const x0 = cellX + 1,
+    y0 = cellY + 1; // NW inset
+  const x1 = cellX + CELL - 1,
+    y1 = cellY + CELL - 1; // SE inset
 
   const NW = `${x0},${y0}`;
   const NE = `${x1},${y0}`;
@@ -109,12 +153,17 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 
   switch (key) {
     // '/' diagonal (SW←→NE): excludes the corner not on the "/" line
-    case '0,1': return `${NE} ${SE} ${SW}`; // open corner = NW, solid: right+bottom+/ hyp
-    case '2,3': return `${NW} ${NE} ${SW}`; // open corner = SE, solid: top+left+/ hyp
+    case "0,1":
+      return `${NE} ${SE} ${SW}`; // open corner = NW, solid: right+bottom+/ hyp
+    case "2,3":
+      return `${NW} ${NE} ${SW}`; // open corner = SE, solid: top+left+/ hyp
     // '\' diagonal (NW←→SE): excludes the corner not on the "\" line
-    case '1,2': return `${NW} ${SW} ${SE}`; // open corner = NE, solid: left+bottom+\ hyp
-    case '0,3': return `${NW} ${NE} ${SE}`; // open corner = SW, solid: top+right+\ hyp
-    default: return null;
+    case "1,2":
+      return `${NW} ${SW} ${SE}`; // open corner = NE, solid: left+bottom+\ hyp
+    case "0,3":
+      return `${NW} ${NE} ${SE}`; // open corner = SW, solid: top+right+\ hyp
+    default:
+      return null;
   }
 }
 
@@ -123,8 +172,10 @@ function getTrianglePoints(cellX: number, cellY: number, arc: [number, number]):
 const LCG_MULTIPLIER = 1664525;
 const LCG_INCREMENT = 1013904223;
 
-function seededPebbles(count: number): { x: number; y: number; rx: number; ry: number; }[] {
-  const pebbles: { x: number; y: number; rx: number; ry: number; }[] = [];
+function seededPebbles(
+  count: number,
+): { x: number; y: number; rx: number; ry: number }[] {
+  const pebbles: { x: number; y: number; rx: number; ry: number }[] = [];
   let seed = 3571;
   for (let i = 0; i < count; i++) {
     seed = ((seed * LCG_MULTIPLIER + LCG_INCREMENT) | 0) >>> 0;
@@ -140,13 +191,13 @@ function seededPebbles(count: number): { x: number; y: number; rx: number; ry: n
 const PEBBLES = seededPebbles(50);
 
 // ─── URL sharing ──────────────────────────────────────────────────
-const QUERY_PARAM_OPTIONS_MINE = 'o';
-const QUERY_PARAM_SEED_MINE = 's';
+const QUERY_PARAM_OPTIONS_MINE = "o";
+const QUERY_PARAM_SEED_MINE = "s";
 
 const getSearchParamsMine = (): URLSearchParams => {
-  if (typeof window === 'undefined') return new URLSearchParams();
+  if (typeof window === "undefined") return new URLSearchParams();
   const params = new URLSearchParams(window.location.search);
-  const hashQuery = window.location.hash.split('?')[1];
+  const hashQuery = window.location.hash.split("?")[1];
   if (hashQuery) {
     const hashParams = new URLSearchParams(hashQuery);
     hashParams.forEach((value, key) => {
@@ -156,45 +207,70 @@ const getSearchParamsMine = (): URLSearchParams => {
   return params;
 };
 
-const getInitialMineStateFromQuery = (): { puzzle: Puzzle; tileOptions: TileOptions; seed: number; } => {
+const getInitialMineStateFromQuery = (): {
+  puzzle: Puzzle;
+  tileOptions: TileOptions;
+  seed: number;
+} => {
   const params = getSearchParamsMine();
-  const optStr = params.get(QUERY_PARAM_OPTIONS_MINE) ?? '';
+  const optStr = params.get(QUERY_PARAM_OPTIONS_MINE) ?? "";
   const tileOptions: TileOptions = {
-    includeTransparent: optStr[0] === '1',
-    includeBlack: optStr[1] === '1',
-    includeLightBlue: optStr[2] === '1',
+    includeTransparent: optStr[0] === "1",
+    includeBlack: optStr[1] === "1",
+    includeLightBlue: optStr[2] === "1",
   };
   if (!/^[01]{3}$/.test(optStr)) {
-    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-    return { puzzle: setupWithSeed(getBoard(), getTiles(defaultTileOptions), seed), tileOptions: defaultTileOptions, seed };
+    const seed = Math.floor(Math.random() * 0xffffffff);
+    return {
+      puzzle: setupWithSeed(getBoard(), getTiles(defaultTileOptions), seed),
+      tileOptions: defaultTileOptions,
+      seed,
+    };
   }
 
   const seedStr = params.get(QUERY_PARAM_SEED_MINE);
-  const parsedSeed = seedStr !== null && /^\d+$/.test(seedStr) ? parseInt(seedStr, 10) : null;
+  const parsedSeed =
+    seedStr !== null && /^\d+$/.test(seedStr) ? parseInt(seedStr, 10) : null;
 
   if (parsedSeed !== null && Number.isInteger(parsedSeed) && parsedSeed >= 0) {
-    return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), parsedSeed), tileOptions, seed: parsedSeed };
+    return {
+      puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), parsedSeed),
+      tileOptions,
+      seed: parsedSeed,
+    };
   }
 
-  const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-  return { puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), seed), tileOptions, seed };
+  const seed = Math.floor(Math.random() * 0xffffffff);
+  return {
+    puzzle: setupWithSeed(getBoard(), getTiles(tileOptions), seed),
+    tileOptions,
+    seed,
+  };
 };
 
 // ─── Component ────────────────────────────────────────────────────
 export default function OrapaMine() {
   const { t } = useTranslation();
   const [initialState] = useState(() => getInitialMineStateFromQuery());
-  const [tileOptions, setTileOptions] = useState<TileOptions>(initialState.tileOptions);
+  const [tileOptions, setTileOptions] = useState<TileOptions>(
+    initialState.tileOptions,
+  );
   const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
   const [seed, setSeed] = useState<number>(initialState.seed);
   const [revealedCells, setRevealedCells] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
   const [clickedBorders, setClickedBorders] = useState<Set<string>>(new Set());
+  const {
+    isBoardMaximized,
+    setBoardMaximized,
+    isBoardRotated,
+    setBoardRotated,
+  } = useBoardViewControls();
 
   const { sight_results: sightResults, light_results: lightResults } = puzzle;
 
   const tileByCoord = useMemo(
-    () => Object.fromEntries(puzzle.tiles.map(t => [t.coordinate, t])),
+    () => Object.fromEntries(puzzle.tiles.map((t) => [t.coordinate, t])),
     [puzzle.tiles],
   );
 
@@ -209,25 +285,25 @@ export default function OrapaMine() {
 
   // ─── URL update ───────────────────────────────────────────────────
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const params = getSearchParamsMine();
-    const optStr = `${tileOptions.includeTransparent ? '1' : '0'}${tileOptions.includeBlack ? '1' : '0'}${tileOptions.includeLightBlue ? '1' : '0'}`;
+    const optStr = `${tileOptions.includeTransparent ? "1" : "0"}${tileOptions.includeBlack ? "1" : "0"}${tileOptions.includeLightBlue ? "1" : "0"}`;
     params.set(QUERY_PARAM_OPTIONS_MINE, optStr);
     params.set(QUERY_PARAM_SEED_MINE, String(seed));
     const search = params.toString();
-    const querySuffix = search ? `?${search}` : '';
-    const hashPath = window.location.hash.split('?')[0];
-    const hasHashPathRoute = hashPath.startsWith('#/');
+    const querySuffix = search ? `?${search}` : "";
+    const hashPath = window.location.hash.split("?")[0];
+    const hasHashPathRoute = hashPath.startsWith("#/");
     const nextUrl = hasHashPathRoute
       ? `${window.location.pathname}${hashPath}${querySuffix}`
       : `${window.location.pathname}${querySuffix}${hashPath}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (currentUrl === nextUrl) return;
-    window.history.replaceState(null, '', nextUrl);
+    window.history.replaceState(null, "", nextUrl);
   }, [seed, tileOptions]);
 
   const handleCellClick = useCallback((label: string) => {
-    setRevealedCells(prev => {
+    setRevealedCells((prev) => {
       if (prev.has(label)) return prev;
       const next = new Set(prev);
       next.add(label);
@@ -236,7 +312,7 @@ export default function OrapaMine() {
   }, []);
 
   const handleBorderClick = useCallback((label: string) => {
-    setClickedBorders(prev => {
+    setClickedBorders((prev) => {
       const next = new Set(prev);
       if (next.has(label)) next.delete(label);
       else next.add(label);
@@ -245,11 +321,11 @@ export default function OrapaMine() {
   }, []);
 
   const handleClickAllBorders = useCallback(() => {
-    setClickedBorders(new Set(ALL_BORDERS.map(b => b.label)));
+    setClickedBorders(new Set(ALL_BORDERS.map((b) => b.label)));
   }, []);
 
   const handleNewGame = useCallback(() => {
-    const nextSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+    const nextSeed = Math.floor(Math.random() * 0xffffffff);
     setSeed(nextSeed);
     setPuzzle(setupWithSeed(getBoard(), getTiles(tileOptions), nextSeed));
     setRevealedCells(new Set());
@@ -257,18 +333,34 @@ export default function OrapaMine() {
     setShowAll(false);
   }, [tileOptions]);
 
+  const boardView = getBoardView(
+    { left: 0, right: SVG_W, top: 0, bottom: SVG_H },
+    isBoardRotated,
+  );
+
   return (
     <div className="game-container">
-      <h2 className="game-title">{t('orapaMine.title')}</h2>
-      <p className="status-message">{t('orapaMine.instructions')}</p>
+      <h2 className="game-title">{t("orapaMine.title")}</h2>
+      <p className="status-message">{t("orapaMine.instructions")}</p>
 
+      <BoardFrame
+        isMaximized={isBoardMaximized}
+        isRotated={isBoardRotated}
+        onMaximizeChange={() =>
+          setBoardMaximized((maximized) => !maximized)
+        }
+        onRotateChange={() =>
+          setBoardRotated((rotated) => !rotated)
+        }
+      >
       <svg
         width={SVG_W}
         height={SVG_H}
-        viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+        viewBox={boardView.viewBox}
         className="game-svg mine-svg"
-        aria-label={t('orapaMine.boardAriaLabel')}
+        aria-label={t("orapaMine.boardAriaLabel")}
       >
+        <g transform={boardView.transform}>
         <defs>
           <filter id="mine-glow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -284,20 +376,30 @@ export default function OrapaMine() {
 
         {/* Rock pebbles */}
         {PEBBLES.map((p, i) => (
-          <ellipse key={`pebble-${i}`} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill="#4a2e18" opacity={0.5} />
+          <ellipse
+            key={`pebble-${i}`}
+            cx={p.x}
+            cy={p.y}
+            rx={p.rx}
+            ry={p.ry}
+            fill="#4a2e18"
+            opacity={0.5}
+          />
         ))}
 
         {/* ── Grid cells ── */}
         {Array.from({ length: COLS }, (_, ci) =>
           Array.from({ length: ROWS }, (_, ri) => {
-            const col = ci + 1, row = ri + 1;
+            const col = ci + 1,
+              row = ri + 1;
             const label = cellLabel(col, row);
             const { x, y } = cellTL(col, row);
-            const cx = x + CELL / 2, cy = y + CELL / 2;
+            const cx = x + CELL / 2,
+              cy = y + CELL / 2;
             const colors = sightResults[label] ?? [];
             const revealed = showAll || revealedCells.has(label);
             const hasGem = colors.length > 0;
-            const gemColor = hasGem ? getGemColor(colors) : '';
+            const gemColor = hasGem ? getGemColor(colors) : "";
             const tileData = tileByCoord[label];
 
             // Triangle tiles: any tile whose reflect array is non-empty.
@@ -312,36 +414,40 @@ export default function OrapaMine() {
             const isTriangle = reflectArcs.length > 0;
 
             // Tile fill colour (only relevant when revealed and a tile exists).
-            let tileFill = '';
+            let tileFill = "";
             if (revealed && tileData) {
               if (hasGem) {
                 tileFill = gemColor;
               } else {
-                tileFill = isTriangle ? '#eeeeee' : '#000000';
+                tileFill = isTriangle ? "#eeeeee" : "#000000";
               }
             }
 
             // Opacity from tile data (transparent gem is 50%); only when revealed.
-            const fillOpacity = revealed && tileData ? tileData.tile.opacity / 100 : 1;
+            const fillOpacity =
+              revealed && tileData ? tileData.tile.opacity / 100 : 1;
 
             // SVG polygon points for triangle tiles – only computed in showAll mode.
             // reflectArcs[0] is safe here: isTriangle guarantees length > 0,
             // and Reflect is typed as [number, number].
-            const trianglePoints = showAll && isTriangle && reflectArcs[0]
-              ? getTrianglePoints(x, y, reflectArcs[0])
-              : null;
+            const trianglePoints =
+              showAll && isTriangle && reflectArcs[0]
+                ? getTrianglePoints(x, y, reflectArcs[0])
+                : null;
 
             return (
               <g
                 key={label}
                 onClick={() => handleCellClick(label)}
-                style={{ cursor: 'pointer' }}
-                aria-label={t('orapaMine.cellAriaLabel', { col, row })}
+                style={{ cursor: "pointer" }}
+                aria-label={t("orapaMine.cellAriaLabel", { col, row })}
               >
                 {/* Background rect – always shown; provides the grid outline. */}
                 <rect
-                  x={x + 1} y={y + 1}
-                  width={CELL - 2} height={CELL - 2}
+                  x={x + 1}
+                  y={y + 1}
+                  width={CELL - 2}
+                  height={CELL - 2}
                   fill="#3d2410"
                   stroke="#6a4420"
                   strokeWidth={1.5}
@@ -349,27 +455,29 @@ export default function OrapaMine() {
                 />
 
                 {/* Revealed tile drawn on top of the background. */}
-                {revealed && tileData && (
-                  isTriangle && trianglePoints ? (
+                {revealed &&
+                  tileData &&
+                  (isTriangle && trianglePoints ? (
                     /* Triangle tile (See Answer mode): polygon covers only the solid portion. */
                     <polygon
                       points={trianglePoints}
                       fill={tileFill}
                       fillOpacity={fillOpacity}
-                      filter={hasGem ? 'url(#mine-glow)' : undefined}
+                      filter={hasGem ? "url(#mine-glow)" : undefined}
                     />
                   ) : (
                     /* Normal play or non-triangle tile: full rectangle. */
                     <rect
-                      x={x + 1} y={y + 1}
-                      width={CELL - 2} height={CELL - 2}
+                      x={x + 1}
+                      y={y + 1}
+                      width={CELL - 2}
+                      height={CELL - 2}
                       fill={tileFill}
                       fillOpacity={fillOpacity}
                       rx={2}
-                      filter={hasGem ? 'url(#mine-glow)' : undefined}
+                      filter={hasGem ? "url(#mine-glow)" : undefined}
                     />
-                  )
-                )}
+                  ))}
 
                 {/* X cross for revealed empty cells (no gem piece placed) */}
                 {revealed && !hasGem && !tileData && (
@@ -381,35 +489,39 @@ export default function OrapaMine() {
 
                 {/* Cell coordinate label */}
                 <text
-                  x={cx} y={cy}
+                  x={cx}
+                  y={cy}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fill={revealed && hasGem ? 'rgba(255,255,255,0.9)' : '#7a4a20'}
+                  fill={
+                    revealed && hasGem ? "rgba(255,255,255,0.9)" : "#7a4a20"
+                  }
                   fontSize={9}
                   fontWeight="bold"
-                  style={{ pointerEvents: 'none', userSelect: 'none' }}
+                  style={{ pointerEvents: "none", userSelect: "none" }}
                 >
                   {label}
                 </text>
               </g>
             );
-          })
+          }),
         )}
 
         {/* ── Border circles ── */}
-        {ALL_BORDERS.map(b => {
+        {ALL_BORDERS.map((b) => {
           const bp = borderPx(b);
           const np = notePx(b);
           const isEntry = clickedBorders.has(b.label);
           const isExit = exitHighlights.has(b.label);
           const result = lightResults[b.label];
-          const exitLbl = result?.end_label ?? '';
+          const exitLbl = result?.end_label ?? "";
 
           const circleColors: Color[] = isEntry ? (result?.colors ?? []) : [];
 
-          const noteColor = circleColors.length > 0
-            ? getGemColor(circleColors as string[])
-            : '#aaaacc';
+          const noteColor =
+            circleColors.length > 0
+              ? getGemColor(circleColors as string[])
+              : "#aaaacc";
 
           return (
             <g key={`b-${b.label}`}>
@@ -428,62 +540,104 @@ export default function OrapaMine() {
               {/* Wave result annotation */}
               {isEntry && (
                 <text
-                  x={np.x} y={np.y}
+                  x={np.x}
+                  y={np.y}
                   textAnchor="middle"
                   dominantBaseline="middle"
                   fill={noteColor}
                   fontSize={9}
                   fontWeight="bold"
-                  style={{ pointerEvents: 'none', userSelect: 'none' }}
+                  style={{ pointerEvents: "none", userSelect: "none" }}
                 >
-                  {exitLbl ? exitLbl : '⊘'}
+                  {exitLbl ? exitLbl : "⊘"}
                 </text>
               )}
             </g>
           );
         })}
+        </g>
       </svg>
+      </BoardFrame>
 
-      <div style={{ marginTop: 12, display: 'flex', gap: 8, justifyContent: 'center' }}>
+      <div
+        style={{
+          marginTop: 12,
+          display: "flex",
+          gap: 8,
+          justifyContent: "center",
+        }}
+      >
         <button className="btn-reset" onClick={() => setShowAll(!showAll)}>
-          {t('orapaMine.showAnswer')}
+          {t("orapaMine.showAnswer")}
         </button>
         <button className="btn-reset" onClick={handleClickAllBorders}>
-          {t('orapaMine.clickAllBorders')}
+          {t("orapaMine.clickAllBorders")}
         </button>
         <button className="btn-reset" onClick={handleNewGame}>
-          {t('shared.newGame')}
+          {t("shared.newGame")}
         </button>
         <ShareButton />
       </div>
 
-      <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
-        <label htmlFor="option-transparent" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div
+        style={{
+          marginTop: 8,
+          display: "flex",
+          gap: 16,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <label
+          htmlFor="option-transparent"
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
           <input
             id="option-transparent"
             type="checkbox"
             checked={tileOptions.includeTransparent}
-            onChange={e => setTileOptions(prev => ({ ...prev, includeTransparent: e.target.checked }))}
+            onChange={(e) =>
+              setTileOptions((prev) => ({
+                ...prev,
+                includeTransparent: e.target.checked,
+              }))
+            }
           />
-          {t('orapaMine.includeTransparent')}
+          {t("orapaMine.includeTransparent")}
         </label>
-        <label htmlFor="option-black" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <label
+          htmlFor="option-black"
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
           <input
             id="option-black"
             type="checkbox"
             checked={tileOptions.includeBlack}
-            onChange={e => setTileOptions(prev => ({ ...prev, includeBlack: e.target.checked }))}
+            onChange={(e) =>
+              setTileOptions((prev) => ({
+                ...prev,
+                includeBlack: e.target.checked,
+              }))
+            }
           />
-          {t('orapaMine.includeBlack')}
+          {t("orapaMine.includeBlack")}
         </label>
-        <label htmlFor="option-light-blue" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <label
+          htmlFor="option-light-blue"
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
           <input
             id="option-light-blue"
             type="checkbox"
             checked={tileOptions.includeLightBlue}
-            onChange={e => setTileOptions(prev => ({ ...prev, includeLightBlue: e.target.checked }))}
+            onChange={(e) =>
+              setTileOptions((prev) => ({
+                ...prev,
+                includeLightBlue: e.target.checked,
+              }))
+            }
           />
-          {t('orapaMine.includeLightBlue')}
+          {t("orapaMine.includeLightBlue")}
         </label>
       </div>
     </div>

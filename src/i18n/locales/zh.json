@@ -8,7 +8,10 @@
     "newGame": "新游戏",
     "reset": "重置",
     "undo": "撤销",
-    "redo": "重做"
+    "redo": "重做",
+    "maximizeBoard": "放大棋盘",
+    "restoreBoard": "还原棋盘",
+    "rotateBoard": "旋转棋盘 90°"
   },
   "home": {
     "title": "卡坦王Eric的游戏",
@@ -32,6 +35,10 @@
     "ricochetRobots": {
       "title": "碰撞机器人六边形",
       "description": "碰撞机器人六边形"
+    },
+    "orapaStreet": {
+      "title": "奥拉帕街 221B",
+      "description": "探索可点击的三角形棋盘"
     },
     "contact": "购买请在闲鱼搜索'卡坦王Eric'，QQ: 961422707，售后及规则书也请联系QQ"
   },
@@ -67,6 +74,29 @@
     "boardSizeLabel": "棋盘尺寸",
     "10by8": "10 × 8",
     "11by7": "11 × 7"
+  },
+  "orapaStreet": {
+    "title": "奥拉帕街 221B",
+    "instructions": "选择一个三角形查看其连接，或点击边界节点追踪光线路径。",
+    "showAnswer": "看答案",
+    "clickAllBorders": "点击所有边界",
+    "board": "棋盘",
+    "defaultBoard": "默认棋盘",
+    "hexBoard": "六边形棋盘",
+    "tiles": "Token",
+    "newPuzzle": "新谜题",
+    "showLabels": "显示标签",
+    "availableTiles": "可用 Token",
+    "boardAriaLabel": "奥拉帕街 221B 三角形棋盘",
+    "triangleAriaLabel": "{{name}}，{{orientation}}，{{count}} 条连接",
+    "borderNodeAriaLabel": "边界节点 {{name}}",
+    "selectedTriangleStatus": "{{name}} · {{orientation}} · 连接至：{{links}}",
+    "none": "无",
+    "triangleCount": "棋盘上有 {{count}} 个三角形 · 点击或使用键盘选择三角形以查看相邻格",
+    "orientation": {
+      "pointyLeft": "尖端朝左",
+      "pointyRight": "尖端朝右"
+    }
   },
   "rotatingRoads": {
     "title": "转路",
