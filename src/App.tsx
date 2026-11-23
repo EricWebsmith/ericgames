@@ -7,6 +7,7 @@ import OrapaSpace from "./components/OrapaSpace";
 import OrapaStreet from "./components/OrapaStreet";
 import RicochetRobots from "./components/RicochetRobots";
 import RotatingRoads from "./components/RotatingRoads";
+import TokenCatalog from "./components/OrapaStreet/TokenCatalog";
 import LanguageSwitcher from "./components/shared/LanguageSwitcher";
 
 function Home() {
@@ -365,6 +366,10 @@ export default function App() {
           <Route path="/rotating-roads" element={<RotatingRoads />} />
           <Route path="/ricochet-robots" element={<RicochetRobots />} />
           <Route path="/orapa-street-221b" element={<OrapaStreet />} />
+          <Route
+            path="/orapa-street-221b/tokens"
+            element={<TokenCatalog />}
+          />
         </Routes>
       </main>
       <Footer />

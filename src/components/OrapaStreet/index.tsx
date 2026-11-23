@@ -13,13 +13,13 @@ import {
   type TileInBoard,
 } from "../../engine/orapaStreet/models";
 import { getTiles } from "../../engine/orapaStreet/tiles";
-import { GEM_FILL } from "../shared/colors";
 import BoardControls from "../shared/BoardControls";
 import ResultCircle from "../shared/ResultCircle";
 import ShareButton from "../shared/ShareButton";
 import { getBoardView } from "../shared/boardView";
 import { useBoardViewControls } from "../shared/useBoardViewControls";
 import Palette from "./Palette";
+import { getTileColor } from "./tileColor";
 
 const SVG_WIDTH = 760;
 const SVG_HEIGHT = 560;
@@ -99,12 +99,6 @@ function getInitialState(): {
     tiles,
     puzzle: setupWithSeed(board, tiles, seed),
   };
-}
-
-function getTileColor(colors: Color[]): string {
-  if (colors.length === 0) return "none";
-  if (colors.includes("blue") && colors.includes("white")) return "#66ccee";
-  return GEM_FILL[colors[0]] ?? "#aaaaaa";
 }
 
 function getTriangleBounds(node: Node): Bounds {
@@ -825,7 +819,7 @@ export default function OrapaStreet221B() {
       <div
         className={`orapa-street-board-layout${isBoardMaximized ? " orapa-street-board-layout-fullscreen" : ""}`}
       >
-        <Palette tiles={tiles} getTileColor={getTileColor} />
+        <Palette tiles={tiles} />
         <div
           className={[
             "shared-board-frame",

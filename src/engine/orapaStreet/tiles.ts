@@ -233,8 +233,8 @@ const blue3_3: ParentTile = {
     leftTile("blue3", [Color.Blue], 0, 2),
     rightTile("blue3", [Color.Blue], 0, 3),
 
-    leftTile("blue3", [Color.Blue], 1, 2),
-    rightTile("blue3", [Color.Blue], 1, 3),
+    rightTile("blue3", [Color.Blue], 1, 2),
+    leftTile("blue3", [Color.Blue], 1, 3),
   ],
 };
 
@@ -437,8 +437,8 @@ const red1_3: ParentTile = {
     leftTile("red1", [Color.Red], 0, -1),
     rightTile("red1", [Color.Red], 0, -2),
 
-    leftLineTile("red1", [Color.Red], 0, -4, TriangleLine.Vertical, { 2: 4, 4: 2 }),
-    rightLineTile("red1", [Color.Red], -1, -4, TriangleLine.Vertical, { 8: 10, 10: 8 }),
+    leftLineTile("red1", [Color.Red], -1, -4),
+    rightLineTile("red1", [Color.Red], 0, -4),
   ],
 };
 
@@ -467,8 +467,8 @@ const red1_5: ParentTile = {
     leftTile("red1", [Color.Red], 0, 1),
     rightTile("red1", [Color.Red], 1, 1),
 
-    rightLineTile("red1", [Color.Red], 2, 1, TriangleLine.Bottom, { 2: 0, 0: 2 }),
-    leftLineTile("red1", [Color.Red], 2, 2, TriangleLine.Top, { 8: 6, 6: 8 }),
+    leftLineTile("red1", [Color.Red], 2, 1, TriangleLine.Bottom, { 2: 0, 0: 2 }),
+    rightLineTile("red1", [Color.Red], 2, 2, TriangleLine.Top, { 8: 6, 6: 8 }),
   ],
 };
 
@@ -603,8 +603,8 @@ const red2_5: ParentTile = {
     leftTile("red2", [Color.Red], 1, 1),
     rightTile("red2", [Color.Red], 1, 2),
 
-    leftLineTile("red2", [Color.Red], -1, 2, TriangleLine.Bottom, { 0: 10, 10: 0 }),
-    rightLineTile("red2", [Color.Red], -1, 3, TriangleLine.Top, { 6: 4, 4: 6 }),
+    rightLineTile("red2", [Color.Red], -1, 2, TriangleLine.Bottom, { 0: 10, 10: 0 }),
+    leftLineTile("red2", [Color.Red], -1, 3, TriangleLine.Top, { 6: 4, 4: 6 }),
   ],
 };
 
@@ -665,51 +665,51 @@ const red3Variants = [red3_0, red3_1, red3_2, red3_3, red3_4, red3_5];
 // #region white 1
 
 const white1_0: ParentTile = {
-  name: "White1",
+  name: "white1",
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    leftTile("White1", [Color.White], 0, 0),
-    rightTile("White1", [Color.White], 0, 1),
-    leftTile("White1", [Color.White], 0, 2),
-    rightTile("White1", [Color.White], 1, 2),
-    leftTile("White1", [Color.White], 1, 3),
-    rightTile("White1", [Color.White], 1, 4),
+    leftTile("white1", [Color.White], 0, 0),
+    rightTile("white1", [Color.White], 0, 1),
+    leftTile("white1", [Color.White], 0, 2),
+    rightTile("white1", [Color.White], 1, 2),
+    leftTile("white1", [Color.White], 1, 3),
+    rightTile("white1", [Color.White], 1, 4),
   ],
 };
 
 
 const white1_1: ParentTile = {
-  name: "White1",
+  name: "white1",
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    leftTile("White1", [Color.White], 0, 0),
+    leftTile("white1", [Color.White], 0, 0),
 
-    leftTile("White1", [Color.White], 1, -3),
-    rightTile("White1", [Color.White], 1, -2),
-    leftTile("White1", [Color.White], 1, -1),
-    rightTile("White1", [Color.White], 1, 0),
+    leftTile("white1", [Color.White], 1, -3),
+    rightTile("white1", [Color.White], 1, -2),
+    leftTile("white1", [Color.White], 1, -1),
+    rightTile("white1", [Color.White], 1, 0),
 
-    rightTile("White1", [Color.White], 2, -3),
+    rightTile("white1", [Color.White], 2, -3),
   ],
 };
 
 
 
 const white1_2: ParentTile = {
-  name: "White1",
+  name: "white1",
   flipable: true,
   hasLineTile: false,
   subTiles: [
-    rightTile("White1", [Color.White], 0, 0),
-    leftTile("White1", [Color.White], 0, 1),
+    rightTile("white1", [Color.White], 0, 0),
+    leftTile("white1", [Color.White], 0, 1),
 
-    leftTile("White1", [Color.White], 1, 0),
-    rightTile("White1", [Color.White], 1, 1),
+    leftTile("white1", [Color.White], 1, 0),
+    rightTile("white1", [Color.White], 1, 1),
 
-    rightTile("White1", [Color.White], 2, 0),
-    leftTile("White1", [Color.White], 2, 1),
+    rightTile("white1", [Color.White], 2, 0),
+    leftTile("white1", [Color.White], 2, 1),
   ],
 };
 
@@ -797,8 +797,9 @@ const white4_1: ParentTile = {
   subTiles: [
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 1, 0),
-    leftLineTile("white4", [Color.White], 2, -1, TriangleLine.Bottom, { 0: 10, 10: 0 }),
-    rightLineTile("white4", [Color.White], 2, -0, TriangleLine.Top, { 6: 4, 4: 6 }),
+
+    rightLineTile("white4", [Color.White], 2, -1, TriangleLine.Bottom, { 0: 10, 10: 0 }),
+    leftLineTile("white4", [Color.White], 2, -0, TriangleLine.Top, { 6: 4, 4: 6 }),
   ],
 };
 
@@ -838,8 +839,8 @@ const white4_4: ParentTile = {
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 1, 0),
 
-    leftLineTile("white4", [Color.White], -1, 0, TriangleLine.Bottom, { 0: 10, 10: 0 }),
-    rightLineTile("white4", [Color.White], -1, 1, TriangleLine.Top, { 4: 6, 6: 4 }),
+    rightLineTile("white4", [Color.White], -1, 0, TriangleLine.Bottom, { 0: 10, 10: 0 }),
+    leftLineTile("white4", [Color.White], -1, 1, TriangleLine.Top, { 4: 6, 6: 4 }),
   ],
 };
 
@@ -852,9 +853,8 @@ const white4_5: ParentTile = {
     rightTile("white4", [Color.White], 0, 0),
     leftTile("white4", [Color.White], 0, 1),
 
-
-    leftLineTile("white4", [Color.White], -1, -1, TriangleLine.Bottom, { 0: 2, 2: 0 }),
-    rightLineTile("white4", [Color.White], -1, -2, TriangleLine.Top, { 8: 6, 6: 8 }),
+    leftLineTile("white4", [Color.White], -1, -2, TriangleLine.Bottom, { 0: 2, 2: 0 }),
+    rightLineTile("white4", [Color.White], -1, -1, TriangleLine.Top, { 8: 6, 6: 8 }),    
   ],
 };
 
@@ -957,11 +957,12 @@ const yellow2_4: ParentTile = {
   flipable: false,
   hasLineTile: true,
   subTiles: [
-    leftTile("yellow2", [Color.Yellow], 0, 0),
-    rightTile("yellow2", [Color.Yellow], 0, 1),
+    rightTile("yellow2", [Color.Yellow], 0, 0),
+    leftTile("yellow2", [Color.Yellow], 0, 1),
     
-    leftLineTile("yellow2", [Color.Yellow], -1, 2, TriangleLine.Bottom, {0:10, 10:0}),
-    rightLineTile("yellow2", [Color.Yellow], -1, 3, TriangleLine.Top, {6:4, 4:6}),
+    
+    rightLineTile("yellow2", [Color.Yellow], -1, 1, TriangleLine.Bottom, {0:10, 10:0}),
+    leftLineTile("yellow2", [Color.Yellow], -1, 2, TriangleLine.Top, {6:4, 4:6}),
     
   ],
 };
@@ -1048,6 +1049,30 @@ const firstVariantsByName: Record<string, ParentTile> = {
 
 export function getFirstTileVariant(tile: ParentTile): ParentTile {
   return firstVariantsByName[tile.name] ?? tile;
+}
+
+export function getAllTileTypes(): ParentTile[] {
+  return Object.values(firstVariantsByName);
+}
+
+const tileVariantsByName: Record<string, ParentTile[]> = {
+  red1: red1Variants,
+  red2: red2Variants,
+  red3: red3Variants,
+  white1: white1Variants,
+  white2: white2Variants,
+  white3: [white3_0],
+  white4: white4Variants,
+  blue1: blue1Variants,
+  blue2: blue2Variants,
+  blue3: blue3Variants,
+  yellow1: yellow1Variants,
+  yellow2: yellow2Variants,
+  yellow3: yellow3Variants,
+};
+
+export function getTileVariants(name: string): ParentTile[] {
+  return tileVariantsByName[name] ?? [];
 }
 
 export function getRandomTile(tileList: ParentTile[]

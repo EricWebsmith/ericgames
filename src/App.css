@@ -337,6 +337,23 @@ body {
   overflow-y: auto;
 }
 
+.orapa-street-palette-link {
+  flex: 0 0 auto;
+  color: inherit;
+  text-decoration: none;
+}
+
+.orapa-street-palette-link:hover .orapa-street-tile-palette,
+.orapa-street-palette-link:focus-visible .orapa-street-tile-palette {
+  border-color: #7ba4bd;
+}
+
+.orapa-street-palette-link:focus-visible {
+  outline: 2px solid #f2f7ff;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
 .orapa-street-palette-title {
   grid-column: 1 / -1;
   margin: 0 0 0.25rem;
@@ -357,9 +374,66 @@ body {
   text-align: center;
 }
 
-.orapa-street-palette-tile svg {
+.orapa-street-token-icon {
   width: 64px;
   height: 64px;
+}
+
+.orapa-street-token-catalog {
+  width: min(100%, 900px);
+}
+
+.orapa-street-token-back {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.orapa-street-token-detail-title {
+  margin: 0;
+  color: #f2f7ff;
+}
+
+.orapa-street-token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.orapa-street-token-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #263b56;
+  border-radius: 8px;
+  background: #08111f;
+}
+
+.orapa-street-token-select {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.orapa-street-token-select:hover,
+.orapa-street-token-select:focus-visible {
+  border-color: #7ba4bd;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.orapa-street-token-card h3 {
+  margin: 0;
+  color: #f2f7ff;
+  font-size: 1rem;
+}
+
+.orapa-street-token-card .orapa-street-token-icon {
+  width: 112px;
+  height: 112px;
 }
 
 .orapa-street-board-frame {
