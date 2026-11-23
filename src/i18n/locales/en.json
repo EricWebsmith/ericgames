@@ -8,7 +8,10 @@
     "newGame": "New Game",
     "reset": "Reset",
     "undo": "Undo",
-    "redo": "Redo"
+    "redo": "Redo",
+    "maximizeBoard": "Maximize board",
+    "restoreBoard": "Restore board",
+    "rotateBoard": "Rotate board 90°"
   },
   "home": {
     "title": "Eric's Games",
@@ -32,6 +35,10 @@
     "ricochetRobots": {
       "title": "Ricochet Robots Hex",
       "description": "Ricochet Robots Hex"
+    },
+    "orapaStreet": {
+      "title": "Orapa Street 221B",
+      "description": "Explore a clickable triangular board"
     },
     "contact": "Buy this game at Xianyu, Search for '卡坦王Eric' QQ: 961422707"
   },
@@ -67,6 +74,29 @@
     "boardSizeLabel": "Board Size",
     "10by8": "10 × 8",
     "11by7": "11 × 7"
+  },
+  "orapaStreet": {
+    "title": "Orapa Street 221B",
+    "instructions": "Select a triangle to inspect its links, or click a border to trace the light path.",
+    "showAnswer": "See Answer",
+    "clickAllBorders": "Click All Borders",
+    "board": "Board",
+    "defaultBoard": "Default board",
+    "hexBoard": "Hex board",
+    "tiles": "Tiles",
+    "newPuzzle": "New puzzle",
+    "showLabels": "Show labels",
+    "availableTiles": "Available Tiles",
+    "boardAriaLabel": "Orapa Street 221B triangular board",
+    "triangleAriaLabel": "{{name}}, {{orientation}}, {{count}} links",
+    "borderNodeAriaLabel": "Border node {{name}}",
+    "selectedTriangleStatus": "{{name}} · {{orientation}} · linked to: {{links}}",
+    "none": "none",
+    "triangleCount": "{{count}} triangles · click or keyboard-select a triangle to inspect its neighbors",
+    "orientation": {
+      "pointyLeft": "Pointing left",
+      "pointyRight": "Pointing right"
+    }
   },
   "rotatingRoads": {
     "title": "Rotating Roads",

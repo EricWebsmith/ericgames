@@ -1,31 +1,33 @@
+import { getBoard, getTiles } from "../../../engine/orapa/mineData";
+import type { Board } from "../../../engine/orapa/models";
 
-import { getBoard, getTiles } from '../../../engine/orapa/mineData';
-import type { Board } from '../../../engine/orapa/models';
-
-describe('getBoard', () => {
-    it('should return a board with spaces as an empty object', () => {
-        const board: Board = getBoard();
-        expect(board).toHaveProperty('spaces');
-        expect(Object.keys(board.spaces).length).toBe(116);
-        for (const label in board.spaces) {
-            const node = board.spaces[label];
-            if (node.is_border) {
-                if (["A1", "A10", "H1", "H10"].includes(node.label)) {
-                    expect(Object.keys(node.edges).length).toBe(2);
-                } else {
-                    expect(Object.keys(node.edges).length).toBe(1);
-                }
-            } else {
-                
-                expect(Object.keys(node.edges).length).toBe(4);
-            }
+describe("getBoard", () => {
+  it("should return a board with spaces as an empty object", () => {
+    const board: Board = getBoard();
+    expect(board).toHaveProperty("spaces");
+    expect(Object.keys(board.spaces).length).toBe(116);
+    for (const label in board.spaces) {
+      const node = board.spaces[label];
+      if (node.is_border) {
+        if (["A1", "A10", "H1", "H10"].includes(node.label)) {
+          expect(Object.keys(node.edges).length).toBe(2);
+        } else {
+          expect(Object.keys(node.edges).length).toBe(1);
         }
-    });
+      } else {
+        expect(Object.keys(node.edges).length).toBe(4);
+      }
+    }
+  });
 });
 
-describe('getTiles', () => {
-    it('excludes Light Blue when includeLightBlue is false', () => {
-        const tiles = getTiles({ includeTransparent: true, includeBlack: true, includeLightBlue: false });
-        expect(tiles.map(tile => tile.name)).not.toContain('Light Blue');
+describe("getTiles", () => {
+  it("excludes Light Blue when includeLightBlue is false", () => {
+    const tiles = getTiles({
+      includeTransparent: true,
+      includeBlack: true,
+      includeLightBlue: false,
     });
+    expect(tiles.map((tile) => tile.name)).not.toContain("Light Blue");
+  });
 });

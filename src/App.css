@@ -226,6 +226,253 @@ body {
   display: block;
 }
 
+.shared-board-frame {
+  position: relative;
+  display: block;
+  width: min(100%, 760px);
+}
+
+.shared-board-frame .game-svg {
+  width: 100%;
+  background: #08111f;
+  border: 1px solid #263b56;
+}
+
+.shared-board-frame-rotated {
+  width: min(100%, 560px);
+}
+
+.shared-board-controls {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.shared-board-size-button,
+.shared-board-rotate-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.35rem;
+  border: 1px solid #7ba4bd;
+  border-radius: 5px;
+  background: rgba(8, 17, 31, 0.92);
+  color: #f2f7ff;
+  cursor: pointer;
+}
+
+.shared-board-size-button:hover,
+.shared-board-size-button:focus-visible,
+.shared-board-rotate-button:hover,
+.shared-board-rotate-button:focus-visible {
+  background: #263b56;
+  border-color: #f2f7ff;
+  outline: none;
+}
+
+.shared-board-size-button svg,
+.shared-board-rotate-button svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.shared-board-rotate-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.shared-board-frame-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  padding: 1rem;
+  background: #0f0f1a;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shared-board-frame-fullscreen .game-svg {
+  width: 100%;
+  height: 100%;
+  max-height: calc(100vh - 2rem);
+  object-fit: contain;
+}
+
+.shared-board-frame-fullscreen .shared-board-controls {
+  top: 1rem;
+  right: 1rem;
+}
+
+.orapa-street-board-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: min(100%, 900px);
+}
+
+.orapa-street-tile-palette {
+  display: grid;
+  grid-template-columns: repeat(2, 64px);
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  max-height: 560px;
+  padding: 0.5rem;
+  border: 1px solid #263b56;
+  border-radius: 8px;
+  background: #08111f;
+  overflow-y: auto;
+}
+
+.orapa-street-palette-title {
+  grid-column: 1 / -1;
+  margin: 0 0 0.25rem;
+  color: #f2f7ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.orapa-street-palette-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 64px;
+  color: #9ca3af;
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+.orapa-street-palette-tile svg {
+  width: 64px;
+  height: 64px;
+}
+
+.orapa-street-board-frame {
+  position: relative;
+  display: block;
+  width: min(100%, 760px);
+}
+
+.orapa-street-board-frame .game-svg {
+  width: 100%;
+  background: #08111f;
+  border: 1px solid #263b56;
+}
+
+.orapa-street-board-frame-rotated {
+  width: min(100%, 560px);
+}
+
+.orapa-street-board-controls {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.orapa-street-board-size-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.35rem;
+  border: 1px solid #7ba4bd;
+  border-radius: 5px;
+  background: rgba(8, 17, 31, 0.92);
+  color: #f2f7ff;
+  cursor: pointer;
+}
+
+.orapa-street-board-rotate-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.35rem;
+  border: 1px solid #7ba4bd;
+  border-radius: 5px;
+  background: rgba(8, 17, 31, 0.92);
+  color: #f2f7ff;
+  cursor: pointer;
+}
+
+.orapa-street-board-size-button:hover,
+.orapa-street-board-size-button:focus-visible,
+.orapa-street-board-rotate-button:hover,
+.orapa-street-board-rotate-button:focus-visible {
+  background: #263b56;
+  border-color: #f2f7ff;
+  outline: none;
+}
+
+.orapa-street-board-size-button svg,
+.orapa-street-board-rotate-button svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.orapa-street-board-rotate-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.orapa-street-board-layout-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: none;
+  padding: 1rem;
+  background: #0f0f1a;
+}
+
+.orapa-street-board-layout-fullscreen .orapa-street-tile-palette {
+  max-height: calc(100vh - 2rem);
+}
+
+.orapa-street-board-layout-fullscreen .orapa-street-board-frame {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  height: calc(100vh - 2rem);
+}
+
+.orapa-street-board-fullscreen .game-svg {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+}
+
+.orapa-street-board-fullscreen .orapa-street-board-controls {
+  top: 1rem;
+  right: 1rem;
+}
+
 /* ==========================================
    Buttons
    ========================================== */

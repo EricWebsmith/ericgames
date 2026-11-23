@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const LANGUAGES = [
-  { code: 'en',    label: 'English'  },
-  { code: 'zh',    label: '简体中文' },
-  { code: 'zh-TW', label: '繁體中文' },
+  { code: "en", label: "English" },
+  { code: "zh", label: "简体中文" },
+  { code: "zh-TW", label: "繁體中文" },
 ] as const;
 
 export default function LanguageSwitcher() {
@@ -17,7 +17,9 @@ export default function LanguageSwitcher() {
       aria-label="Select language"
     >
       {LANGUAGES.map(({ code, label }) => (
-        <option key={code} value={code}>{label}</option>
+        <option key={code} value={code}>
+          {label}
+        </option>
       ))}
     </select>
   );
