@@ -958,7 +958,7 @@ export default function OrapaStreet221B() {
           const tileColor =
             showAnswer && tileInBoard
               ? tileInBoard.tile.colors.length === 0
-                ? "#eeeeee"
+                ? "#999999"
                 : getTileColor(tileInBoard.tile.colors)
               : "none";
           const isRestricted = board.restrictedArea.includes(node.name);
