@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getRandomTile, getTiles } from "../../../engine/orapaStreet/tiles";
+import { defaultTileOptions } from "../../../engine/orapaStreet/models";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -7,7 +8,7 @@ afterEach(() => {
 
 describe("getRandomTile", () => {
   it("can select each of the 12 blue3 variants", () => {
-    const blueTile = getTiles(4, () => 0).find((tile) =>
+    const blueTile = getTiles(4, defaultTileOptions, () => 0).find((tile) =>
       tile.subTiles[0].colors.includes("blue"),
     );
     if (!blueTile) throw new Error("No blue tile is available");
@@ -23,7 +24,7 @@ describe("getRandomTile", () => {
   });
 
   it("rejects random values outside [0, 1)", () => {
-    const blueTile = getTiles(4, () => 0).find((tile) =>
+    const blueTile = getTiles(4, defaultTileOptions, () => 0).find((tile) =>
       tile.subTiles[0].colors.includes("blue"),
     );
     if (!blueTile) throw new Error("No blue tile is available");

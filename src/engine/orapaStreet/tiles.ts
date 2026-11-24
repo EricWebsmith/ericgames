@@ -1,4 +1,4 @@
-import { Color, Orient, Tile, TriangleLine, type ParentTile, type Reflect } from "./models";
+import { Color, Orient, Tile, TriangleLine, type ParentTile, type Reflect, type TileOptions } from "./models";
 
 const leftΔReflect: Reflect = {
   0: 10,
@@ -854,7 +854,7 @@ const white4_5: ParentTile = {
     leftTile("white4", [Color.White], 0, 1),
 
     leftLineTile("white4", [Color.White], -1, -2, TriangleLine.Bottom, { 0: 2, 2: 0 }),
-    rightLineTile("white4", [Color.White], -1, -1, TriangleLine.Top, { 8: 6, 6: 8 }),    
+    rightLineTile("white4", [Color.White], -1, -1, TriangleLine.Top, { 8: 6, 6: 8 }),
   ],
 };
 
@@ -917,8 +917,8 @@ const yellow2_1: ParentTile = {
     rightTile("yellow2", [Color.Yellow], 0, 0),
     leftTile("yellow2", [Color.Yellow], 0, 1),
 
-    rightLineTile("yellow2", [Color.Yellow], 1, -1, TriangleLine.Bottom, {0:10, 10:0}),
-    leftLineTile("yellow2", [Color.Yellow], 1, 0, TriangleLine.Top, {6:4, 4:6}),
+    rightLineTile("yellow2", [Color.Yellow], 1, -1, TriangleLine.Bottom, { 0: 10, 10: 0 }),
+    leftLineTile("yellow2", [Color.Yellow], 1, 0, TriangleLine.Top, { 6: 4, 4: 6 }),
   ],
 };
 
@@ -930,9 +930,9 @@ const yellow2_2: ParentTile = {
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 0, 1),
-    
-    leftLineTile("yellow2", [Color.Yellow], 1, 1, TriangleLine.Bottom, {0:2, 2:0}),
-    rightLineTile("yellow2", [Color.Yellow], 1, 2, TriangleLine.Top, {6:8, 8:6}),
+
+    leftLineTile("yellow2", [Color.Yellow], 1, 1, TriangleLine.Bottom, { 0: 2, 2: 0 }),
+    rightLineTile("yellow2", [Color.Yellow], 1, 2, TriangleLine.Top, { 6: 8, 8: 6 }),
   ],
 };
 
@@ -944,7 +944,7 @@ const yellow2_3: ParentTile = {
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 1, 0),
-    
+
     leftLineTile("yellow2", [Color.Yellow], 0, 2),
     rightLineTile("yellow2", [Color.Yellow], 1, 2),
   ],
@@ -959,11 +959,11 @@ const yellow2_4: ParentTile = {
   subTiles: [
     rightTile("yellow2", [Color.Yellow], 0, 0),
     leftTile("yellow2", [Color.Yellow], 0, 1),
-    
-    
-    rightLineTile("yellow2", [Color.Yellow], -1, 1, TriangleLine.Bottom, {0:10, 10:0}),
-    leftLineTile("yellow2", [Color.Yellow], -1, 2, TriangleLine.Top, {6:4, 4:6}),
-    
+
+
+    rightLineTile("yellow2", [Color.Yellow], -1, 1, TriangleLine.Bottom, { 0: 10, 10: 0 }),
+    leftLineTile("yellow2", [Color.Yellow], -1, 2, TriangleLine.Top, { 6: 4, 4: 6 }),
+
   ],
 };
 
@@ -976,13 +976,13 @@ const yellow2_5: ParentTile = {
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 0, 1),
-    
-    leftLineTile("yellow2", [Color.Yellow], -1, -1, TriangleLine.Bottom, {0:2, 2:0}),
-    rightLineTile("yellow2", [Color.Yellow], -1, 0, TriangleLine.Top, {6:8, 8:6}),    
+
+    leftLineTile("yellow2", [Color.Yellow], -1, -1, TriangleLine.Bottom, { 0: 2, 2: 0 }),
+    rightLineTile("yellow2", [Color.Yellow], -1, 0, TriangleLine.Top, { 6: 8, 8: 6 }),
   ],
 };
 
-const yellow2Variants = [yellow2_0,yellow2_1, yellow2_2, yellow2_3, yellow2_4, yellow2_5]
+const yellow2Variants = [yellow2_0, yellow2_1, yellow2_2, yellow2_3, yellow2_4, yellow2_5];
 
 
 // #region white 2
@@ -1031,6 +1031,61 @@ const yellow3Variants = [yellow3_0, yellow3_1, yellow3_2, yellow3_3, yellow3_4, 
 
 // #endregion
 
+const transparent1_0 = {
+  name: "transparent1",
+  flipable: false,
+  hasLineTile: false,
+  subTiles: [
+    leftTile("transparent1", [], 0, 0),
+    rightTile("transparent1", [], 0, 1),
+  ],
+};
+
+const transparent1_1 = {
+  name: "transparent1",
+  flipable: false,
+  hasLineTile: false,
+  subTiles: [
+    rightTile("transparent1", [], 0, 0),
+    leftTile("transparent1", [], 0, 1),
+  ],
+};
+
+
+const transparent1_2 = {
+  name: "transparent1",
+  flipable: false,
+  hasLineTile: false,
+  subTiles: [
+    leftTile("transparent1", [], 0, 0),
+    rightTile("transparent1", [], 1, 0),
+  ],
+};
+
+const transparent1Variants = [transparent1_0, transparent1_1, transparent1_2];
+
+
+const lightblue1_0 = {
+  name: "lightblue1",
+  flipable: false,
+  hasLineTile: false,
+  subTiles: [
+    leftTile("lightblue1", [Color.Blue, Color.White], 0, 0),
+  ],
+};
+
+
+const lightblue1_1 = {
+  name: "lightblue1",
+  flipable: false,
+  hasLineTile: false,
+  subTiles: [
+    rightTile("lightblue1", [Color.Blue, Color.White], 0, 1),
+  ],
+};
+
+const lightblue1Variants = [lightblue1_0, lightblue1_1];
+
 const firstVariantsByName: Record<string, ParentTile> = {
   [red3_0.name]: red3_0,
   [white1_0.name]: white1_0,
@@ -1045,6 +1100,7 @@ const firstVariantsByName: Record<string, ParentTile> = {
   [yellow3_0.name]: yellow3_0,
   [red1_0.name]: red1_0,
   [red2_0.name]: red2_0,
+  [transparent1_0.name]: transparent1_0,
 };
 
 export function getFirstTileVariant(tile: ParentTile): ParentTile {
@@ -1086,6 +1142,7 @@ export function getRandomTile(tileList: ParentTile[]
 
 export function getTiles(
   tileCount: number,
+  tileOptions: TileOptions,
   random: () => number = Math.random,
 ): ParentTile[] {
   const allTiles = [
@@ -1136,5 +1193,14 @@ export function getTiles(
   }
 
   selected.push(...remaining.slice(0, tileCount - selected.length));
+
+  if (tileOptions.includeTransparent) {
+    selected.push(getRandomTile(transparent1Variants));
+  }
+
+  if (tileOptions.includeLightBlue) {
+    selected.push(getRandomTile(lightblue1Variants));
+  }
+
   return selected;
 }

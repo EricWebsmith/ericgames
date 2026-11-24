@@ -132,7 +132,7 @@ export class TileInBoard implements ITileInBoard {
   tile: Tile;
   label: string;
 
-  constructor(data: Partial<ITileInBoard> & { tile: Tile; label: string }) {
+  constructor(data: Partial<ITileInBoard> & { tile: Tile; label: string; }) {
     this.tile = data.tile;
     this.label = data.label;
   }
@@ -145,5 +145,16 @@ export interface ParentTile {
   hasLineTile: boolean;
   subTiles: Tile[];
 }
+
+
+export interface TileOptions {
+  includeTransparent: boolean;
+  includeLightBlue: boolean;
+}
+
+export const defaultTileOptions: TileOptions = {
+  includeTransparent: true,
+  includeLightBlue: true,
+};
 
 // endregion
