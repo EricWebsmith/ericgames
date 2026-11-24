@@ -141,8 +141,6 @@ export class TileInBoard implements ITileInBoard {
 /** This interface represents a parent tile, which can have multiple child tiles. */
 export interface ParentTile {
   name: string;
-  flipable: boolean;
-  hasLineTile: boolean;
   subTiles: Tile[];
 }
 

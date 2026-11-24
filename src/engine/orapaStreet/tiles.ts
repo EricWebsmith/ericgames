@@ -143,8 +143,6 @@ function changeNameColor(pTile: ParentTile, name: string, colors: Color[]): Pare
 
 const white3_0: ParentTile = {
   name: "white3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("white3", [Color.White], 0, 0),
     rightTile("white3", [Color.White], 0, 1),
@@ -159,8 +157,6 @@ const white3_0: ParentTile = {
 
 const blue1_0: ParentTile = {
   name: "blue1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("blue1", [Color.Blue], 0, 0),
     leftTile("blue1", [Color.Blue], 0, 1),
@@ -178,8 +174,6 @@ const blue1Variants = [blue1_0, blue1_1];
 
 const blue3_0: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     rightTile("blue3", [Color.Blue], 0, 0),
     leftTile("blue3", [Color.Blue], 0, 1),
@@ -193,8 +187,6 @@ const blue3_0: ParentTile = {
 
 const blue3_1: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
     rightTile("blue3", [Color.Blue], 0, 1),
@@ -209,8 +201,6 @@ const blue3_1: ParentTile = {
 
 const blue3_2: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     rightTile("blue3", [Color.Blue], 0, 0),
     leftTile("blue3", [Color.Blue], 0, 1),
@@ -225,8 +215,6 @@ const blue3_2: ParentTile = {
 
 const blue3_3: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
     rightTile("blue3", [Color.Blue], 0, 1),
@@ -240,8 +228,6 @@ const blue3_3: ParentTile = {
 
 const blue3_4: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
 
@@ -256,8 +242,6 @@ const blue3_4: ParentTile = {
 
 const blue3_5: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
 
@@ -272,8 +256,6 @@ const blue3_5: ParentTile = {
 
 const blue3_6: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     rightTile("blue3", [Color.Blue], 0, 0),
     leftTile("blue3", [Color.Blue], 0, 1),
@@ -287,8 +269,6 @@ const blue3_6: ParentTile = {
 
 const blue3_7: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
     rightTile("blue3", [Color.Blue], 0, 1),
@@ -303,8 +283,6 @@ const blue3_7: ParentTile = {
 
 const blue3_8: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
 
@@ -319,8 +297,6 @@ const blue3_8: ParentTile = {
 
 const blue3_9: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
     rightTile("blue3", [Color.Blue], 0, 1),
@@ -334,8 +310,6 @@ const blue3_9: ParentTile = {
 
 const blue3_10: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
 
@@ -350,8 +324,6 @@ const blue3_10: ParentTile = {
 
 const blue3_11: ParentTile = {
   name: "blue3",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("blue3", [Color.Blue], 0, 0),
 
@@ -385,8 +357,6 @@ const blue3Variants = [
 
 const red1_0: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("red1", [Color.Red], 0, 0),
     rightTile("red1", [Color.Red], 0, 1),
@@ -398,8 +368,6 @@ const red1_0: ParentTile = {
 
 const red1_1: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     rightTile("red1", [Color.Red], 0, 0),
     leftTile("red1", [Color.Red], -1, 0),
@@ -413,8 +381,6 @@ const red1_1: ParentTile = {
 
 const red1_2: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
 
     leftTile("red1", [Color.Red], 0, 0),
@@ -429,8 +395,6 @@ const red1_2: ParentTile = {
 
 const red1_3: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
 
     rightTile("red1", [Color.Red], 0, 0),
@@ -445,8 +409,6 @@ const red1_3: ParentTile = {
 
 const red1_4: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("red1", [Color.Red], 0, 0),
     rightTile("red1", [Color.Red], 1, 0),
@@ -460,8 +422,6 @@ const red1_4: ParentTile = {
 
 const red1_5: ParentTile = {
   name: "red1",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     rightTile("red1", [Color.Red], 0, 0),
     leftTile("red1", [Color.Red], 0, 1),
@@ -501,8 +461,6 @@ const red1Variants = [
 
 const red2_0: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -518,8 +476,6 @@ const red2_0: ParentTile = {
 
 const red2_1: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -537,8 +493,6 @@ const red2_1: ParentTile = {
 
 const red2_2: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -555,8 +509,6 @@ const red2_2: ParentTile = {
 
 const red2_3: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -575,8 +527,6 @@ const red2_3: ParentTile = {
 
 const red2_4: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -593,8 +543,6 @@ const red2_4: ParentTile = {
 
 const red2_5: ParentTile = {
   name: "red2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("red2", [Color.Red], 0, 0),
     rightTile("red2", [Color.Red], 0, 1),
@@ -616,8 +564,6 @@ const red2Variants = [red2_0, red2_1, red2_2, red2_3, red2_4, red2_5];
 
 const red3_0: ParentTile = {
   name: "red3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("red3", [Color.Red], 0, 0),
     leftTile("red3", [Color.Red], 0, 1),
@@ -629,8 +575,6 @@ const red3_0: ParentTile = {
 
 const red3_1: ParentTile = {
   name: "red3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("red3", [Color.Red], 0, 0),
     leftTile("red3", [Color.Red], 0, -1),
@@ -643,8 +587,6 @@ const red3_1: ParentTile = {
 
 const red3_2: ParentTile = {
   name: "red3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("red3", [Color.Red], 0, 0),
     rightTile("red3", [Color.Red], 1, 0),
@@ -666,8 +608,6 @@ const red3Variants = [red3_0, red3_1, red3_2, red3_3, red3_4, red3_5];
 
 const white1_0: ParentTile = {
   name: "white1",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("white1", [Color.White], 0, 0),
     rightTile("white1", [Color.White], 0, 1),
@@ -681,8 +621,6 @@ const white1_0: ParentTile = {
 
 const white1_1: ParentTile = {
   name: "white1",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     leftTile("white1", [Color.White], 0, 0),
 
@@ -699,8 +637,6 @@ const white1_1: ParentTile = {
 
 const white1_2: ParentTile = {
   name: "white1",
-  flipable: true,
-  hasLineTile: false,
   subTiles: [
     rightTile("white1", [Color.White], 0, 0),
     leftTile("white1", [Color.White], 0, 1),
@@ -725,8 +661,6 @@ const white1Variants = [white1_0, white1_1, white1_2, white1_3, white1_4, white1
 
 const white2_0: ParentTile = {
   name: "white2",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("white2", [Color.White], 0, 0),
     leftTile("white2", [Color.White], 0, 1),
@@ -738,8 +672,6 @@ const white2_0: ParentTile = {
 
 const white2_1: ParentTile = {
   name: "white2",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("white2", [Color.White], 0, 0),
 
@@ -754,8 +686,6 @@ const white2_1: ParentTile = {
 
 const white2_2: ParentTile = {
   name: "white2",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("white2", [Color.White], 0, 0),
     leftTile("white2", [Color.White], 0, 1),
@@ -779,8 +709,6 @@ const white2Variants = [white2_0, white2_1, white2_2, white2_3, white2_4, white2
 
 const white4_0: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 0, 1),
@@ -792,8 +720,6 @@ const white4_0: ParentTile = {
 
 const white4_1: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 1, 0),
@@ -805,8 +731,6 @@ const white4_1: ParentTile = {
 
 const white4_2: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     rightTile("white4", [Color.White], 0, 0),
     leftTile("white4", [Color.White], 0, 1),
@@ -818,8 +742,6 @@ const white4_2: ParentTile = {
 
 const white4_3: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 0, 1),
@@ -833,8 +755,6 @@ const white4_3: ParentTile = {
 
 const white4_4: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     leftTile("white4", [Color.White], 0, 0),
     rightTile("white4", [Color.White], 1, 0),
@@ -847,8 +767,6 @@ const white4_4: ParentTile = {
 
 const white4_5: ParentTile = {
   name: "white4",
-  flipable: true,
-  hasLineTile: true,
   subTiles: [
     rightTile("white4", [Color.White], 0, 0),
     leftTile("white4", [Color.White], 0, 1),
@@ -898,8 +816,6 @@ const yellow1Variants = [yellow1_0, yellow1_1, yellow1_2, yellow1_3, yellow1_4, 
 
 const yellow2_0: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftLineTile("yellow2", [Color.Yellow], 0, 0),
     leftTile("yellow2", [Color.Yellow], 0, 2),
@@ -911,8 +827,6 @@ const yellow2_0: ParentTile = {
 
 const yellow2_1: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     rightTile("yellow2", [Color.Yellow], 0, 0),
     leftTile("yellow2", [Color.Yellow], 0, 1),
@@ -925,8 +839,6 @@ const yellow2_1: ParentTile = {
 
 const yellow2_2: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 0, 1),
@@ -939,8 +851,6 @@ const yellow2_2: ParentTile = {
 
 const yellow2_3: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 1, 0),
@@ -954,8 +864,6 @@ const yellow2_3: ParentTile = {
 
 const yellow2_4: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     rightTile("yellow2", [Color.Yellow], 0, 0),
     leftTile("yellow2", [Color.Yellow], 0, 1),
@@ -971,8 +879,6 @@ const yellow2_4: ParentTile = {
 
 const yellow2_5: ParentTile = {
   name: "yellow2",
-  flipable: false,
-  hasLineTile: true,
   subTiles: [
     leftTile("yellow2", [Color.Yellow], 0, 0),
     rightTile("yellow2", [Color.Yellow], 0, 1),
@@ -989,8 +895,6 @@ const yellow2Variants = [yellow2_0, yellow2_1, yellow2_2, yellow2_3, yellow2_4, 
 
 const yellow3_0: ParentTile = {
   name: "yellow3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("yellow3", [Color.Yellow], 0, 0),
     leftTile("yellow3", [Color.Yellow], 0, 1),
@@ -1000,8 +904,6 @@ const yellow3_0: ParentTile = {
 
 const yellow3_1: ParentTile = {
   name: "yellow3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("yellow3", [Color.Yellow], 0, 0),
 
@@ -1013,8 +915,6 @@ const yellow3_1: ParentTile = {
 
 const yellow3_2: ParentTile = {
   name: "yellow3",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("yellow3", [Color.Yellow], 0, 0),
     leftTile("yellow3", [Color.Yellow], 0, 1),
@@ -1033,8 +933,6 @@ const yellow3Variants = [yellow3_0, yellow3_1, yellow3_2, yellow3_3, yellow3_4, 
 
 const transparent1_0 = {
   name: "transparent1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("transparent1", [], 0, 0),
     rightTile("transparent1", [], 0, 1),
@@ -1043,8 +941,6 @@ const transparent1_0 = {
 
 const transparent1_1 = {
   name: "transparent1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("transparent1", [], 0, 0),
     leftTile("transparent1", [], 0, 1),
@@ -1054,8 +950,6 @@ const transparent1_1 = {
 
 const transparent1_2 = {
   name: "transparent1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("transparent1", [], 0, 0),
     rightTile("transparent1", [], 1, 0),
@@ -1067,8 +961,6 @@ const transparent1Variants = [transparent1_0, transparent1_1, transparent1_2];
 
 const lightblue1_0 = {
   name: "lightblue1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     leftTile("lightblue1", [Color.Blue, Color.White], 0, 0),
   ],
@@ -1077,8 +969,6 @@ const lightblue1_0 = {
 
 const lightblue1_1 = {
   name: "lightblue1",
-  flipable: false,
-  hasLineTile: false,
   subTiles: [
     rightTile("lightblue1", [Color.Blue, Color.White], 0, 0),
   ],
