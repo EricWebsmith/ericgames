@@ -955,13 +955,12 @@ export default function OrapaStreet221B() {
             node.orientation,
           );
           const tileInBoard = tilesInBoard[node.name];
-          const tileColor = showAnswer
-            ? tileInBoard
+          const tileColor =
+            showAnswer && tileInBoard
               ? tileInBoard.tile.colors.length === 0
-                ? "#999999"
+                ? "#eeeeee"
                 : getTileColor(tileInBoard.tile.colors)
-              : "none"
-            : "none";
+              : "none";
           const isRestricted = board.restrictedArea.includes(node.name);
           const fill = isRestricted
             ? "url(#orapa-street-restricted-stripes)"

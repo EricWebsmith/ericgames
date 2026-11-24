@@ -46,7 +46,7 @@ describe("OrapaStreet221B", () => {
   });
 
   it("shows the selected parent tiles at the left of the board", () => {
-    window.history.replaceState(null, "", "/?s=123&n=4");
+    window.history.replaceState(null, "", "/?s=123&n=4&o=00");
     render(<OrapaStreet />);
     fireEvent.click(screen.getByRole("button", { name: "See Answer" }));
 
@@ -142,15 +142,11 @@ describe("OrapaStreet221B", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "See Answer" }));
 
-    expect(
-      screen
-        .getAllByTestId(/^triangle-/)
-        .some(
-          (triangle) =>
-            triangle.querySelector("polygon")?.getAttribute("fill") ===
-            "#eeeeee",
-        ),
-    ).toBe(true);
+    const fills = screen
+      .getAllByTestId(/^triangle-/)
+      .map((triangle) => triangle.querySelector("polygon")?.getAttribute("fill"));
+    expect(fills).toContain("#eeeeee");
+    expect(fills).toContain("none");
   });
 
   it("translates the page into Simplified Chinese", async () => {

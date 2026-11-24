@@ -1080,7 +1080,7 @@ const lightblue1_1 = {
   flipable: false,
   hasLineTile: false,
   subTiles: [
-    rightTile("lightblue1", [Color.Blue, Color.White], 0, 1),
+    rightTile("lightblue1", [Color.Blue, Color.White], 0, 0),
   ],
 };
 
@@ -1100,6 +1100,7 @@ const firstVariantsByName: Record<string, ParentTile> = {
   [yellow3_0.name]: yellow3_0,
   [red1_0.name]: red1_0,
   [red2_0.name]: red2_0,
+  [lightblue1_0.name]: lightblue1_0,
   [transparent1_0.name]: transparent1_0,
 };
 
@@ -1125,6 +1126,8 @@ const tileVariantsByName: Record<string, ParentTile[]> = {
   yellow1: yellow1Variants,
   yellow2: yellow2Variants,
   yellow3: yellow3Variants,
+  lightblue1: lightblue1Variants,
+  transparant1: transparent1Variants,
 };
 
 export function getTileVariants(name: string): ParentTile[] {
