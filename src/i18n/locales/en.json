@@ -84,6 +84,8 @@
     "defaultBoard": "Default board",
     "hexBoard": "Hex board",
     "tiles": "Tiles",
+    "includeTransparent": "Transparent Expansion",
+    "includeSapphire": "Sapphire Expansion",
     "newPuzzle": "New puzzle",
     "showLabels": "Show labels",
     "availableTiles": "Available Tiles",

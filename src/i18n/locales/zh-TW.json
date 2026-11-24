@@ -84,6 +84,8 @@
     "defaultBoard": "預設棋盤",
     "hexBoard": "六邊形棋盤",
     "tiles": "Token",
+    "includeTransparent": "透明擴展",
+    "includeSapphire": "藍寶石擴展",
     "newPuzzle": "新謎題",
     "showLabels": "顯示標籤",
     "availableTiles": "可用 Token",

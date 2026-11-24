@@ -4,6 +4,7 @@ import { getDefaultBoard, getHexBoard } from "../../engine/orapaStreet/boards";
 import { setupWithSeed } from "../../engine/orapaStreet/gameManager";
 import {
   Color,
+  defaultTileOptions,
   Orient,
   TriangleLine,
   type Board,
@@ -11,6 +12,7 @@ import {
   type ParentTile,
   type Puzzle,
   type TileInBoard,
+  type TileOptions,
 } from "../../engine/orapaStreet/models";
 import { getTiles } from "../../engine/orapaStreet/tiles";
 import BoardControls from "../shared/BoardControls";
@@ -37,6 +39,7 @@ type BoardType = "default" | "hex";
 const QUERY_PARAM_SEED = "s";
 const QUERY_PARAM_BOARD_TYPE = "b";
 const QUERY_PARAM_TILE_COUNT = "n";
+const QUERY_PARAM_TILE_OPTIONS = "o";
 
 function getTileCountOptions(boardType: BoardType): number[] {
   return boardType === "default" ? [4, 5, 6] : [5, 6, 7, 8];
@@ -70,12 +73,20 @@ function getInitialState(): {
   boardType: BoardType;
   seed: number;
   tileCount: number;
+  tileOptions: TileOptions;
   tiles: ParentTile[];
   puzzle: Puzzle;
 } {
   const params = getSearchParams();
   const boardParam = params.get(QUERY_PARAM_BOARD_TYPE);
   const boardType: BoardType = boardParam === "hex" ? "hex" : "default";
+  const optionsParam = params.get(QUERY_PARAM_TILE_OPTIONS) ?? "";
+  const tileOptions: TileOptions = /^[01]{2}$/.test(optionsParam)
+    ? {
+        includeTransparent: optionsParam[0] === "1",
+        includeLightBlue: optionsParam[1] === "1",
+      }
+    : defaultTileOptions;
   const seedParam = params.get(QUERY_PARAM_SEED);
   const seed =
     seedParam !== null && /^\d+$/.test(seedParam)
@@ -91,11 +102,12 @@ function getInitialState(): {
     ? requestedTileCount
     : getDefaultTileCount(boardType);
   const board = boardType === "default" ? getDefaultBoard() : getHexBoard();
-  const tiles = getTiles(tileCount, seededRandom(seed));
+  const tiles = getTiles(tileCount, tileOptions, seededRandom(seed));
   return {
     boardType,
     seed,
     tileCount,
+    tileOptions,
     tiles,
     puzzle: setupWithSeed(board, tiles, seed),
   };
@@ -539,6 +551,9 @@ export default function OrapaStreet221B() {
   const [boardType, setBoardType] = useState<BoardType>(initialState.boardType);
   const [seed, setSeed] = useState(initialState.seed);
   const [tileCount, setTileCount] = useState(initialState.tileCount);
+  const [tileOptions, setTileOptions] = useState<TileOptions>(
+    initialState.tileOptions,
+  );
   const [tiles, setTiles] = useState<ParentTile[]>(initialState.tiles);
   const [puzzle, setPuzzle] = useState<Puzzle>(initialState.puzzle);
   const [selectedBorder, setSelectedBorder] = useState<string | null>(null);
@@ -690,6 +705,10 @@ export default function OrapaStreet221B() {
     params.set(QUERY_PARAM_SEED, String(seed));
     params.set(QUERY_PARAM_BOARD_TYPE, boardType);
     params.set(QUERY_PARAM_TILE_COUNT, String(tileCount));
+    params.set(
+      QUERY_PARAM_TILE_OPTIONS,
+      `${tileOptions.includeTransparent ? "1" : "0"}${tileOptions.includeLightBlue ? "1" : "0"}`,
+    );
     const search = params.toString();
     const querySuffix = search ? `?${search}` : "";
     const hashPath = window.location.hash.split("?")[0];
@@ -701,7 +720,7 @@ export default function OrapaStreet221B() {
     if (currentUrl !== nextUrl) {
       window.history.replaceState(null, "", nextUrl);
     }
-  }, [seed, boardType, tileCount]);
+  }, [seed, boardType, tileCount, tileOptions]);
 
   return (
     <section className="game-container" style={{ maxWidth: 900 }}>
@@ -735,7 +754,11 @@ export default function OrapaStreet221B() {
               const nextTiles =
                 nextTileCount === tileCount
                   ? tiles
-                  : getTiles(nextTileCount, seededRandom(seed));
+                  : getTiles(
+                      nextTileCount,
+                      tileOptions,
+                      seededRandom(seed),
+                    );
               setBoardType(nextBoardType);
               setTileCount(nextTileCount);
               setTiles(nextTiles);
@@ -763,7 +786,11 @@ export default function OrapaStreet221B() {
               return;
             }
 
-            const nextTiles = getTiles(nextTileCount, seededRandom(seed));
+            const nextTiles = getTiles(
+              nextTileCount,
+              tileOptions,
+              seededRandom(seed),
+            );
             setTileCount(nextTileCount);
             setTiles(nextTiles);
             setPuzzle(setupWithSeed(board, nextTiles, seed));
@@ -781,7 +808,11 @@ export default function OrapaStreet221B() {
           className="btn-reset"
           onClick={() => {
             const nextSeed = Math.floor(Math.random() * 0xffffffff);
-            const nextTiles = getTiles(tileCount, seededRandom(nextSeed));
+            const nextTiles = getTiles(
+              tileCount,
+              tileOptions,
+              seededRandom(nextSeed),
+            );
             setSeed(nextSeed);
             setTiles(nextTiles);
             setPuzzle(setupWithSeed(board, nextTiles, nextSeed));
@@ -792,14 +823,7 @@ export default function OrapaStreet221B() {
           {t("orapaStreet.newPuzzle")}
         </button>
         <ShareButton />
-        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <input
-            type="checkbox"
-            checked={showLabels}
-            onChange={(event) => setShowLabels(event.target.checked)}
-          />
-          {t("orapaStreet.showLabels")}
-        </label>
+
         <button
           className="btn-reset"
           onClick={() => setShowAnswer((visible) => !visible)}
@@ -814,6 +838,60 @@ export default function OrapaStreet221B() {
         >
           {t("orapaStreet.clickAllBorders")}
         </button>
+      </div>
+
+      <div
+        style={{
+          marginTop: 8,
+          display: "flex",
+          gap: 16,
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <label
+          htmlFor="orapa-street-option-transparent"
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
+          <input
+            id="orapa-street-option-transparent"
+            type="checkbox"
+            checked={tileOptions.includeTransparent}
+            onChange={(event) =>
+              setTileOptions((previous) => ({
+                ...previous,
+                includeTransparent: event.target.checked,
+              }))
+            }
+          />
+          {t("orapaStreet.includeTransparent")}
+        </label>
+        <label
+          htmlFor="orapa-street-option-sapphire"
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
+          <input
+            id="orapa-street-option-sapphire"
+            type="checkbox"
+            checked={tileOptions.includeLightBlue}
+            onChange={(event) =>
+              setTileOptions((previous) => ({
+                ...previous,
+                includeLightBlue: event.target.checked,
+              }))
+            }
+          />
+          {t("orapaStreet.includeSapphire")}
+        </label>
+        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={showLabels}
+            onChange={(event) => setShowLabels(event.target.checked)}
+          />
+          {t("orapaStreet.showLabels")}
+        </label>
       </div>
 
       <div
@@ -878,7 +956,11 @@ export default function OrapaStreet221B() {
           );
           const tileInBoard = tilesInBoard[node.name];
           const tileColor = showAnswer
-            ? getTileColor(tileInBoard?.tile.colors ?? [])
+            ? tileInBoard
+              ? tileInBoard.tile.colors.length === 0
+                ? "#999999"
+                : getTileColor(tileInBoard.tile.colors)
+              : "none"
             : "none";
           const isRestricted = board.restrictedArea.includes(node.name);
           const fill = isRestricted

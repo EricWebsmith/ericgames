@@ -113,6 +113,46 @@ describe("OrapaStreet221B", () => {
     }
   });
 
+  it("supports transparent and sapphire expansion options", () => {
+    render(<OrapaStreet />);
+
+    const transparentOption = screen.getByRole("checkbox", {
+      name: "Transparent Expansion",
+    });
+    const sapphireOption = screen.getByRole("checkbox", {
+      name: "Sapphire Expansion",
+    });
+
+    expect(transparentOption).toBeChecked();
+    expect(sapphireOption).toBeChecked();
+
+    fireEvent.click(transparentOption);
+    fireEvent.click(sapphireOption);
+    fireEvent.click(screen.getByRole("button", { name: "New puzzle" }));
+
+    expect(screen.queryByTestId("palette-tile-transparent1")).toBeNull();
+    expect(screen.queryByTestId("palette-tile-lightblue1")).toBeNull();
+    expect(new URLSearchParams(window.location.search).get("o")).toBe("00");
+  });
+
+  it("renders transparent tiles in light gray when revealing the answer", () => {
+    window.history.replaceState(null, "", "/?s=123&n=4&o=10");
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    render(<OrapaStreet />);
+
+    fireEvent.click(screen.getByRole("button", { name: "See Answer" }));
+
+    expect(
+      screen
+        .getAllByTestId(/^triangle-/)
+        .some(
+          (triangle) =>
+            triangle.querySelector("polygon")?.getAttribute("fill") ===
+            "#eeeeee",
+        ),
+    ).toBe(true);
+  });
+
   it("translates the page into Simplified Chinese", async () => {
     await act(async () => {
       await i18n.changeLanguage("zh");
